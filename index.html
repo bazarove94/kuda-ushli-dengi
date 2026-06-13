@@ -284,6 +284,7 @@
     .quick-btn .quick-icon { width: 31px; height: 31px; display: grid; place-items: center; border-radius: 7px; }
     .quick-btn.income .quick-icon { color: var(--income); background: color-mix(in srgb, var(--income) 12%, transparent); }
     .quick-btn.expense .quick-icon { color: var(--expense); background: color-mix(in srgb, var(--expense) 12%, transparent); }
+    .quick-btn.receipt .quick-icon { color: var(--warning); background: color-mix(in srgb, var(--warning) 12%, transparent); }
     .quick-btn strong { font-size: 13px; }
 
     .transaction-list { display: grid; }
@@ -647,6 +648,52 @@
     .field-caption { display: block; margin-bottom: 6px; color: var(--muted); font-size: 11px; }
     .operation-submit.expense-mode { color: #1c0709; border-color: var(--expense); background: var(--expense); }
     .operation-submit.income-mode { color: #06120d; border-color: var(--income); background: var(--income); }
+    .operation-receipt-action { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border: 1px dashed color-mix(in srgb, var(--warning) 45%, var(--border)); border-radius: 7px; background: color-mix(in srgb, var(--warning) 7%, var(--surface-2)); }
+    .operation-receipt-copy { min-width: 0; display: grid; gap: 3px; }
+    .operation-receipt-copy strong { font-size: 12px; }
+    .operation-receipt-copy span { color: var(--muted); font-size: 10px; }
+    .receipt-badge { display: inline-flex; align-items: center; gap: 4px; min-height: 23px; padding: 0 7px; border: 1px solid color-mix(in srgb, var(--warning) 42%, var(--border)); border-radius: 999px; color: var(--warning); background: color-mix(in srgb, var(--warning) 9%, transparent); cursor: pointer; font-size: 9px; font-weight: 750; white-space: nowrap; }
+    .receipt-badge .icon { width: 13px; height: 13px; }
+    .receipt-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 14px; padding: 4px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg); }
+    .receipt-tab { min-height: 36px; border: 0; border-radius: 5px; color: var(--muted); background: transparent; cursor: pointer; font-size: 11px; }
+    .receipt-tab.active { color: var(--text); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--border-soft); font-weight: 700; }
+    .receipt-pane { display: none; }
+    .receipt-pane.active { display: block; }
+    .receipt-dropzone { min-height: 210px; display: grid; place-items: center; padding: 22px; border: 1px dashed color-mix(in srgb, var(--accent) 48%, var(--border)); border-radius: 7px; background: color-mix(in srgb, var(--accent) 5%, var(--surface-2)); cursor: pointer; text-align: center; }
+    .receipt-dropzone.dragging { border-color: var(--accent); background: var(--accent-soft); }
+    .receipt-dropzone-inner { max-width: 440px; display: grid; justify-items: center; gap: 8px; }
+    .receipt-dropzone .icon { width: 31px; height: 31px; color: var(--accent); }
+    .receipt-dropzone strong { font-size: 14px; }
+    .receipt-dropzone span, .receipt-privacy { color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .receipt-file-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; margin-top: 5px; }
+    .receipt-preview { display: none; grid-template-columns: minmax(0, 1fr) 190px; gap: 14px; margin-top: 14px; }
+    .receipt-preview.visible { display: grid; }
+    .receipt-preview-image { min-height: 260px; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--border-soft); border-radius: 7px; background: #090b0f; }
+    .receipt-preview-image img { width: 100%; max-height: 430px; object-fit: contain; }
+    .receipt-preview-meta { display: grid; align-content: start; gap: 10px; }
+    .receipt-progress { display: grid; gap: 7px; }
+    .receipt-progress-line { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 10px; }
+    .receipt-progress .bar { height: 7px; }
+    .receipt-progress .bar span { transition: width .2s ease; }
+    .receipt-review-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; margin-bottom: 14px; }
+    .receipt-review-stat { min-width: 0; padding: 11px; border: 1px solid var(--border-soft); border-radius: 7px; background: var(--surface-2); }
+    .receipt-review-stat span { display: block; color: var(--muted); font-size: 9px; }
+    .receipt-review-stat strong { display: block; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .receipt-warning-list { display: grid; gap: 6px; margin-bottom: 14px; }
+    .receipt-warning { display: flex; gap: 7px; padding: 9px 10px; border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--border)); border-radius: 6px; color: var(--muted); background: color-mix(in srgb, var(--warning) 7%, var(--surface-2)); font-size: 10px; line-height: 1.45; }
+    .receipt-warning .icon { width: 15px; height: 15px; flex: 0 0 auto; color: var(--warning); }
+    .receipt-items { display: grid; gap: 6px; }
+    .receipt-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-soft); }
+    .receipt-item:last-child { border-bottom: 0; }
+    .receipt-item-main { min-width: 0; }
+    .receipt-item-main strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+    .receipt-item-main span { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .receipt-raw { margin-top: 14px; border: 1px solid var(--border-soft); border-radius: 7px; background: var(--surface-2); }
+    .receipt-raw summary { padding: 11px 12px; cursor: pointer; font-size: 11px; font-weight: 650; }
+    .receipt-raw pre { max-height: 260px; overflow: auto; margin: 0; padding: 0 12px 12px; color: var(--muted); font: 10px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre-wrap; word-break: break-word; }
+    .receipt-analytics-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+    .merchant-link { border: 0; padding: 0; color: var(--text); background: none; cursor: pointer; font: inherit; text-align: left; }
+    .merchant-link:hover { color: var(--accent); }
 
     .analytics-toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 16px; padding: 13px; border: 1px solid var(--border-soft); border-radius: 7px; background: var(--surface); }
     .analytics-toolbar .field { min-width: 180px; }
@@ -784,7 +831,7 @@
       :root { --sidebar: 218px; }
       .grid-2, .settings-grid { grid-template-columns: 1fr; }
       .grid-3 { grid-template-columns: 1fr 1fr; }
-      .topbar-actions .btn-primary, .topbar-actions .btn-expense { display: none; }
+      .topbar-actions .btn-primary, .topbar-actions .btn-expense, .topbar-actions .btn-receipt { display: none; }
       .cloud-status-copy span { display: none; }
       .filters { grid-template-columns: 1fr 1fr; }
       .detail-metrics { grid-template-columns: 1fr 1fr; }
@@ -801,7 +848,7 @@
       .mobile-menu { display: inline-grid; }
       .page-kicker { display: none; }
       .month-control input { min-width: 145px; }
-      .topbar-actions .btn-primary, .topbar-actions .btn-expense { display: none; }
+      .topbar-actions .btn-primary, .topbar-actions .btn-expense, .topbar-actions .btn-receipt { display: none; }
       .cloud-status { min-width: 68px; width: auto; justify-content: flex-start; padding: 0 8px; }
       .cloud-status-copy { display: grid; }
       .cloud-status-copy span { display: none; }
@@ -871,6 +918,9 @@
       .calendar-day { min-height: 54px; padding: 5px; }
       .calendar-day span { font-size: 8px; }
       .detail-table-wrap { display: none; }
+      .receipt-preview { grid-template-columns: 1fr; }
+      .receipt-preview-meta { grid-template-columns: 1fr 1fr; }
+      .receipt-review-summary { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 480px) {
       .topbar { gap: 8px; }
@@ -882,6 +932,7 @@
       .metric-meta { font-size: 10px; }
       .filters { grid-template-columns: 1fr; }
       .quick-actions { grid-template-columns: 1fr 1fr; }
+      .quick-btn.receipt { grid-column: 1 / -1; }
       .quick-btn { min-height: 82px; }
       .panel-head { align-items: flex-start; }
       .detail-metrics { grid-template-columns: 1fr 1fr; }
@@ -899,6 +950,7 @@
       .analytics-toolbar { align-items: stretch; flex-direction: column; }
       .analytics-toolbar .field { min-width: 0; }
       .habit-grid { grid-template-columns: 1fr; }
+      .receipt-preview-meta, .receipt-analytics-grid { grid-template-columns: 1fr; }
       .calendar-grid { gap: 3px; }
       .calendar-day { min-height: 48px; }
       .calendar-day span { display: none; }
@@ -942,6 +994,8 @@
     <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol>
     <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M6.1 9a7 7 0 0 1 11.4-2.5L20 9M4 15l2.5 2.5A7 7 0 0 0 17.9 15"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"/><path d="M9 8h6M9 12h6M9 16h3"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 7h4l2-3h4l2 3h4v13H4V7Z"/><circle cx="12" cy="13" r="4"/></symbol>
   </svg>
 
   <div class="app">
@@ -983,6 +1037,7 @@
           </div>
           <button class="btn btn-primary" data-action="add-income"><svg class="icon"><use href="#i-plus"></use></svg>Доход</button>
           <button class="btn btn-expense" data-action="add-expense"><svg class="icon"><use href="#i-minus"></use></svg>Расход</button>
+          <button class="btn btn-receipt" data-action="scan-receipt"><svg class="icon"><use href="#i-receipt"></use></svg>Сканировать чек</button>
         </div>
       </header>
 
@@ -1030,6 +1085,7 @@
                   <div class="quick-actions">
                     <button class="quick-btn income" data-action="add-income"><span class="quick-icon"><svg class="icon"><use href="#i-plus"></use></svg></span><strong>Добавить доход</strong></button>
                     <button class="quick-btn expense" data-action="add-expense"><span class="quick-icon"><svg class="icon"><use href="#i-minus"></use></svg></span><strong>Добавить расход</strong></button>
+                    <button class="quick-btn receipt" data-action="scan-receipt"><span class="quick-icon"><svg class="icon"><use href="#i-receipt"></use></svg></span><strong>Сканировать чек</strong></button>
                   </div>
                 </div>
               </div>
@@ -1080,6 +1136,7 @@
                 <label class="field">Кто добавил<select id="filterCreator"><option value="all">Все участники</option></select></label>
                 <label class="field">Счет<select id="filterAccount"><option value="all">Все счета</option><option>Основная карта</option><option>Наличные</option><option>Накопления</option></select></label>
                 <label class="field">Способ оплаты<select id="filterPayment"><option value="all">Все способы</option><option>Карта</option><option>Наличные</option><option>Перевод</option></select></label>
+                <label class="field">Чек<select id="filterReceipt"><option value="all">Все операции</option><option value="with">Только с чеком</option><option value="without">Без чека</option></select></label>
                 <label class="field">Месяц<input id="transactionsMonth" type="month"></label>
                 <label class="field search-field-wide">Поиск<input id="filterSearch" type="search" placeholder="Комментарий, категория, получатель, автор..."></label>
               </div>
@@ -1104,6 +1161,10 @@
             <div class="panel-subtitle" id="analyticsPeriodLabel"></div>
           </div>
           <div class="metrics analytics-summary" id="analyticsMetrics"></div>
+          <div class="panel section-space">
+            <div class="panel-head"><div><h3 class="panel-title">Расходы по чекам</h3><div class="panel-subtitle">Доля распознанных покупок и самые частые магазины</div></div></div>
+            <div class="panel-body" id="receiptAnalytics"></div>
+          </div>
           <div class="grid-2 section-space">
             <div class="panel">
               <div class="panel-head"><div><h3 class="panel-title">Расходы по получателям</h3><div class="panel-subtitle">На кого потрачены семейные деньги</div></div></div>
@@ -1317,7 +1378,7 @@
                   <div class="setting-row"><div class="setting-copy"><strong>Очистить все данные</strong><span>Удалит операции, лимиты и цели из браузера</span></div><button class="btn btn-sm btn-danger" id="clearDataBtn"><svg class="icon icon-sm"><use href="#i-trash"></use></svg>Очистить</button></div>
                 </div>
               </div>
-              <div class="app-version">Версия 3.0 family · схема данных <span id="schemaVersionLabel"></span></div>
+              <div class="app-version">Версия 3.1 receipts · схема данных <span id="schemaVersionLabel"></span></div>
             </div>
           </div>
         </section>
@@ -1375,6 +1436,10 @@
             <label class="field field-wide">Теги<input id="operationTags" maxlength="180" placeholder="отпуск, машина, здоровье"><span>Введите через запятую</span></label>
             <label class="field">Способ оплаты<select id="operationPayment"><option>Карта</option><option>Наличные</option><option>Перевод</option></select></label>
             <label class="field">Счет<select id="operationAccount"><option>Основная карта</option><option>Наличные</option><option>Накопления</option></select></label>
+            <div class="operation-receipt-action field-wide" id="operationReceiptAction">
+              <div class="operation-receipt-copy"><strong id="operationReceiptTitle">Есть чек?</strong><span id="operationReceiptNote">Сфотографируйте его, чтобы заполнить расход автоматически</span></div>
+              <button class="btn btn-sm" type="button" data-action="scan-receipt"><svg class="icon icon-sm"><use href="#i-receipt"></use></svg>Сканировать</button>
+            </div>
             <label class="checkbox field-wide"><input id="operationRegular" type="checkbox"><span>Регулярная операция</span></label>
           </div>
         </div>
@@ -1383,6 +1448,112 @@
           <button class="btn operation-submit expense-mode" id="operationSubmit" type="submit">Сохранить расход</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="receiptScanModal" role="dialog" aria-modal="true" aria-labelledby="receiptScanTitle">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div><h3 class="modal-title" id="receiptScanTitle">Сканирование чека</h3><div class="panel-subtitle">Фото обрабатывается в браузере и не сохраняется</div></div>
+        <button class="action-btn" data-close-modal="receiptScanModal" aria-label="Закрыть"><svg class="icon"><use href="#i-close"></use></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-tabs">
+          <button class="receipt-tab active" type="button" data-receipt-tab="image">Фото или скриншот</button>
+          <button class="receipt-tab" type="button" data-receipt-tab="text">Текст электронного чека</button>
+        </div>
+        <div class="receipt-pane active" data-receipt-pane="image">
+          <div class="receipt-dropzone" id="receiptDropzone">
+            <div class="receipt-dropzone-inner">
+              <svg class="icon"><use href="#i-camera"></use></svg>
+              <strong>Перетащите сюда фото чека</strong>
+              <span>Поддерживаются JPG, PNG и WEBP до 15 МБ. PDF пока можно открыть и вставить как текст во второй вкладке.</span>
+              <div class="receipt-file-actions">
+                <button class="btn btn-sm" id="receiptChooseFileBtn" type="button">Выбрать файл</button>
+                <button class="btn btn-sm btn-primary" id="receiptCameraBtn" type="button"><svg class="icon icon-sm"><use href="#i-camera"></use></svg>Сфотографировать чек</button>
+              </div>
+            </div>
+          </div>
+          <div class="receipt-preview" id="receiptPreview">
+            <div class="receipt-preview-image"><img id="receiptPreviewImage" alt="Предпросмотр чека"></div>
+            <div class="receipt-preview-meta">
+              <div class="receipt-review-stat"><span>Файл</span><strong id="receiptFileName">—</strong></div>
+              <div class="receipt-review-stat"><span>Размер</span><strong id="receiptFileSize">—</strong></div>
+              <div class="receipt-progress">
+                <div class="receipt-progress-line"><span id="receiptProgressLabel">Готов к распознаванию</span><strong id="receiptProgressValue">0%</strong></div>
+                <div class="bar"><span id="receiptProgressBar" style="width:0%"></span></div>
+              </div>
+              <div class="receipt-review-stat"><span>QR-код</span><strong id="receiptQrStatus">Проверим автоматически</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="receipt-pane" data-receipt-pane="text">
+          <label class="field">Текст электронного чека
+            <textarea id="electronicReceiptText" rows="14" placeholder="Вставьте сюда текст из письма, SMS, PDF или приложения банка"></textarea>
+          </label>
+        </div>
+        <p class="receipt-privacy">Распознавание выполняется в браузере. Само изображение чека не попадает в localStorage и не отправляется в базу приложения.</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="receiptClearBtn" type="button">Очистить</button>
+        <button class="btn" id="receiptManualBtn" type="button">Заполнить вручную</button>
+        <button class="btn btn-primary" id="receiptRecognizeBtn" type="button"><svg class="icon icon-sm"><use href="#i-receipt"></use></svg>Распознать чек</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="receiptReviewModal" role="dialog" aria-modal="true" aria-labelledby="receiptReviewTitle">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div><h3 class="modal-title" id="receiptReviewTitle">Проверьте данные чека</h3><div class="panel-subtitle">Исправьте результат распознавания перед сохранением</div></div>
+        <button class="action-btn" data-close-modal="receiptReviewModal" aria-label="Закрыть"><svg class="icon"><use href="#i-close"></use></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-review-summary" id="receiptReviewSummary"></div>
+        <div class="receipt-warning-list" id="receiptWarnings"></div>
+        <div class="form-grid">
+          <label class="field field-wide">Магазин или продавец<input id="receiptMerchant" maxlength="160" placeholder="Название магазина"></label>
+          <label class="field">Сумма<input id="receiptAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></label>
+          <label class="field">Дата<input id="receiptDate" type="date" required></label>
+          <label class="field">Время<input id="receiptTime" type="time"></label>
+          <label class="field">Способ оплаты<select id="receiptPayment"><option>Карта</option><option>Наличные</option><option>Перевод</option></select></label>
+          <label class="field">Категория<select id="receiptCategory"></select></label>
+          <label class="field">Подкатегория<select id="receiptSubcategory"></select></label>
+          <label class="field">На кого потрачено<select id="receiptBeneficiary"></select></label>
+          <label class="field">Счет<select id="receiptAccount"><option>Основная карта</option><option>Наличные</option><option>Накопления</option></select></label>
+          <label class="field field-wide">Комментарий<textarea id="receiptComment" maxlength="240"></textarea></label>
+        </div>
+        <div class="section-space">
+          <div class="panel-subtitle">Распознанные товары</div>
+          <div class="receipt-items" id="receiptItems"></div>
+        </div>
+        <details class="receipt-raw"><summary>Распознанный текст</summary><pre id="receiptRawText"></pre></details>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="receiptAnotherBtn" type="button">Распознать другой чек</button>
+        <button class="btn" id="receiptEditManualBtn" type="button">Редактировать вручную</button>
+        <button class="btn btn-expense" id="receiptCreateExpenseBtn" type="button">Создать расход</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="receiptDetailModal" role="dialog" aria-modal="true" aria-labelledby="receiptDetailTitle">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div><h3 class="modal-title" id="receiptDetailTitle">Детали чека</h3><div class="panel-subtitle" id="receiptDetailSubtitle"></div></div>
+        <button class="action-btn" data-close-modal="receiptDetailModal" aria-label="Закрыть"><svg class="icon"><use href="#i-close"></use></svg></button>
+      </div>
+      <div class="modal-body" id="receiptDetailBody"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="merchantModal" role="dialog" aria-modal="true" aria-labelledby="merchantModalTitle">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <div><h3 class="modal-title" id="merchantModalTitle">Расходы в магазине</h3><div class="panel-subtitle" id="merchantModalSubtitle"></div></div>
+        <button class="action-btn" data-close-modal="merchantModal" aria-label="Закрыть"><svg class="icon"><use href="#i-close"></use></svg></button>
+      </div>
+      <div class="modal-body" id="merchantModalBody"></div>
     </div>
   </div>
 
@@ -1483,9 +1654,13 @@
 
   <input class="hidden" id="csvFileInput" type="file" accept=".csv,text/csv">
   <input class="hidden" id="jsonFileInput" type="file" accept=".json,application/json">
+  <input class="hidden" id="receiptFileInput" type="file" accept="image/jpeg,image/png,image/webp">
+  <input class="hidden" id="receiptCameraInput" type="file" accept="image/*" capture="environment">
   <div class="toast-region" id="toastRegion" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@7/dist/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
   <script>
     "use strict";
 
@@ -1529,14 +1704,14 @@
     };
     const SUPABASE_URL = "https://joujmvjsvuaaqgbezson.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_06TyU60nTxr4VZOOyFN0QQ_vnpH4tnT";
-    const APP_VERSION = "3.0 family";
-    const SCHEMA_VERSION = 3;
+    const APP_VERSION = "3.1 receipts";
+    const SCHEMA_VERSION = 4;
     const SMALL_EXPENSE_LIMIT = 500;
     const LARGE_EXPENSE_LIMIT = 5000;
     const ACCOUNTS = ["Основная карта", "Наличные", "Накопления"];
     const PAYMENT_METHODS = ["Карта", "Наличные", "Перевод"];
     const DEFAULT_BENEFICIARIES = ["Я", "Жена", "Сын", "Кошка", "Семья", "Дом", "Общее", "Прочее"];
-    const CSV_FIELDS = ["id", "type", "amount", "date", "category", "subcategory", "beneficiary", "comment", "paymentMethod", "account", "tags", "regular", "createdByName", "createdByEmail", "createdAt", "updatedAt"];
+    const CSV_FIELDS = ["id", "type", "amount", "date", "category", "subcategory", "beneficiary", "comment", "paymentMethod", "account", "tags", "regular", "createdByName", "createdByEmail", "createdAt", "updatedAt", "receiptMerchant", "receiptTime", "receiptItemsCount", "receiptConfidence"];
     const QUICK_COMMENTS = {
       "Продукты": ["продукты на неделю", "супермаркет", "бытовые покупки"],
       "Кафе и доставка": ["кофе", "обед", "доставка еды", "ресторан"],
@@ -1640,8 +1815,7 @@
         return (data || []).map(fromCloudTransaction).map(normalizeTransaction).filter(Boolean);
       },
       async addTransaction(transaction) {
-        const { error } = await this.client().from("transactions").upsert(toCloudTransaction(transaction), { onConflict: "id" });
-        if (error) throw error;
+        await upsertCloudTransactions([transaction]);
         return transaction;
       },
       async updateTransaction(transaction) {
@@ -1826,8 +2000,11 @@
         setSyncStatus("syncing", "Синхронизация");
         try {
           await flushPendingCloudOperations();
+          const localReceipts = new Map(state.transactions.filter(item => item.receipt).map(item => [item.id, item.receipt]));
           const cloudData = await supabaseAdapter.syncData();
-          state.transactions = cloudData.transactions;
+          state.transactions = cloudData.transactions.map(item => item.receipt || !localReceipts.has(item.id)
+            ? item
+            : { ...item, receipt: localReceipts.get(item.id) });
           state.goals = cloudData.goals;
           state.categoryLimits = normalizeLimits(cloudData.categoryLimits);
           state.familySettings = normalizeFamilySettings(cloudData.familySettings);
@@ -1878,6 +2055,18 @@
       storageWarning: "",
       detail: { category: "", subcategory: "all", search: "", sort: { field: "date", direction: "desc" } },
       beneficiaryDetail: { beneficiary: "" },
+      operationReceiptDraft: null,
+      receiptScan: {
+        tab: "image",
+        file: null,
+        objectUrl: "",
+        worker: null,
+        recognition: null,
+        parsed: null,
+        qrData: { found: false, raw: "", parsed: null },
+        running: false,
+        cancelled: false
+      },
       cloud: {
         configured: Boolean(SUPABASE_URL.trim() && SUPABASE_ANON_KEY.trim()),
         client: null,
@@ -1888,7 +2077,9 @@
         syncStatus: "local",
         syncLabel: "Локальный режим",
         lastError: "",
-        channel: null
+        channel: null,
+        receiptColumnAvailable: null,
+        receiptWarningShown: false
       }
     };
     migrateData();
@@ -1913,6 +2104,34 @@
         if (typeof toast === "function") toast("Браузер не смог сохранить изменения. Создайте резервную копию.", "error");
         return false;
       }
+    }
+
+    function normalizeReceipt(raw) {
+      if (!raw || typeof raw !== "object") return null;
+      const time = /^\d{2}:\d{2}(?::\d{2})?$/.test(String(raw.time || "")) ? String(raw.time).slice(0, 5) : "";
+      const confidenceValue = raw.confidence === null || raw.confidence === undefined || raw.confidence === "" ? null : Math.max(0, Math.min(100, safeNumber(raw.confidence)));
+      const items = Array.isArray(raw.items) ? raw.items.slice(0, 100).map(item => ({
+        name: String(item?.name || "").trim().slice(0, 240),
+        qty: String(item?.qty || "").trim().slice(0, 40),
+        price: item?.price === null || item?.price === undefined || item?.price === "" ? null : Math.max(0, safeNumber(item.price)),
+        total: item?.total === null || item?.total === undefined || item?.total === "" ? null : Math.max(0, safeNumber(item.total))
+      })).filter(item => item.name) : [];
+      const qrRaw = raw.qrData && typeof raw.qrData === "object" ? raw.qrData : {};
+      return {
+        merchant: String(raw.merchant || "").trim().slice(0, 160),
+        time,
+        items,
+        rawText: String(raw.rawText || "").slice(0, 50000),
+        sourceType: ["image", "electronic", "manual"].includes(raw.sourceType) ? raw.sourceType : "manual",
+        recognizedAt: isIsoDateTime(raw.recognizedAt) ? String(raw.recognizedAt) : new Date().toISOString(),
+        confidence: confidenceValue,
+        warnings: Array.isArray(raw.warnings) ? raw.warnings.map(item => String(item || "").trim()).filter(Boolean).slice(0, 20) : [],
+        qrData: {
+          found: Boolean(qrRaw.found),
+          raw: String(qrRaw.raw || "").slice(0, 4000),
+          parsed: qrRaw.parsed && typeof qrRaw.parsed === "object" ? qrRaw.parsed : null
+        }
+      };
     }
 
     function normalizeTransaction(raw) {
@@ -1940,6 +2159,7 @@
         account: ACCOUNTS.includes(String(raw.account)) ? String(raw.account) : "Основная карта",
         tags: [...new Set(tags.map(tag => String(tag).trim().toLocaleLowerCase("ru")).filter(Boolean))].slice(0, 12),
         regular: raw.regular === true || raw.regular === 1 || String(raw.regular).toLocaleLowerCase("ru") === "true" || String(raw.regular).toLocaleLowerCase("ru") === "да",
+        receipt: type === "expense" ? normalizeReceipt(raw.receipt) : null,
         isDemo: Boolean(raw.isDemo),
         createdByUserId: String(raw.createdByUserId || ""),
         createdByName: String(raw.createdByName || "Локальный пользователь").trim() || "Локальный пользователь",
@@ -2046,6 +2266,538 @@
       return Number.isFinite(number) ? number : 0;
     }
 
+    // Распознавание и разбор чеков
+    function setReceiptProgress(progress = 0, label = "Готов к распознаванию") {
+      const value = Math.max(0, Math.min(100, Math.round(safeNumber(progress))));
+      $("#receiptProgressBar").style.width = `${value}%`;
+      $("#receiptProgressValue").textContent = `${value}%`;
+      $("#receiptProgressLabel").textContent = label;
+    }
+
+    function setReceiptTab(tab) {
+      state.receiptScan.tab = tab === "text" ? "text" : "image";
+      $$("[data-receipt-tab]").forEach(button => button.classList.toggle("active", button.dataset.receiptTab === state.receiptScan.tab));
+      $$("[data-receipt-pane]").forEach(pane => pane.classList.toggle("active", pane.dataset.receiptPane === state.receiptScan.tab));
+      $("#receiptRecognizeBtn").innerHTML = state.receiptScan.tab === "text"
+        ? `${icon("receipt", "icon-sm")}Разобрать текст`
+        : `${icon("receipt", "icon-sm")}Распознать чек`;
+    }
+
+    function resetReceiptScanner() {
+      state.receiptScan.cancelled = true;
+      if (state.receiptScan.worker) {
+        state.receiptScan.worker.terminate().catch(() => {});
+        state.receiptScan.worker = null;
+      }
+      if (state.receiptScan.objectUrl) URL.revokeObjectURL(state.receiptScan.objectUrl);
+      state.receiptScan.file = null;
+      state.receiptScan.objectUrl = "";
+      state.receiptScan.recognition = null;
+      state.receiptScan.parsed = null;
+      state.receiptScan.qrData = { found: false, raw: "", parsed: null };
+      state.receiptScan.running = false;
+      $("#receiptPreview").classList.remove("visible");
+      $("#receiptPreviewImage").removeAttribute("src");
+      $("#receiptFileName").textContent = "—";
+      $("#receiptFileSize").textContent = "—";
+      $("#receiptQrStatus").textContent = "Проверим автоматически";
+      $("#electronicReceiptText").value = "";
+      $("#receiptRecognizeBtn").disabled = false;
+      setReceiptProgress(0, "Готов к распознаванию");
+    }
+
+    function openReceiptScanner() {
+      resetReceiptScanner();
+      state.receiptScan.cancelled = false;
+      setReceiptTab("image");
+      openModal("receiptScanModal");
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return `${bytes} Б`;
+      if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} КБ`;
+      return `${(bytes / 1024 / 1024).toFixed(1).replace(".", ",")} МБ`;
+    }
+
+    async function handleReceiptFile(file) {
+      if (!file) return;
+      const supported = ["image/jpeg", "image/png", "image/webp"];
+      if (!supported.includes(file.type)) {
+        toast("Поддерживаются только изображения JPG, PNG и WEBP.", "error");
+        return;
+      }
+      if (file.size > 15 * 1024 * 1024) {
+        toast("Файл слишком большой. Выберите изображение до 15 МБ.", "error");
+        return;
+      }
+      if (state.receiptScan.objectUrl) URL.revokeObjectURL(state.receiptScan.objectUrl);
+      state.receiptScan.file = file;
+      state.receiptScan.objectUrl = URL.createObjectURL(file);
+      state.receiptScan.qrData = { found: false, raw: "", parsed: null };
+      $("#receiptPreviewImage").src = state.receiptScan.objectUrl;
+      $("#receiptFileName").textContent = file.name || "Фото с камеры";
+      $("#receiptFileSize").textContent = formatFileSize(file.size);
+      $("#receiptPreview").classList.add("visible");
+      $("#receiptQrStatus").textContent = "Поиск QR...";
+      setReceiptProgress(0, "Изображение загружено");
+      try {
+        state.receiptScan.qrData = await recognizeReceiptQr(file);
+        $("#receiptQrStatus").textContent = state.receiptScan.qrData.found ? "QR найден" : "QR не найден";
+      } catch (error) {
+        $("#receiptQrStatus").textContent = "QR не прочитан";
+      }
+    }
+
+    async function imageDataFromFile(file, maxSide = 1800) {
+      const bitmap = await createImageBitmap(file);
+      const ratio = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+      const width = Math.max(1, Math.round(bitmap.width * ratio));
+      const height = Math.max(1, Math.round(bitmap.height * ratio));
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.drawImage(bitmap, 0, 0, width, height);
+      bitmap.close?.();
+      return { canvas, imageData: context.getImageData(0, 0, width, height) };
+    }
+
+    function parseReceiptQr(raw) {
+      if (!raw) return null;
+      const query = raw.includes("?") ? raw.slice(raw.indexOf("?") + 1) : raw;
+      const params = new URLSearchParams(query);
+      if (![...params.keys()].length) return { raw };
+      const result = {};
+      params.forEach((value, key) => { result[key] = value; });
+      if (params.get("s")) result.amount = parseMoneyToken(params.get("s"));
+      const dateToken = params.get("t") || "";
+      const dateMatch = dateToken.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/);
+      if (dateMatch) {
+        result.date = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+        if (dateMatch[4]) result.time = `${dateMatch[4]}:${dateMatch[5]}`;
+      }
+      return result;
+    }
+
+    async function recognizeReceiptQr(file) {
+      if (typeof window.jsQR !== "function") return { found: false, raw: "", parsed: null };
+      const { imageData } = await imageDataFromFile(file, 1600);
+      const result = window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "attemptBoth" });
+      return result?.data
+        ? { found: true, raw: result.data, parsed: parseReceiptQr(result.data) }
+        : { found: false, raw: "", parsed: null };
+    }
+
+    async function recognizeReceiptImage(file) {
+      if (!window.Tesseract?.createWorker) throw new Error("Модуль распознавания не загрузился");
+      state.receiptScan.cancelled = false;
+      const worker = await window.Tesseract.createWorker("rus+eng", 1, {
+        logger(message) {
+          if (state.receiptScan.cancelled) return;
+          const progress = safeNumber(message.progress) * 100;
+          const labels = {
+            "loading tesseract core": "Загрузка OCR",
+            "initializing tesseract": "Подготовка OCR",
+            "loading language traineddata": "Загрузка русского языка",
+            "initializing api": "Запуск распознавания",
+            "recognizing text": "Распознавание текста"
+          };
+          setReceiptProgress(progress, labels[message.status] || "Обработка изображения");
+        }
+      });
+      state.receiptScan.worker = worker;
+      const result = await worker.recognize(file);
+      await worker.terminate();
+      state.receiptScan.worker = null;
+      if (state.receiptScan.cancelled) throw new Error("Распознавание отменено");
+      const rawText = String(result?.data?.text || "").trim();
+      if (!rawText) throw new Error("Текст на изображении не найден");
+      return {
+        rawText,
+        lines: rawText.split(/\r?\n/).map(line => line.trim()).filter(Boolean),
+        confidence: Number.isFinite(result?.data?.confidence) ? result.data.confidence : null,
+        sourceType: "image"
+      };
+    }
+
+    function parseMoneyToken(value) {
+      const cleaned = String(value || "")
+        .replace(/\s/g, "")
+        .replace(/[₽рР]/g, "")
+        .replace(/,(?=\d{1,2}\b)/, ".")
+        .replace(/[^\d.]/g, "");
+      const number = Number(cleaned);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function normalizeReceiptDate(match) {
+      if (!match) return "";
+      if (match[1]?.length === 4) {
+        const [, year, month, day] = match;
+        return isIsoDate(`${year}-${month}-${day}`) ? `${year}-${month}-${day}` : "";
+      }
+      let [, day, month, year] = match;
+      if (year.length === 2) year = `20${year}`;
+      return isIsoDate(`${year}-${month}-${day}`) ? `${year}-${month}-${day}` : "";
+    }
+
+    function parseReceiptItems(lines) {
+      const ignored = /(?:итог|итого|всего|сумма|к оплате|total|amount|налич|карта|сдача|скидка|инн|ккт|фн|фд|фп|кассир|чек)/i;
+      const items = [];
+      lines.forEach(line => {
+        if (items.length >= 40 || ignored.test(line) || line.length < 3) return;
+        const amountMatch = line.match(/(\d[\d\s]*(?:[.,]\d{2}))\s*(?:₽|руб\.?|р)?\s*$/i);
+        if (!amountMatch) return;
+        const name = line.slice(0, amountMatch.index).replace(/^\d+[.)]\s*/, "").replace(/[.\-–—:\s]+$/, "").trim();
+        if (!name || !/[A-Za-zА-Яа-яЁё]/.test(name)) return;
+        const qtyMatch = line.match(/(\d+(?:[.,]\d+)?)\s*[xх*]\s*(\d+(?:[.,]\d{1,2})?)/i);
+        const total = parseMoneyToken(amountMatch[1]);
+        items.push({
+          name: name.slice(0, 240),
+          qty: qtyMatch ? qtyMatch[1].replace(",", ".") : "",
+          price: qtyMatch ? parseMoneyToken(qtyMatch[2]) : null,
+          total: total || null
+        });
+      });
+      return items;
+    }
+
+    function parseReceiptText(rawText) {
+      const text = String(rawText || "").replace(/\u00a0/g, " ").trim();
+      const lines = text.split(/\r?\n/).map(line => line.replace(/\s+/g, " ").trim()).filter(Boolean);
+      const warnings = [];
+      const totalKeywords = /(?:ИТОГ(?:О)?|ВСЕГО|СУММА|К\s*ОПЛАТЕ|TOTAL|AMOUNT)/i;
+      const amountPattern = /(?:\d{1,3}(?:[ \u00a0]\d{3})+|\d+)(?:[.,]\d{1,2})?/g;
+      const totalCandidates = [];
+      lines.forEach((line, index) => {
+        if (!totalKeywords.test(line)) return;
+        const amounts = [...line.matchAll(amountPattern)].map(match => parseMoneyToken(match[0])).filter(value => value > 0);
+        amounts.forEach(amount => totalCandidates.push({ amount, index, score: /К\s*ОПЛАТЕ|ИТОГ(?:О)?|TOTAL/i.test(line) ? 3 : 2 }));
+      });
+      let amount = 0;
+      let amountConfidence = 0;
+      if (totalCandidates.length) {
+        totalCandidates.sort((a, b) => b.score - a.score || b.index - a.index || b.amount - a.amount);
+        amount = totalCandidates[0].amount;
+        amountConfidence = .92;
+      } else {
+        const allAmounts = [...text.matchAll(amountPattern)].map(match => parseMoneyToken(match[0])).filter(value => value > 0 && value < 100000000);
+        amount = allAmounts.length ? Math.max(...allAmounts) : 0;
+        amountConfidence = amount ? .42 : 0;
+        warnings.push(amount ? "Сумма определена по самому крупному числу и требует проверки." : "Сумма не найдена. Укажите ее вручную.");
+      }
+
+      const isoDateMatch = text.match(/\b(20\d{2})[-/.](0[1-9]|1[0-2])[-/.](0[1-9]|[12]\d|3[01])\b/);
+      const localDateMatch = text.match(/\b(0[1-9]|[12]\d|3[01])[./-](0[1-9]|1[0-2])[./-](\d{2}|\d{4})\b/);
+      let date = normalizeReceiptDate(isoDateMatch || localDateMatch);
+      let dateConfidence = date ? .9 : .35;
+      if (!date) {
+        date = new Date().toISOString().slice(0, 10);
+        warnings.push("Дата не найдена, поставлена сегодняшняя. Проверьте ее.");
+      }
+      const timeMatch = text.match(/\b([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d)?\b/);
+      const time = timeMatch ? `${timeMatch[1]}:${timeMatch[2]}` : "";
+
+      const garbage = /(?:ИНН|ККТ|ФН|ФД|ФП|КАССИР|СМЕНА|ЧЕК|ДОКУМЕНТ|АДРЕС|ТЕЛЕФОН|САЙТ|ОФД|www\.|https?:)/i;
+      const merchantCandidates = lines.slice(0, 12).filter(line =>
+        line.length >= 3 && line.length <= 100 &&
+        /[A-Za-zА-Яа-яЁё]/.test(line) &&
+        !garbage.test(line) &&
+        !totalKeywords.test(line) &&
+        (line.match(/\d/g) || []).length <= line.length / 2
+      );
+      const merchant = merchantCandidates[0] || "";
+      if (!merchant) warnings.push("Магазин не удалось определить.");
+      const upper = text.toLocaleUpperCase("ru");
+      const paymentMethod = /НАЛИЧНЫЕ|CASH/.test(upper) && !/КАРТА|CARD/.test(upper) ? "Наличные" : "Карта";
+      const items = parseReceiptItems(lines);
+      if (!items.length) warnings.push("Список товаров не удалось надежно распознать.");
+      return {
+        amount,
+        amountConfidence,
+        date,
+        dateConfidence,
+        time,
+        merchant,
+        merchantConfidence: merchant ? .65 : 0,
+        paymentMethod,
+        items,
+        rawText: text,
+        warnings
+      };
+    }
+
+    function guessCategoryFromReceipt(parsedReceipt) {
+      const source = [parsedReceipt.merchant, parsedReceipt.rawText, ...(parsedReceipt.items || []).map(item => item.name)].join(" ").toLocaleLowerCase("ru");
+      const has = pattern => pattern.test(source);
+      if (has(/вет|ветеринар|зоомагазин/)) return { category: "Здоровье", subcategory: "Врачи", beneficiary: "Кошка", confidence: .86, reason: "Найдены слова о ветеринарии" };
+      if (has(/корм|наполнитель/)) return { category: "Продукты", subcategory: "Прочее", beneficiary: "Кошка", confidence: .78, reason: "Найдены товары для питомца" };
+      if (has(/детск|игрушк|подгузник|садик|ребенок|ребёнок/)) return { category: "Ребенок", subcategory: has(/игрушк/) ? "Игрушки" : "Прочее", beneficiary: "Сын", confidence: .78, reason: "Найдены детские товары" };
+      if (has(/пят[её]рочк|перекр[её]сток|лента|магнит|окей|ашан|самокат|вкусвилл|супермаркет/)) return { category: "Продукты", subcategory: "Супермаркет", beneficiary: "Семья", confidence: .9, reason: "Распознан продуктовый магазин" };
+      if (has(/азс|бензин|топливо|газпромнефть|лукойл|роснефть/)) return { category: "Авто", subcategory: "Бензин", beneficiary: "Общее", confidence: .9, reason: "Распознана заправка или топливо" };
+      if (has(/аптек|фарм|лекарств/)) return { category: "Здоровье", subcategory: "Аптека", beneficiary: "Общее", confidence: .88, reason: "Распознана аптека" };
+      if (has(/спорт|фитнес|протеин|креатин|абонемент/)) return { category: "Спорт", subcategory: has(/протеин|креатин|добавк/) ? "Добавки" : "Прочее", beneficiary: "Я", confidence: .78, reason: "Найдены спортивные товары или услуги" };
+      if (has(/кофе|coffee/)) return { category: "Кафе и доставка", subcategory: "Кофе", beneficiary: "Общее", confidence: .84, reason: "Распознан кофе" };
+      if (has(/ресторан/)) return { category: "Кафе и доставка", subcategory: "Ресторан", beneficiary: "Семья", confidence: .84, reason: "Распознан ресторан" };
+      if (has(/доставк|яндекс\s*еда|delivery/)) return { category: "Кафе и доставка", subcategory: "Доставка еды", beneficiary: "Семья", confidence: .82, reason: "Распознана доставка еды" };
+      if (has(/cafe|кафе|бургер|пицц|ролл|суши|перекус/)) return { category: "Кафе и доставка", subcategory: "Кафе", beneficiary: "Общее", confidence: .75, reason: "Распознано заведение питания" };
+      return { category: "Прочее", subcategory: "Другое", beneficiary: "Общее", confidence: .3, reason: "Подходящее правило не найдено" };
+    }
+
+    function mergeReceiptQr(parsed, qrData) {
+      if (!qrData?.found || !qrData.parsed) return parsed;
+      const qr = qrData.parsed;
+      const result = { ...parsed, warnings: [...parsed.warnings] };
+      if (qr.amount > 0) {
+        if (result.amount > 0 && Math.abs(result.amount - qr.amount) > .01) result.warnings.push("Сумма OCR отличается от суммы в QR-коде. Использована сумма из QR.");
+        result.amount = qr.amount;
+        result.amountConfidence = .98;
+      }
+      if (isIsoDate(qr.date)) {
+        result.date = qr.date;
+        result.dateConfidence = .98;
+      }
+      if (qr.time) result.time = qr.time;
+      return result;
+    }
+
+    function reviewSubcategoryOptions(category, selected = "") {
+      const options = EXPENSE_SUBCATEGORIES[category] || ["Другое"];
+      $("#receiptSubcategory").innerHTML = options.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+      $("#receiptSubcategory").value = options.includes(selected) ? selected : options[0];
+    }
+
+    function renderReceiptReview(recognition, qrData) {
+      const parsed = mergeReceiptQr(parseReceiptText(recognition.rawText), qrData);
+      const guess = guessCategoryFromReceipt(parsed);
+      parsed.warnings.push(`Категория определена автоматически: ${guess.category} · ${guess.subcategory}.`);
+      state.receiptScan.recognition = recognition;
+      state.receiptScan.parsed = { ...parsed, guess };
+      $("#receiptMerchant").value = parsed.merchant;
+      $("#receiptAmount").value = parsed.amount || "";
+      $("#receiptDate").value = parsed.date;
+      $("#receiptTime").value = parsed.time || "";
+      $("#receiptPayment").value = parsed.paymentMethod;
+      $("#receiptCategory").innerHTML = EXPENSE_CATEGORIES.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+      $("#receiptCategory").value = guess.category;
+      reviewSubcategoryOptions(guess.category, guess.subcategory);
+      renderReceiptBeneficiaries(guess.beneficiary);
+      $("#receiptAccount").value = parsed.paymentMethod === "Наличные" ? "Наличные" : "Основная карта";
+      $("#receiptComment").value = parsed.merchant ? `Чек: ${parsed.merchant}` : "Расход по чеку";
+      const confidence = recognition.confidence === null ? "—" : `${Math.round(recognition.confidence)}%`;
+      $("#receiptReviewSummary").innerHTML = [
+        ["Магазин", parsed.merchant || "Не найден"],
+        ["Сумма", parsed.amount ? money(parsed.amount) : "Не найдена"],
+        ["Дата", formatDate(parsed.date)],
+        ["Уверенность OCR", confidence]
+      ].map(([label, value]) => `<div class="receipt-review-stat"><span>${escapeHtml(label)}</span><strong title="${escapeHtml(value)}">${escapeHtml(value)}</strong></div>`).join("");
+      $("#receiptWarnings").innerHTML = parsed.warnings.map(message => `<div class="receipt-warning">${icon("info")}<span>${escapeHtml(message)}</span></div>`).join("");
+      $("#receiptItems").innerHTML = parsed.items.length
+        ? parsed.items.map(item => `<div class="receipt-item"><div class="receipt-item-main"><strong>${escapeHtml(item.name)}</strong><span>${item.qty ? `Количество: ${escapeHtml(item.qty)}` : "Количество не определено"}${item.price !== null ? ` · цена ${money(item.price)}` : ""}</span></div><strong>${item.total !== null ? money(item.total) : "—"}</strong></div>`).join("")
+        : emptyState("Товары не распознаны", "Расход можно сохранить без списка товаров.", "receipt", true);
+      $("#receiptRawText").textContent = recognition.rawText;
+      closeModal("receiptScanModal");
+      openModal("receiptReviewModal");
+    }
+
+    function renderReceiptBeneficiaries(selected = "Общее") {
+      const values = normalizeBeneficiaries(state.beneficiaries);
+      $("#receiptBeneficiary").innerHTML = values.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+      $("#receiptBeneficiary").value = values.includes(selected) ? selected : values.includes("Общее") ? "Общее" : values[0];
+    }
+
+    async function processReceipt() {
+      if (state.receiptScan.running) return;
+      try {
+        state.receiptScan.running = true;
+        $("#receiptRecognizeBtn").disabled = true;
+        if (state.receiptScan.tab === "text") {
+          const rawText = $("#electronicReceiptText").value.trim();
+          if (!rawText) throw new Error("Вставьте текст электронного чека");
+          setReceiptProgress(100, "Текст готов");
+          renderReceiptReview({ rawText, lines: rawText.split(/\r?\n/).filter(Boolean), confidence: null, sourceType: "electronic" }, { found: false, raw: "", parsed: null });
+          return;
+        }
+        if (!state.receiptScan.file) throw new Error("Сначала выберите или сфотографируйте чек");
+        setReceiptProgress(1, "Подготовка изображения");
+        const recognition = await recognizeReceiptImage(state.receiptScan.file);
+        setReceiptProgress(100, "Распознавание завершено");
+        renderReceiptReview(recognition, state.receiptScan.qrData);
+      } catch (error) {
+        if (!state.receiptScan.cancelled) {
+          setReceiptProgress(0, "Не удалось распознать");
+          toast(`${error.message}. Можно заполнить расход вручную.`, "error");
+        }
+      } finally {
+        state.receiptScan.running = false;
+        $("#receiptRecognizeBtn").disabled = false;
+      }
+    }
+
+    function receiptDataFromReview() {
+      const parsed = state.receiptScan.parsed || {};
+      const recognition = state.receiptScan.recognition || {};
+      return normalizeReceipt({
+        merchant: $("#receiptMerchant").value,
+        time: $("#receiptTime").value,
+        items: parsed.items || [],
+        rawText: recognition.rawText || "",
+        sourceType: recognition.sourceType || "manual",
+        recognizedAt: new Date().toISOString(),
+        confidence: recognition.confidence,
+        warnings: parsed.warnings || [],
+        qrData: state.receiptScan.qrData
+      });
+    }
+
+    function receiptReviewValues() {
+      return {
+        amount: safeNumber($("#receiptAmount").value),
+        date: $("#receiptDate").value,
+        category: $("#receiptCategory").value,
+        subcategory: $("#receiptSubcategory").value,
+        beneficiary: $("#receiptBeneficiary").value,
+        comment: $("#receiptComment").value.trim(),
+        paymentMethod: $("#receiptPayment").value,
+        account: $("#receiptAccount").value,
+        receipt: receiptDataFromReview()
+      };
+    }
+
+    function validateReceiptReview(values) {
+      if (values.amount <= 0) {
+        toast("Проверьте сумму чека.", "error");
+        $("#receiptAmount").focus();
+        return false;
+      }
+      if (!isIsoDate(values.date)) {
+        toast("Проверьте дату чека.", "error");
+        $("#receiptDate").focus();
+        return false;
+      }
+      if (!EXPENSE_CATEGORIES.includes(values.category)) {
+        toast("Выберите категорию расхода.", "error");
+        return false;
+      }
+      return true;
+    }
+
+    async function createExpenseFromReceipt() {
+      const values = receiptReviewValues();
+      if (!validateReceiptReview(values)) return;
+      const actor = currentActor();
+      const now = new Date().toISOString();
+      const transaction = normalizeTransaction({
+        id: newEntityId(),
+        familyId: cloudActive() ? state.cloud.family.id : null,
+        type: "expense",
+        ...values,
+        tags: ["чек"],
+        regular: false,
+        createdByUserId: actor.id,
+        createdByName: actor.name,
+        createdByEmail: actor.email,
+        createdAt: now,
+        updatedAt: now,
+        syncStatus: cloudActive() ? "pending" : "local"
+      });
+      if (!transaction) {
+        toast("Не удалось создать расход по чеку.", "error");
+        return;
+      }
+      await storageService.addTransaction(transaction);
+      state.selectedMonth = transaction.date.slice(0, 7);
+      closeModal("receiptReviewModal");
+      closeModal("operationModal");
+      renderAll();
+      toast("Расход по чеку добавлен.", "success");
+    }
+
+    function editReceiptManually() {
+      const values = receiptReviewValues();
+      closeModal("receiptReviewModal");
+      openOperationModal("expense");
+      setOperationType("expense", values.category, values.subcategory);
+      $("#operationAmount").value = values.amount || "";
+      $("#operationDate").value = values.date;
+      $("#operationComment").value = values.comment;
+      $("#operationPayment").value = values.paymentMethod;
+      $("#operationAccount").value = values.account;
+      renderOperationBeneficiaries(values.beneficiary);
+      state.operationReceiptDraft = values.receipt;
+      renderOperationReceiptState();
+    }
+
+    function receiptItemsMarkup(receipt) {
+      return receipt.items?.length
+        ? `<div class="receipt-items">${receipt.items.map(item => `<div class="receipt-item"><div class="receipt-item-main"><strong>${escapeHtml(item.name)}</strong><span>${item.qty ? `Количество: ${escapeHtml(item.qty)}` : "Количество не определено"}${item.price !== null ? ` · цена ${money(item.price)}` : ""}</span></div><strong>${item.total !== null ? money(item.total) : "—"}</strong></div>`).join("")}</div>`
+        : emptyState("Товаров нет", "В этом чеке список товаров не распознан.", "receipt", true);
+    }
+
+    function openReceiptDetail(id) {
+      const transaction = state.transactions.find(item => item.id === id);
+      if (!transaction?.receipt) return;
+      const receipt = transaction.receipt;
+      $("#receiptDetailTitle").textContent = receipt.merchant || "Детали чека";
+      $("#receiptDetailSubtitle").textContent = `${formatDate(transaction.date)} · ${money(transaction.amount)}`;
+      $("#receiptDetailBody").innerHTML = `
+        <div class="receipt-review-summary">
+          <div class="receipt-review-stat"><span>Магазин</span><strong>${escapeHtml(receipt.merchant || "Не указан")}</strong></div>
+          <div class="receipt-review-stat"><span>Время</span><strong>${escapeHtml(receipt.time || "—")}</strong></div>
+          <div class="receipt-review-stat"><span>Товаров</span><strong>${receipt.items?.length || 0}</strong></div>
+          <div class="receipt-review-stat"><span>Уверенность OCR</span><strong>${receipt.confidence === null ? "—" : `${Math.round(receipt.confidence)}%`}</strong></div>
+        </div>
+        ${receipt.warnings?.length ? `<div class="receipt-warning-list">${receipt.warnings.map(message => `<div class="receipt-warning">${icon("info")}<span>${escapeHtml(message)}</span></div>`).join("")}</div>` : ""}
+        <div class="panel-subtitle">Товары</div>${receiptItemsMarkup(receipt)}
+        ${receipt.qrData?.found ? `<div class="detail-conclusion">QR-код найден и использован как дополнительный источник данных.</div>` : ""}
+        <details class="receipt-raw"><summary>Распознанный текст</summary><pre>${escapeHtml(receipt.rawText || "Текст не сохранен")}</pre></details>`;
+      openModal("receiptDetailModal");
+    }
+
+    function receiptAnalyticsMarkup(expenseItems, totalExpense) {
+      const receiptItems = expenseItems.filter(item => item.receipt);
+      const total = receiptItems.reduce((sum, item) => sum + item.amount, 0);
+      const share = totalExpense > 0 ? total / totalExpense * 100 : 0;
+      const merchants = Object.values(receiptItems.reduce((result, item) => {
+        const merchant = item.receipt?.merchant || "Магазин не указан";
+        if (!result[merchant]) result[merchant] = { merchant, amount: 0, count: 0 };
+        result[merchant].amount += item.amount;
+        result[merchant].count++;
+        return result;
+      }, {}));
+      const byAmount = [...merchants].sort((a, b) => b.amount - a.amount).slice(0, 5);
+      const byCount = [...merchants].sort((a, b) => b.count - a.count || b.amount - a.amount).slice(0, 5);
+      if (!receiptItems.length) return emptyState("Чеков за период нет", "Сканируйте чек при добавлении следующего расхода.", "receipt");
+      return `<div class="receipt-analytics-grid">
+        <div class="receipt-review-stat"><span>Операций с чеком</span><strong>${receiptItems.length}</strong></div>
+        <div class="receipt-review-stat"><span>Сумма по чекам</span><strong>${money(total)}</strong></div>
+        <div class="receipt-review-stat"><span>Доля расходов</span><strong>${Math.round(share)}%</strong></div>
+      </div>
+      <div class="grid-2 section-space">
+        <div><div class="panel-subtitle">Топ магазинов по сумме</div><div class="data-list section-space">${byAmount.map(item => `<div class="data-row"><div class="data-row-main"><button class="merchant-link" data-merchant-detail="${escapeHtml(item.merchant)}"><strong>${escapeHtml(item.merchant)}</strong></button><span>${item.count} чеков</span></div><strong>${money(item.amount)}</strong></div>`).join("")}</div></div>
+        <div><div class="panel-subtitle">Топ магазинов по числу чеков</div><div class="data-list section-space">${byCount.map(item => `<div class="data-row"><div class="data-row-main"><button class="merchant-link" data-merchant-detail="${escapeHtml(item.merchant)}"><strong>${escapeHtml(item.merchant)}</strong></button><span>Средний чек ${money(item.amount / item.count)}</span></div><strong>${item.count}</strong></div>`).join("")}</div></div>
+      </div>`;
+    }
+
+    function openMerchantDetail(merchant) {
+      const items = transactionsForPeriod().filter(item => item.type === "expense" && item.receipt && (item.receipt.merchant || "Магазин не указан") === merchant);
+      const total = items.reduce((sum, item) => sum + item.amount, 0);
+      const categories = sortedEntries(groupBy(items, "category"));
+      $("#merchantModalTitle").textContent = merchant;
+      $("#merchantModalSubtitle").textContent = `${periodRange().label} · ${items.length} чеков`;
+      $("#merchantModalBody").innerHTML = items.length ? `
+        <div class="receipt-review-summary">
+          <div class="receipt-review-stat"><span>Общая сумма</span><strong>${money(total)}</strong></div>
+          <div class="receipt-review-stat"><span>Количество чеков</span><strong>${items.length}</strong></div>
+          <div class="receipt-review-stat"><span>Средний чек</span><strong>${money(total / items.length)}</strong></div>
+          <div class="receipt-review-stat"><span>Категорий</span><strong>${categories.length}</strong></div>
+        </div>
+        <div class="data-list">${categories.map(([category, amount]) => `<div class="data-row"><span>${escapeHtml(category)}</span><strong>${money(amount)}</strong></div>`).join("")}</div>
+        <div class="transaction-list section-space">${[...items].sort((a, b) => b.date.localeCompare(a.date)).map(transactionRow).join("")}</div>`
+        : emptyState("Операций нет", "За выбранный период чеки этого магазина не найдены.", "receipt");
+      openModal("merchantModal");
+    }
+
     // Семейный облачный режим
     function cloudActive() {
       return Boolean(state.cloud.configured && state.cloud.client && state.cloud.user && state.cloud.family?.id);
@@ -2089,6 +2841,7 @@
         payment_method: transaction.paymentMethod,
         account: transaction.account,
         tags: transaction.tags || [],
+        receipt: transaction.receipt || null,
         created_by_user_id: transaction.createdByUserId || state.cloud.user.id,
         created_by_name: transaction.createdByName || currentActor().name,
         created_by_email: transaction.createdByEmail || currentActor().email,
@@ -2112,6 +2865,7 @@
         paymentMethod: row.payment_method,
         account: row.account,
         tags: row.tags,
+        receipt: row.receipt || null,
         createdByUserId: row.created_by_user_id,
         createdByName: row.created_by_name,
         createdByEmail: row.created_by_email,
@@ -2120,6 +2874,45 @@
         deletedAt: row.deleted_at,
         syncStatus: "synced"
       };
+    }
+
+    function isMissingReceiptColumnError(error) {
+      const message = String(error?.message || "");
+      return String(error?.code || "") === "42703" || /transactions\.receipt|column.+receipt.+does not exist/i.test(message);
+    }
+
+    function cloudPayloadWithoutReceipt(transaction) {
+      const payload = toCloudTransaction(transaction);
+      delete payload.receipt;
+      return payload;
+    }
+
+    async function upsertCloudTransactions(transactions) {
+      if (!transactions.length) return;
+      const includeReceipt = state.cloud.receiptColumnAvailable !== false;
+      let result = await state.cloud.client
+        .from("transactions")
+        .upsert(transactions.map(item => includeReceipt ? toCloudTransaction(item) : cloudPayloadWithoutReceipt(item)), { onConflict: "id" });
+      if (result.error && includeReceipt && isMissingReceiptColumnError(result.error)) {
+        state.cloud.receiptColumnAvailable = false;
+        result = await state.cloud.client
+          .from("transactions")
+          .upsert(transactions.map(cloudPayloadWithoutReceipt), { onConflict: "id" });
+      } else if (!result.error && includeReceipt && state.cloud.receiptColumnAvailable === null) {
+        state.cloud.receiptColumnAvailable = true;
+      }
+      if (result.error) throw result.error;
+      if (state.cloud.receiptColumnAvailable === false && transactions.some(item => item.receipt) && !state.cloud.receiptWarningShown) {
+        state.cloud.receiptWarningShown = true;
+        toast("Операция синхронизирована, но чек пока хранится только на этом устройстве. Выполните актуальный supabase-family.sql.", "error");
+      }
+    }
+
+    async function detectCloudReceiptSupport() {
+      if (!cloudActive()) return;
+      const { error } = await state.cloud.client.from("transactions").select("receipt").limit(0);
+      if (!error) state.cloud.receiptColumnAvailable = true;
+      else if (isMissingReceiptColumnError(error)) state.cloud.receiptColumnAvailable = false;
     }
 
     function setSyncStatus(status, label) {
@@ -2148,7 +2941,7 @@
       const pending = state.transactions.filter(item => item.syncStatus !== "synced");
       for (let index = 0; index < pending.length; index += 200) {
         const batch = pending.slice(index, index + 200);
-        const { error } = await state.cloud.client.from("transactions").upsert(batch.map(item => {
+        batch.forEach(item => {
           item.familyId = state.cloud.family.id;
           if (!item.createdByUserId) {
             const actor = currentActor();
@@ -2156,9 +2949,8 @@
             item.createdByName = item.createdByName || actor.name;
             item.createdByEmail = item.createdByEmail || actor.email;
           }
-          return toCloudTransaction(item);
-        }), { onConflict: "id" });
-        if (error) throw error;
+        });
+        await upsertCloudTransactions(batch);
         batch.forEach(item => { item.syncStatus = "synced"; });
       }
       if (state.pendingDeletes.length) {
@@ -2256,6 +3048,7 @@
         const { data: members, error: membersError } = await state.cloud.client.from("family_members").select("user_id,role,display_name,created_at").eq("family_id", state.cloud.family.id).order("created_at");
         if (membersError) throw membersError;
         state.cloud.members = members || [];
+        await detectCloudReceiptSupport();
         subscribeFamilyRealtime();
         await storageService.syncData();
       } catch (error) {
@@ -2427,8 +3220,7 @@
           syncStatus: "synced"
         })).filter(Boolean);
         for (let index = 0; index < transactions.length; index += 200) {
-          const { error } = await state.cloud.client.from("transactions").upsert(transactions.slice(index, index + 200).map(toCloudTransaction), { onConflict: "id" });
-          if (error) throw error;
+          await upsertCloudTransactions(transactions.slice(index, index + 200));
         }
         report.push(`Перенесено операций: ${transactions.length}`);
 
@@ -2730,7 +3522,7 @@
         : item.createdByName || "Локальный пользователь";
       return `<div class="transaction-row ${item.type}">
         <div class="category-avatar">${escapeHtml(initials(item.category))}</div>
-        <div class="transaction-main"><div class="transaction-name">${escapeHtml(item.comment || fallback)}</div><div class="transaction-meta">${escapeHtml(item.category)}${item.subcategory ? ` · ${escapeHtml(item.subcategory)}` : ""} · ${escapeHtml(familyMeta)} · ${formatDate(item.date)}</div></div>
+        <div class="transaction-main"><div class="transaction-name">${escapeHtml(item.comment || fallback)} ${item.receipt ? `<button class="receipt-badge" data-receipt-detail="${escapeHtml(item.id)}">${icon("receipt", "icon-sm")}Чек</button>` : ""}</div><div class="transaction-meta">${escapeHtml(item.category)}${item.subcategory ? ` · ${escapeHtml(item.subcategory)}` : ""} · ${escapeHtml(familyMeta)} · ${formatDate(item.date)}</div></div>
         <div class="amount ${item.type}">${sign}${money(item.amount)}</div>
       </div>`;
     }
@@ -2852,6 +3644,7 @@
       const creator = $("#filterCreator").value;
       const account = $("#filterAccount").value;
       const payment = $("#filterPayment").value;
+      const receiptFilter = $("#filterReceipt").value;
       const search = $("#filterSearch").value.trim().toLocaleLowerCase("ru");
       const month = $("#transactionsMonth").value;
       const nowDate = new Date();
@@ -2873,7 +3666,8 @@
         (creator === "all" || (item.createdByUserId || item.createdByName) === creator) &&
         (account === "all" || item.account === account) &&
         (payment === "all" || item.paymentMethod === payment) &&
-        (!search || [item.comment, item.category, item.subcategory, item.beneficiary, item.createdByName, item.createdByEmail, item.paymentMethod, item.account, ...(item.tags || [])].join(" ").toLocaleLowerCase("ru").includes(search))
+        (receiptFilter === "all" || (receiptFilter === "with" && item.receipt) || (receiptFilter === "without" && !item.receipt)) &&
+        (!search || [item.comment, item.category, item.subcategory, item.beneficiary, item.createdByName, item.createdByEmail, item.paymentMethod, item.account, item.receipt?.merchant, ...(item.tags || [])].join(" ").toLocaleLowerCase("ru").includes(search))
       );
     }
 
@@ -2927,6 +3721,7 @@
               <th class="select-cell"><input type="checkbox" id="selectPageTransactions" aria-label="Выбрать операции на странице" ${pageItems.length && pageItems.every(item => state.selectedTransactionIds.has(item.id)) ? "checked" : ""}></th>
               <th><button class="sortable" data-sort-transaction="date">Дата ${icon("sort", "icon-sm")}</button></th>
               <th>Тип</th>
+              <th>Источник</th>
               <th><button class="sortable" data-sort-transaction="amount">Сумма ${icon("sort", "icon-sm")}</button></th>
               <th><button class="sortable" data-sort-transaction="category">Категория ${icon("sort", "icon-sm")}</button></th>
               <th>Подкатегория</th>
@@ -2942,6 +3737,7 @@
               <td class="select-cell"><input type="checkbox" data-select-transaction="${escapeHtml(item.id)}" aria-label="Выбрать операцию" ${state.selectedTransactionIds.has(item.id) ? "checked" : ""}></td>
               <td>${formatDate(item.date)}</td>
               <td><span class="type-badge ${item.type}">${item.type === "income" ? "Доход" : "Расход"}</span></td>
+              <td>${item.receipt ? `<button class="receipt-badge" data-receipt-detail="${escapeHtml(item.id)}">${icon("receipt", "icon-sm")}Чек</button>` : "—"}</td>
               <td><span class="amount ${item.type}">${item.type === "income" ? "+" : "−"}${money(item.amount)}</span></td>
               <td>${escapeHtml(item.category)}</td>
               <td>${escapeHtml(item.subcategory || "Без подкатегории")}</td>
@@ -2979,6 +3775,7 @@
         <div class="mobile-transaction-head"><label class="checkbox"><input type="checkbox" data-select-transaction="${escapeHtml(item.id)}" ${state.selectedTransactionIds.has(item.id) ? "checked" : ""}><span class="mobile-transaction-title"><strong>${escapeHtml(item.comment || item.category)}</strong><span>${escapeHtml(item.category)} · ${formatDate(item.date)}</span></span></label><span class="amount ${item.type}">${item.type === "income" ? "+" : "−"}${money(item.amount)}</span></div>
         <div class="mobile-transaction-comment">${escapeHtml(item.subcategory || "Без подкатегории")} · ${escapeHtml(item.account)} · ${escapeHtml(item.paymentMethod)}</div>
         <div class="author-line">${item.type === "expense" ? `<span>На кого: <b>${escapeHtml(item.beneficiary || "Общее")}</b></span>` : ""}<span>Добавил(а): <b>${escapeHtml(item.createdByName || "Локальный пользователь")}</b></span></div>
+        ${item.receipt ? `<div><button class="receipt-badge" data-receipt-detail="${escapeHtml(item.id)}">${icon("receipt", "icon-sm")}Чек · ${escapeHtml(item.receipt.merchant || "магазин не указан")}</button></div>` : ""}
         ${item.tags?.length ? tagsMarkup(item.tags) : ""}
         <div class="mobile-transaction-foot"><span class="type-badge ${item.type}">${item.type === "income" ? "Доход" : "Расход"}</span><div class="actions"><button class="action-btn" data-edit-transaction="${escapeHtml(item.id)}" aria-label="Редактировать">${icon("edit", "icon-sm")}</button><button class="action-btn" data-duplicate-transaction="${escapeHtml(item.id)}" aria-label="Дублировать">${icon("plus", "icon-sm")}</button><button class="action-btn delete" data-delete-transaction="${escapeHtml(item.id)}" aria-label="Удалить">${icon("trash", "icon-sm")}</button></div></div>
       </article>`;
@@ -3057,6 +3854,7 @@
       const resolvedType = item ? item.type : type;
       state.lastFocus = document.activeElement;
       $("#operationId").value = item?.id || "";
+      state.operationReceiptDraft = item?.receipt || null;
       $("#operationTitle").textContent = item ? "Редактировать операцию" : resolvedType === "income" ? "Новый доход" : "Новый расход";
       $("#operationSubtitle").textContent = item ? "Измените нужные поля и сохраните" : "Заполните данные операции";
       setOperationType(resolvedType, item?.category, item?.subcategory);
@@ -3068,6 +3866,7 @@
       $("#operationTags").value = (item?.tags || []).join(", ");
       $("#operationRegular").checked = Boolean(item?.regular);
       renderOperationBeneficiaries(item?.beneficiary || "Общее");
+      renderOperationReceiptState();
       updateAmountWarning();
       renderCommentSuggestions();
       openModal("operationModal");
@@ -3091,9 +3890,18 @@
       beneficiaryField.classList.toggle("hidden", type !== "expense");
       beneficiarySelect.required = type === "expense";
       if (type === "expense") renderOperationBeneficiaries(beneficiarySelect.value || "Общее");
+      $("#operationReceiptAction").classList.toggle("hidden", type !== "expense");
       const submit = $("#operationSubmit");
       submit.className = `btn operation-submit ${type === "income" ? "income-mode" : "expense-mode"}`;
       submit.textContent = type === "income" ? "Сохранить доход" : "Сохранить расход";
+    }
+
+    function renderOperationReceiptState() {
+      const receipt = state.operationReceiptDraft;
+      $("#operationReceiptTitle").textContent = receipt ? "Чек прикреплен" : "Есть чек?";
+      $("#operationReceiptNote").textContent = receipt
+        ? `${receipt.merchant || "Магазин не указан"} · ${receipt.items?.length || 0} товаров`
+        : "Сфотографируйте его, чтобы заполнить расход автоматически";
     }
 
     function renderSubcategories(selected = "") {
@@ -3168,6 +3976,7 @@
         account: $("#operationAccount").value,
         tags: $("#operationTags").value,
         regular: $("#operationRegular").checked,
+        receipt: type === "expense" ? (state.operationReceiptDraft || existing?.receipt || null) : null,
         isDemo: existing?.isDemo || false,
         createdByUserId: existing?.createdByUserId || actor.id,
         createdByName: existing?.createdByName || actor.name,
@@ -3241,6 +4050,7 @@
 
       const top = [...expenseItems].sort((a, b) => b.amount - a.amount).slice(0, 5);
       $("#topExpenses").innerHTML = top.length ? `<div class="transaction-list">${top.map(transactionRow).join("")}</div>` : emptyState("Нет расходов", "Крупные операции появятся после добавления расходов.", "chart", true);
+      $("#receiptAnalytics").innerHTML = receiptAnalyticsMarkup(expenseItems, summary.expense);
 
       const limits = EXPENSE_CATEGORIES.map(category => ({ category, ...limitStatus(category) })).filter(item => item.limit > 0).sort((a, b) => b.percent - a.percent).slice(0, 5);
       $("#analyticsLimits").innerHTML = limits.length ? limits.map(limitCompact).join("") : emptyState("Лимиты не заданы", "Настройте лимиты, чтобы сравнивать план и факт.", "gauge", true);
@@ -4095,7 +4905,11 @@
       const loggedIn = Boolean(state.cloud.user);
       const active = cloudActive();
       $("#cloudConfigMessage").textContent = configured
-        ? active ? "Семейный режим подключен. Изменения сохраняются в общей базе и локальном кеше этого устройства." : loggedIn ? "Вы вошли в аккаунт. Создайте семейную группу или подключитесь по коду." : "Supabase настроен. Войдите или зарегистрируйтесь, чтобы включить семейный режим."
+        ? active
+          ? state.cloud.receiptColumnAvailable === false
+            ? "Семейный режим подключен. Операции синхронизируются, но чеки пока остаются на этом устройстве: выполните актуальный supabase-family.sql."
+            : "Семейный режим подключен. Изменения сохраняются в общей базе и локальном кеше этого устройства."
+          : loggedIn ? "Вы вошли в аккаунт. Создайте семейную группу или подключитесь по коду." : "Supabase настроен. Войдите или зарегистрируйтесь, чтобы включить семейный режим."
         : "Облачный семейный режим не настроен. Укажите Supabase URL и anon key в коде приложения.";
       $("#familyModeBadge").textContent = active ? "Семья активна" : "Локально";
       $("#familyModeBadge").classList.toggle("cloud", active);
@@ -4103,7 +4917,8 @@
         ["Режим", active ? "Семейный облачный" : "Локальный"],
         ["Пользователь", loggedIn ? currentActor().name : "Не выполнен вход"],
         ["Email", state.cloud.user?.email || "—"],
-        ["Синхронизация", state.cloud.syncLabel]
+        ["Синхронизация", state.cloud.syncLabel],
+        ["Чеки", !active ? "Локально" : state.cloud.receiptColumnAvailable === false ? "Только на устройстве" : state.cloud.receiptColumnAvailable === true ? "Синхронизируются" : "Проверка"]
       ].map(([label, value]) => `<div class="settings-stat"><span>${escapeHtml(label)}</span><strong title="${escapeHtml(value)}">${escapeHtml(value)}</strong></div>`).join("");
       $("#familyDetails").innerHTML = active ? `<div class="family-card">
         <div class="data-row"><div class="data-row-main"><strong>${escapeHtml(state.cloud.family.name || "Семейная группа")}</strong><span>Ваша роль: ${state.cloud.family.role === "owner" ? "владелец" : "участник"}</span></div><span class="role-badge">${state.cloud.family.role === "owner" ? "owner" : "member"}</span></div>
@@ -4140,8 +4955,7 @@
         const synced = await runCloudMutation(async () => {
           await supabaseAdapter.saveSettings(state.familySettings);
           for (let index = 0; index < affectedTransactions.length; index += 150) {
-            const { error } = await state.cloud.client.from("transactions").upsert(affectedTransactions.slice(index, index + 150).map(toCloudTransaction), { onConflict: "id" });
-            if (error) throw error;
+            await upsertCloudTransactions(affectedTransactions.slice(index, index + 150));
           }
         });
         if (synced) {
@@ -4261,7 +5075,13 @@
         return;
       }
       const rows = [CSV_FIELDS.join(","), ...items.map(item => CSV_FIELDS.map(field => {
-        const value = field === "tags" ? (item.tags || []).join(";") : item[field] ?? "";
+        const receiptValues = {
+          receiptMerchant: item.receipt?.merchant || "",
+          receiptTime: item.receipt?.time || "",
+          receiptItemsCount: item.receipt?.items?.length || 0,
+          receiptConfidence: item.receipt?.confidence ?? ""
+        };
+        const value = field === "tags" ? (item.tags || []).join(";") : field in receiptValues ? receiptValues[field] : item[field] ?? "";
         return csvEscape(value);
       }).join(","))];
       downloadFile(fileName, "\ufeff" + rows.join("\r\n"), "text/csv;charset=utf-8");
@@ -4318,7 +5138,24 @@
             errors.push(`Строка ${index + 2}: дубликат id`);
             return;
           }
-          const transaction = normalizeTransaction({ ...record, id: record.id || newEntityId(), tags: record.tags || "", beneficiary: record.beneficiary || "Общее", createdByName: record.createdByName || "Локальный пользователь" });
+          const hasReceiptData = Boolean(record.receiptMerchant || record.receiptTime || record.receiptConfidence);
+          const transaction = normalizeTransaction({
+            ...record,
+            id: record.id || newEntityId(),
+            tags: record.tags || "",
+            beneficiary: record.beneficiary || "Общее",
+            createdByName: record.createdByName || "Локальный пользователь",
+            receipt: hasReceiptData ? {
+              merchant: record.receiptMerchant || "",
+              time: record.receiptTime || "",
+              items: [],
+              rawText: "",
+              sourceType: "manual",
+              recognizedAt: new Date().toISOString(),
+              confidence: record.receiptConfidence || null,
+              warnings: ["Импортировано из CSV без исходного текста и списка товаров."]
+            } : null
+          });
           if (!transaction) {
             skipped++;
             errors.push(`Строка ${index + 2}: некорректная дата, сумма или тип`);
@@ -4342,9 +5179,7 @@
           });
           const synced = await runCloudMutation(async () => {
           for (let index = 0; index < transactions.length; index += 200) {
-            const prepared = transactions.slice(index, index + 200).map(toCloudTransaction);
-            const { error } = await state.cloud.client.from("transactions").upsert(prepared, { onConflict: "id" });
-            if (error) throw error;
+            await upsertCloudTransactions(transactions.slice(index, index + 200));
           }
           });
           if (synced) transactions.forEach(item => { item.syncStatus = "synced"; });
@@ -4402,8 +5237,7 @@
           state.goals.forEach(goal => { goal.id = ensureUuid(goal.id); });
           const synced = await runCloudMutation(async () => {
             for (let index = 0; index < state.transactions.length; index += 200) {
-              const { error } = await state.cloud.client.from("transactions").upsert(state.transactions.slice(index, index + 200).map(toCloudTransaction), { onConflict: "id" });
-              if (error) throw error;
+              await upsertCloudTransactions(state.transactions.slice(index, index + 200));
             }
             await supabaseAdapter.saveGoals(state.goals);
             await supabaseAdapter.saveCategoryLimits(state.categoryLimits);
@@ -4439,6 +5273,29 @@
         if (!confirmed) return;
         if (hasDemo) state.transactions = state.transactions.filter(item => !item.isDemo);
       }
+      const demoReceiptFor = (category, subcategory, amount, date, index = 0) => {
+        const merchants = {
+          "Продукты": ["Пятёрочка", "Перекрёсток", "ВкусВилл"],
+          "Кафе и доставка": ["Яндекс Еда", "Кофемания", "Додо Пицца"],
+          "Авто": ["Лукойл", "Газпромнефть"],
+          "Здоровье": ["Аптека Горздрав", "Ригла"],
+          "Одежда": ["O'STIN", "Спортмастер"]
+        };
+        const categoryMerchants = merchants[category];
+        if (!categoryMerchants) return null;
+        const merchant = categoryMerchants[Math.abs(index) % categoryMerchants.length];
+        return {
+          merchant,
+          time: `${String(10 + (Math.abs(index) % 9)).padStart(2, "0")}:${String((Math.abs(index) * 7) % 60).padStart(2, "0")}`,
+          items: [{ name: subcategory || category, qty: "1", price: amount, total: amount }],
+          rawText: `ДЕМО-ЧЕК\n${merchant}\n${subcategory || category}\nИТОГ ${amount.toFixed(2)}\n${date}`,
+          sourceType: "electronic",
+          recognizedAt: new Date().toISOString(),
+          confidence: 96,
+          warnings: [],
+          qrData: { found: false, raw: "", parsed: null }
+        };
+      };
       const templates = [
         ["income", 165000, 5, "Зарплата", "", "Зарплата за месяц", "Перевод", "Основная карта"],
         ["income", 18000, 9, "Подработка", "", "Проект на выходных", "Перевод", "Накопления"],
@@ -4467,11 +5324,13 @@
         templates.forEach((template, index) => {
           const [type, base, day, category, subcategory, comment, paymentMethod, account] = template;
           const variation = type === "income" ? 1 + offset * .003 : 1 + ((offset + index) % 5) * .035;
+          const amount = Math.round(base * variation / 10) * 10;
+          const date = `${month}-${String(Math.min(day, maxDay)).padStart(2, "0")}`;
           generated.push(normalizeTransaction({
             id: newEntityId(),
             type,
-            amount: Math.round(base * variation / 10) * 10,
-            date: `${month}-${String(Math.min(day, maxDay)).padStart(2, "0")}`,
+            amount,
+            date,
             category,
             subcategory,
             comment,
@@ -4482,6 +5341,7 @@
             createdByEmail: index % 3 === 0 ? "wife@example.demo" : "zhenya@example.demo",
             tags: category === "Авто" ? ["машина"] : category === "Здоровье" ? ["здоровье"] : category === "Ребенок" ? ["семья"] : [],
             regular: ["Зарплата", "Дом и ЖКХ", "Спорт"].includes(category),
+            receipt: type === "expense" ? demoReceiptFor(category, subcategory, amount, date, index + offset * 10) : null,
             isDemo: true,
             createdAt: new Date().toISOString()
           }));
@@ -4495,10 +5355,13 @@
         ["expense", 4200, 20, "Кафе и доставка", "Кафе", "Встречи и обеды", "Жена"],
         ["expense", 2800, 22, "Прочее", "Другое", "Корм для кошки", "Кошка"],
         ["income", 25000, 19, "Премия", "", "Квартальная премия", ""]
-      ].forEach(([type, amount, day, category, subcategory, comment, beneficiary]) => generated.push(normalizeTransaction({
-        id: newEntityId(), type, amount, date: `${current}-${String(Math.min(day, daysInMonth(current))).padStart(2, "0")}`,
-        category, subcategory, beneficiary: type === "expense" ? beneficiary || "Общее" : "", comment, paymentMethod: type === "income" ? "Перевод" : "Карта", account: "Основная карта", createdByName: day % 2 ? "Женя" : "Жена", createdByEmail: day % 2 ? "zhenya@example.demo" : "wife@example.demo", tags: category === "Кафе и доставка" ? ["еда"] : [], isDemo: true, createdAt: new Date().toISOString()
-      })));
+      ].forEach(([type, amount, day, category, subcategory, comment, beneficiary], index) => {
+        const date = `${current}-${String(Math.min(day, daysInMonth(current))).padStart(2, "0")}`;
+        generated.push(normalizeTransaction({
+          id: newEntityId(), type, amount, date,
+          category, subcategory, beneficiary: type === "expense" ? beneficiary || "Общее" : "", comment, paymentMethod: type === "income" ? "Перевод" : "Карта", account: "Основная карта", createdByName: day % 2 ? "Женя" : "Жена", createdByEmail: day % 2 ? "zhenya@example.demo" : "wife@example.demo", tags: category === "Кафе и доставка" ? ["еда"] : [], receipt: type === "expense" ? demoReceiptFor(category, subcategory, amount, date, index + 50) : null, isDemo: true, createdAt: new Date().toISOString()
+        }));
+      });
       state.transactions.push(...generated.filter(Boolean));
       state.categoryLimits = { ...state.categoryLimits, "Кафе и доставка": 15000, "Продукты": 35000, "Авто": 20000 };
       if (!state.goals.length) {
@@ -4514,11 +5377,10 @@
           const cloudTransactions = generated.filter(Boolean).map(item => {
             item.familyId = state.cloud.family.id;
             if (!item.createdByUserId) item.createdByUserId = state.cloud.user.id;
-            return toCloudTransaction(item);
+            return item;
           });
           for (let index = 0; index < cloudTransactions.length; index += 200) {
-            const { error } = await state.cloud.client.from("transactions").upsert(cloudTransactions.slice(index, index + 200), { onConflict: "id" });
-            if (error) throw error;
+            await upsertCloudTransactions(cloudTransactions.slice(index, index + 200));
           }
           await supabaseAdapter.saveCategoryLimits(state.categoryLimits);
           await supabaseAdapter.saveGoals(state.goals);
@@ -4606,6 +5468,13 @@
     function closeModal(id) {
       const modal = $(`#${id}`);
       if (!modal) return;
+      if (id === "receiptScanModal" && state.receiptScan.running) {
+        state.receiptScan.cancelled = true;
+        state.receiptScan.worker?.terminate().catch(() => {});
+        state.receiptScan.worker = null;
+        state.receiptScan.running = false;
+        $("#receiptRecognizeBtn").disabled = false;
+      }
       modal.classList.remove("open");
       if (!$(".modal-backdrop.open")) document.body.style.overflow = "";
       if (!$(".modal-backdrop.open") && state.lastFocus?.focus) {
@@ -4657,6 +5526,7 @@
       const action = event.target.closest("[data-action]");
       if (action?.dataset.action === "add-income") openOperationModal("income");
       if (action?.dataset.action === "add-expense") openOperationModal("expense");
+      if (action?.dataset.action === "scan-receipt") openReceiptScanner();
 
       const close = event.target.closest("[data-close-modal]");
       if (close) closeModal(close.dataset.closeModal);
@@ -4678,6 +5548,15 @@
 
       const remove = event.target.closest("[data-delete-transaction]");
       if (remove) deleteTransaction(remove.dataset.deleteTransaction);
+
+      const receiptDetail = event.target.closest("[data-receipt-detail]");
+      if (receiptDetail) openReceiptDetail(receiptDetail.dataset.receiptDetail);
+
+      const merchantDetail = event.target.closest("[data-merchant-detail]");
+      if (merchantDetail) openMerchantDetail(merchantDetail.dataset.merchantDetail);
+
+      const receiptTab = event.target.closest("[data-receipt-tab]");
+      if (receiptTab) setReceiptTab(receiptTab.dataset.receiptTab);
 
       const category = event.target.closest("[data-category-detail]");
       if (category) {
@@ -4788,7 +5667,7 @@
       $("#globalMonth").value = state.selectedMonth;
       renderAll();
     });
-    ["filterType", "filterCategory", "filterSubcategory", "filterBeneficiary", "filterCreator", "filterAccount", "filterPayment"].forEach(id => $(`#${id}`).addEventListener("change", () => {
+    ["filterType", "filterCategory", "filterSubcategory", "filterBeneficiary", "filterCreator", "filterAccount", "filterPayment", "filterReceipt"].forEach(id => $(`#${id}`).addEventListener("change", () => {
       state.transactionPage = 1;
       renderTransactions();
     }));
@@ -4809,6 +5688,44 @@
     $("#operationSubcategory").addEventListener("change", renderCommentSuggestions);
     $("#operationAmount").addEventListener("input", updateAmountWarning);
     $("#operationForm").addEventListener("submit", saveOperation);
+    $("#receiptCategory").addEventListener("change", event => reviewSubcategoryOptions(event.target.value));
+    $("#receiptChooseFileBtn").addEventListener("click", () => $("#receiptFileInput").click());
+    $("#receiptCameraBtn").addEventListener("click", () => $("#receiptCameraInput").click());
+    $("#receiptRecognizeBtn").addEventListener("click", processReceipt);
+    $("#receiptClearBtn").addEventListener("click", resetReceiptScanner);
+    $("#receiptManualBtn").addEventListener("click", () => {
+      closeModal("receiptScanModal");
+      if (!$("#operationModal").classList.contains("open")) openOperationModal("expense");
+    });
+    $("#receiptAnotherBtn").addEventListener("click", () => {
+      closeModal("receiptReviewModal");
+      openReceiptScanner();
+    });
+    $("#receiptEditManualBtn").addEventListener("click", editReceiptManually);
+    $("#receiptCreateExpenseBtn").addEventListener("click", createExpenseFromReceipt);
+    $("#receiptFileInput").addEventListener("change", event => {
+      if (event.target.files[0]) handleReceiptFile(event.target.files[0]);
+      event.target.value = "";
+    });
+    $("#receiptCameraInput").addEventListener("change", event => {
+      if (event.target.files[0]) handleReceiptFile(event.target.files[0]);
+      event.target.value = "";
+    });
+    $("#receiptDropzone").addEventListener("click", event => {
+      if (!event.target.closest("button")) $("#receiptFileInput").click();
+    });
+    ["dragenter", "dragover"].forEach(type => $("#receiptDropzone").addEventListener(type, event => {
+      event.preventDefault();
+      $("#receiptDropzone").classList.add("dragging");
+    }));
+    ["dragleave", "drop"].forEach(type => $("#receiptDropzone").addEventListener(type, event => {
+      event.preventDefault();
+      $("#receiptDropzone").classList.remove("dragging");
+    }));
+    $("#receiptDropzone").addEventListener("drop", event => {
+      const file = event.dataTransfer?.files?.[0];
+      if (file) handleReceiptFile(file);
+    });
     $("#authForm").addEventListener("submit", submitAuth);
     $("#familyForm").addEventListener("submit", submitFamily);
     $("#goalForm").addEventListener("submit", saveGoal);
@@ -4893,13 +5810,15 @@
       else closeModal(backdrop.id);
     }));
     document.addEventListener("keydown", event => {
-      if (event.key === "Enter" && $("#operationModal").classList.contains("open") && event.target.tagName !== "TEXTAREA" && event.target.tagName !== "BUTTON") {
+      const openModals = $$(".modal-backdrop.open");
+      const topOpen = openModals[openModals.length - 1];
+      if (event.key === "Enter" && topOpen?.id === "operationModal" && event.target.tagName !== "TEXTAREA" && event.target.tagName !== "BUTTON") {
         event.preventDefault();
         $("#operationForm").requestSubmit();
         return;
       }
       if (event.key === "Escape") {
-        const open = $(".modal-backdrop.open");
+        const open = topOpen;
         if (!open) return;
         if (open.id === "confirmModal") resolveConfirm(false);
         else closeModal(open.id);
