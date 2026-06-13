@@ -1389,7 +1389,7 @@
                   <div class="setting-row"><div class="setting-copy"><strong>Очистить все данные</strong><span>Удалит операции, лимиты и цели из браузера</span></div><button class="btn btn-sm btn-danger" id="clearDataBtn"><svg class="icon icon-sm"><use href="#i-trash"></use></svg>Очистить</button></div>
                 </div>
               </div>
-              <div class="app-version">Версия 3.2 fiscal QR · схема данных <span id="schemaVersionLabel"></span></div>
+              <div class="app-version">Версия 3.3 family realtime · схема данных <span id="schemaVersionLabel"></span></div>
             </div>
           </div>
         </section>
@@ -1714,12 +1714,13 @@
       settings: "money_tracker_settings",
       beneficiaries: "money_tracker_beneficiaries",
       familySettings: "money_tracker_family_settings",
-      cloudCachePrefix: "money_tracker_cloud_cache_"
+      cloudCachePrefix: "money_tracker_cloud_cache_",
+      pendingCloudPrefix: "money_tracker_pending_cloud_"
     };
     const SUPABASE_URL = "https://joujmvjsvuaaqgbezson.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_06TyU60nTxr4VZOOyFN0QQ_vnpH4tnT";
-    const APP_VERSION = "3.2 fiscal QR";
-    const SCHEMA_VERSION = 5;
+    const APP_VERSION = "3.3 family realtime";
+    const SCHEMA_VERSION = 6;
     const SMALL_EXPENSE_LIMIT = 500;
     const LARGE_EXPENSE_LIMIT = 5000;
     const ACCOUNTS = ["Основная карта", "Наличные", "Накопления"];
@@ -1751,6 +1752,9 @@
       cacheKey(familyId) {
         return `${STORAGE_KEYS.cloudCachePrefix}${familyId}`;
       },
+      pendingKey(familyId) {
+        return `${STORAGE_KEYS.pendingCloudPrefix}${familyId}`;
+      },
       clearCloudCaches() {
         const keys = [];
         for (let index = 0; index < localStorage.length; index++) {
@@ -1761,14 +1765,23 @@
       },
       getSnapshot(familyId = "") {
         if (familyId) {
+          const pending = this.read(this.pendingKey(familyId), {});
           return {
-            transactions: [],
+            transactions: Array.isArray(pending.transactions) ? pending.transactions : [],
             categoryLimits: {},
             beneficiaryLimits: {},
             goals: [],
             settings: this.read(STORAGE_KEYS.settings, { currency: "RUB", theme: "graphite" }),
             beneficiaries: DEFAULT_BENEFICIARIES,
-            familySettings: {}
+            familySettings: {},
+            pendingDeletes: Array.isArray(pending.pendingDeletes) ? pending.pendingDeletes : [],
+            pendingCloud: pending.pendingCloud && typeof pending.pendingCloud === "object"
+              ? pending.pendingCloud
+              : { goals: false, limits: false, beneficiaryLimits: false, settings: false },
+            pendingGoals: Array.isArray(pending.goals) ? pending.goals : [],
+            pendingCategoryLimits: pending.categoryLimits && typeof pending.categoryLimits === "object" ? pending.categoryLimits : {},
+            pendingBeneficiaryLimits: pending.beneficiaryLimits && typeof pending.beneficiaryLimits === "object" ? pending.beneficiaryLimits : {},
+            pendingFamilySettings: pending.familySettings && typeof pending.familySettings === "object" ? pending.familySettings : {}
           };
         }
         return {
@@ -1784,6 +1797,26 @@
       saveSnapshot(snapshot, familyId = "") {
         if (familyId) {
           this.write(STORAGE_KEYS.settings, snapshot.settings);
+          const pendingCloud = snapshot.pendingCloud || {};
+          const pendingState = {
+            transactions: (snapshot.transactions || []).filter(item => item.syncStatus !== "synced"),
+            pendingDeletes: snapshot.pendingDeletes || [],
+            pendingCloud: {
+              goals: Boolean(pendingCloud.goals),
+              limits: Boolean(pendingCloud.limits),
+              beneficiaryLimits: Boolean(pendingCloud.beneficiaryLimits),
+              settings: Boolean(pendingCloud.settings)
+            },
+            goals: pendingCloud.goals ? snapshot.goals || [] : [],
+            categoryLimits: pendingCloud.limits ? snapshot.categoryLimits || {} : {},
+            beneficiaryLimits: pendingCloud.beneficiaryLimits ? snapshot.beneficiaryLimits || {} : {},
+            familySettings: pendingCloud.settings ? snapshot.familySettings || {} : {}
+          };
+          const hasPending = pendingState.transactions.length
+            || pendingState.pendingDeletes.length
+            || Object.values(pendingState.pendingCloud).some(Boolean);
+          if (hasPending) this.write(this.pendingKey(familyId), pendingState);
+          else localStorage.removeItem(this.pendingKey(familyId));
           return;
         }
         this.write(STORAGE_KEYS.transactions, snapshot.transactions);
@@ -1904,6 +1937,27 @@
           if (error) throw error;
         }
       },
+      async getBeneficiaryLimits() {
+        const { data, error } = await this.client().from("beneficiary_limits").select("beneficiary,limit_amount").eq("family_id", this.familyId());
+        if (error) throw error;
+        return Object.fromEntries((data || []).map(item => [item.beneficiary, safeNumber(item.limit_amount)]));
+      },
+      async saveBeneficiaryLimits(limits) {
+        const familyId = this.familyId();
+        const payload = Object.entries(limits).map(([beneficiary, amount]) => ({ family_id: familyId, beneficiary, limit_amount: amount, updated_at: new Date().toISOString() }));
+        if (payload.length) {
+          const { error } = await this.client().from("beneficiary_limits").upsert(payload, { onConflict: "family_id,beneficiary" });
+          if (error) throw error;
+        }
+        const { data: current, error: readError } = await this.client().from("beneficiary_limits").select("beneficiary").eq("family_id", familyId);
+        if (readError) throw readError;
+        const keep = new Set(Object.keys(limits));
+        const stale = (current || []).map(item => item.beneficiary).filter(beneficiary => !keep.has(beneficiary));
+        if (stale.length) {
+          const { error } = await this.client().from("beneficiary_limits").delete().eq("family_id", familyId).in("beneficiary", stale);
+          if (error) throw error;
+        }
+      },
       async getSettings() {
         const { data, error } = await this.client().from("family_settings").select("*").eq("family_id", this.familyId()).maybeSingle();
         if (error) throw error;
@@ -1919,17 +1973,27 @@
         if (error) throw error;
       },
       async syncData() {
-        const [transactions, goals, categoryLimits, familySettings] = await Promise.all([
+        const [transactions, goals, categoryLimits, beneficiaryLimits, familySettings] = await Promise.all([
           this.getTransactions(),
           this.getGoals(),
           this.getCategoryLimits(),
+          this.getBeneficiaryLimits(),
           this.getSettings()
         ]);
-        return { transactions, goals, categoryLimits, familySettings };
+        return { transactions, goals, categoryLimits, beneficiaryLimits, familySettings };
       }
     };
 
     const storageService = {
+      listeners: {
+        transactions: new Set(),
+        goals: new Set(),
+        categoryLimits: new Set()
+      },
+      async init() { return initSupabase(); },
+      getCurrentMode() { return cloudActive() ? "cloud" : "local"; },
+      getCurrentUser() { return state.cloud.user; },
+      getCurrentFamily() { return state.cloud.family; },
       getLocalSnapshot() {
         return localStorageAdapter.getSnapshot();
       },
@@ -1937,6 +2001,27 @@
       getGoals() { return state.goals; },
       getCategoryLimits() { return state.categoryLimits; },
       getSettings() { return state.settings; },
+      subscribeToTransactions(callback) {
+        if (typeof callback === "function") this.listeners.transactions.add(callback);
+        return () => this.unsubscribeFromTransactions(callback);
+      },
+      unsubscribeFromTransactions(callback) {
+        if (callback) this.listeners.transactions.delete(callback);
+        else this.listeners.transactions.clear();
+      },
+      subscribeToGoals(callback) {
+        if (typeof callback === "function") this.listeners.goals.add(callback);
+        return () => this.listeners.goals.delete(callback);
+      },
+      subscribeToCategoryLimits(callback) {
+        if (typeof callback === "function") this.listeners.categoryLimits.add(callback);
+        return () => this.listeners.categoryLimits.delete(callback);
+      },
+      notify(type, detail = {}) {
+        this.listeners[type]?.forEach(callback => {
+          try { callback(detail); } catch (_) {}
+        });
+      },
       persistCurrentSnapshot() {
         const familyId = cloudActive() ? state.cloud.family.id : "";
         localStorageAdapter.saveSnapshot({
@@ -1955,12 +2040,16 @@
         state.transactions.push(transaction);
         this.persistCurrentSnapshot();
         if (cloudActive()) {
-          const synced = await runCloudMutation(() => supabaseAdapter.addTransaction(transaction));
+          const synced = await runCloudMutation(
+            () => supabaseAdapter.addTransaction(transaction),
+            "Операция сохранена локально и будет отправлена после восстановления подключения."
+          );
           if (synced) {
             transaction.syncStatus = "synced";
             this.persistCurrentSnapshot();
           }
         }
+        this.notify("transactions", { event: "INSERT", transaction });
         return transaction;
       },
       async updateTransaction(transaction) {
@@ -1973,6 +2062,7 @@
             this.persistCurrentSnapshot();
           }
         }
+        this.notify("transactions", { event: "UPDATE", transaction });
         return transaction;
       },
       async deleteTransaction(id) {
@@ -1986,6 +2076,15 @@
             this.persistCurrentSnapshot();
           }
         }
+        this.notify("transactions", { event: "DELETE", id });
+      },
+      async saveGoal(goal) {
+        const goals = [...state.goals.filter(item => item.id !== goal.id), goal];
+        await this.saveGoals(goals);
+        return goal;
+      },
+      async deleteGoal(goalId) {
+        await this.saveGoals(state.goals.filter(item => item.id !== goalId));
       },
       async saveGoals(goals) {
         state.goals = goals;
@@ -1998,6 +2097,12 @@
             this.persistCurrentSnapshot();
           }
         }
+        this.notify("goals", { goals: state.goals });
+      },
+      async saveCategoryLimit(limit) {
+        const category = String(limit?.category || "");
+        if (!category) return;
+        await this.saveCategoryLimits({ ...state.categoryLimits, [category]: safeNumber(limit.limitAmount ?? limit.amount) });
       },
       async saveCategoryLimits(limits) {
         state.categoryLimits = limits;
@@ -2007,6 +2112,19 @@
           const synced = await runCloudMutation(() => supabaseAdapter.saveCategoryLimits(limits));
           if (synced) {
             state.pendingCloud.limits = false;
+            this.persistCurrentSnapshot();
+          }
+        }
+        this.notify("categoryLimits", { limits: state.categoryLimits });
+      },
+      async saveBeneficiaryLimits(limits) {
+        state.beneficiaryLimits = limits;
+        if (cloudActive()) state.pendingCloud.beneficiaryLimits = true;
+        this.persistCurrentSnapshot();
+        if (cloudActive()) {
+          const synced = await runCloudMutation(() => supabaseAdapter.saveBeneficiaryLimits(limits));
+          if (synced) {
+            state.pendingCloud.beneficiaryLimits = false;
             this.persistCurrentSnapshot();
           }
         }
@@ -2035,6 +2153,7 @@
             : { ...item, receipt: localReceipts.get(item.id) });
           state.goals = cloudData.goals;
           state.categoryLimits = normalizeLimits(cloudData.categoryLimits);
+          state.beneficiaryLimits = normalizeLimits(cloudData.beneficiaryLimits);
           state.familySettings = normalizeFamilySettings(cloudData.familySettings);
           state.beneficiaries = normalizeBeneficiaries(state.familySettings.beneficiaries || DEFAULT_BENEFICIARIES);
           state.settings.currency = ["RUB", "USD", "EUR"].includes(state.familySettings.currency) ? state.familySettings.currency : state.settings.currency;
@@ -2042,6 +2161,9 @@
           this.persistCurrentSnapshot();
           setSyncStatus("synced", "Синхронизировано");
           renderAll();
+          this.notify("transactions", { event: "SYNC", transactions: state.transactions });
+          this.notify("goals", { goals: state.goals });
+          this.notify("categoryLimits", { limits: state.categoryLimits });
           return true;
         } catch (error) {
           setSyncStatus(navigator.onLine ? "error" : "offline", navigator.onLine ? "Ошибка синхронизации" : "Нет подключения");
@@ -2049,7 +2171,8 @@
           renderSettings();
           return false;
         }
-      }
+      },
+      syncNow() { return this.syncData(); }
     };
 
     // Состояние приложения
@@ -2066,7 +2189,7 @@
       beneficiaries: initialLocalSnapshot.beneficiaries,
       familySettings: initialLocalSnapshot.familySettings || {},
       pendingDeletes: initialLocalSnapshot.pendingDeletes || [],
-      pendingCloud: initialLocalSnapshot.pendingCloud || { goals: false, limits: false, settings: false },
+      pendingCloud: initialLocalSnapshot.pendingCloud || { goals: false, limits: false, beneficiaryLimits: false, settings: false },
       selectedMonth: currentMonth,
       currentView: "dashboard",
       transactionSort: { field: "date", direction: "desc" },
@@ -2105,6 +2228,7 @@
         syncStatus: "local",
         syncLabel: "Локальный режим",
         lastError: "",
+        lastSuccessfulSyncAt: "",
         channel: null,
         receiptColumnAvailable: null,
         receiptWarningShown: false
@@ -2869,7 +2993,9 @@
       closeModal("receiptReviewModal");
       closeModal("operationModal");
       renderAll();
-      toast("Расход по чеку добавлен.", "success");
+      if (!(cloudActive() && transaction.syncStatus === "pending")) {
+        toast(cloudActive() ? "Расход по чеку добавлен и синхронизирован." : "Расход по чеку добавлен.", "success");
+      }
     }
 
     function editReceiptManually() {
@@ -3024,7 +3150,8 @@
         created_by_email: transaction.createdByEmail || currentActor().email,
         created_at: transaction.createdAt,
         updated_at: transaction.updatedAt || new Date().toISOString(),
-        deleted_at: transaction.deletedAt || null
+        deleted_at: transaction.deletedAt || null,
+        sync_status: "synced"
       };
     }
 
@@ -3095,6 +3222,7 @@
     function setSyncStatus(status, label) {
       state.cloud.syncStatus = status;
       state.cloud.syncLabel = label;
+      if (status === "synced") state.cloud.lastSuccessfulSyncAt = new Date().toISOString();
       if (typeof renderCloudStatus === "function" && document.body) renderCloudStatus();
     }
 
@@ -3107,8 +3235,13 @@
       return fallback;
     }
 
-    async function runCloudMutation(action) {
+    async function runCloudMutation(action, offlineMessage = "Изменение сохранено локально и будет отправлено после восстановления подключения.") {
       if (!cloudActive()) return true;
+      if (!navigator.onLine) {
+        setSyncStatus("offline", "Нет подключения");
+        toast(offlineMessage, "error");
+        return false;
+      }
       setSyncStatus("syncing", "Синхронизация");
       try {
         await action();
@@ -3117,7 +3250,9 @@
       } catch (error) {
         state.cloud.lastError = friendlyCloudError(error);
         setSyncStatus(navigator.onLine ? "error" : "offline", navigator.onLine ? "Ошибка синхронизации" : "Нет подключения");
-        toast("Облачная синхронизация не выполнена. Не закрывайте страницу и повторите после восстановления связи.", "error");
+        toast(navigator.onLine
+          ? "Ошибка синхронизации. Изменение осталось в очереди, нажмите «Синхронизировать» позже."
+          : offlineMessage, "error");
         return false;
       }
     }
@@ -3152,6 +3287,10 @@
         await supabaseAdapter.saveCategoryLimits(state.categoryLimits);
         state.pendingCloud.limits = false;
       }
+      if (state.pendingCloud.beneficiaryLimits) {
+        await supabaseAdapter.saveBeneficiaryLimits(state.beneficiaryLimits);
+        state.pendingCloud.beneficiaryLimits = false;
+      }
       if (state.pendingCloud.settings) {
         await supabaseAdapter.saveSettings({ beneficiaries: state.beneficiaries, currency: state.settings.currency });
         state.pendingCloud.settings = false;
@@ -3167,7 +3306,9 @@
       state.beneficiaries = normalizeBeneficiaries(snapshot.beneficiaries);
       state.familySettings = normalizeFamilySettings(snapshot.familySettings);
       state.pendingDeletes = Array.isArray(snapshot.pendingDeletes) ? snapshot.pendingDeletes.filter(Boolean) : [];
-      state.pendingCloud = snapshot.pendingCloud && typeof snapshot.pendingCloud === "object" ? snapshot.pendingCloud : { goals: false, limits: false, settings: false };
+      state.pendingCloud = snapshot.pendingCloud && typeof snapshot.pendingCloud === "object"
+        ? { goals: false, limits: false, beneficiaryLimits: false, settings: false, ...snapshot.pendingCloud }
+        : { goals: false, limits: false, beneficiaryLimits: false, settings: false };
       state.settings = normalizeSettings({ ...state.settings, ...(snapshot.settings || {}) });
     }
 
@@ -3230,15 +3371,16 @@
         }
         const familyData = Array.isArray(membership.families) ? membership.families[0] : membership.families;
         state.cloud.family = { ...familyData, id: membership.family_id, role: membership.role };
+        const pendingSnapshot = localStorageAdapter.getSnapshot(state.cloud.family.id);
         applySnapshot({
-          transactions: [],
-          goals: [],
-          categoryLimits: {},
-          beneficiaryLimits: {},
+          transactions: pendingSnapshot.transactions,
+          goals: pendingSnapshot.pendingCloud.goals ? pendingSnapshot.pendingGoals : [],
+          categoryLimits: pendingSnapshot.pendingCloud.limits ? pendingSnapshot.pendingCategoryLimits : {},
+          beneficiaryLimits: pendingSnapshot.pendingCloud.beneficiaryLimits ? pendingSnapshot.pendingBeneficiaryLimits : {},
           beneficiaries: DEFAULT_BENEFICIARIES,
-          familySettings: {},
-          pendingDeletes: [],
-          pendingCloud: { goals: false, limits: false, settings: false },
+          familySettings: pendingSnapshot.pendingCloud.settings ? pendingSnapshot.pendingFamilySettings : {},
+          pendingDeletes: pendingSnapshot.pendingDeletes,
+          pendingCloud: pendingSnapshot.pendingCloud,
           settings: state.settings
         });
         const { data: members, error: membersError } = await state.cloud.client.from("family_members").select("user_id,role,display_name,created_at").eq("family_id", state.cloud.family.id).order("created_at");
@@ -3268,16 +3410,74 @@
       renderAll();
     }
 
+    function upsertRealtimeTransaction(row, eventType) {
+      if (!row?.id || row.family_id !== state.cloud.family?.id) return;
+      const existing = state.transactions.find(item => item.id === row.id);
+      const transaction = normalizeTransaction(fromCloudTransaction(row));
+      if (!transaction || row.deleted_at) {
+        state.transactions = state.transactions.filter(item => item.id !== row.id);
+      } else if (existing) {
+        state.transactions = state.transactions.map(item => item.id === transaction.id ? transaction : item);
+      } else {
+        state.transactions.push(transaction);
+      }
+      storageService.persistCurrentSnapshot();
+      storageService.notify("transactions", { event: eventType, transaction });
+      renderAll();
+      if (eventType === "INSERT" && row.created_by_user_id !== state.cloud.user?.id && !existing) {
+        toast(`Добавлена новая операция: ${money(transaction.amount)} — ${transaction.category}.`, "success");
+      }
+    }
+
+    function removeRealtimeTransaction(row) {
+      const id = row?.id;
+      if (!id) return;
+      state.transactions = state.transactions.filter(item => item.id !== id);
+      storageService.persistCurrentSnapshot();
+      storageService.notify("transactions", { event: "DELETE", id });
+      renderAll();
+    }
+
+    async function refreshRealtimeCollection(type) {
+      if (!cloudActive()) return;
+      try {
+        if (type === "goals") {
+          state.goals = await supabaseAdapter.getGoals();
+          storageService.notify("goals", { goals: state.goals });
+        } else if (type === "category_limits") {
+          state.categoryLimits = normalizeLimits(await supabaseAdapter.getCategoryLimits());
+          storageService.notify("categoryLimits", { limits: state.categoryLimits });
+        } else if (type === "beneficiary_limits") {
+          state.beneficiaryLimits = normalizeLimits(await supabaseAdapter.getBeneficiaryLimits());
+        } else if (type === "family_settings") {
+          state.familySettings = normalizeFamilySettings(await supabaseAdapter.getSettings());
+          state.beneficiaries = normalizeBeneficiaries(state.familySettings.beneficiaries || DEFAULT_BENEFICIARIES);
+          if (["RUB", "USD", "EUR"].includes(state.familySettings.currency)) state.settings.currency = state.familySettings.currency;
+        }
+        setSyncStatus("synced", "Синхронизировано");
+        renderAll();
+      } catch (error) {
+        state.cloud.lastError = friendlyCloudError(error);
+        setSyncStatus(navigator.onLine ? "error" : "offline", navigator.onLine ? "Ошибка синхронизации" : "Нет подключения");
+      }
+    }
+
     function subscribeFamilyRealtime() {
       if (!cloudActive() || typeof state.cloud.client.channel !== "function") return;
       if (state.cloud.channel) state.cloud.client.removeChannel(state.cloud.channel);
       state.cloud.channel = state.cloud.client
         .channel(`family-${state.cloud.family.id}`)
-        .on("postgres_changes", { event: "*", schema: "public", table: "transactions", filter: `family_id=eq.${state.cloud.family.id}` }, () => {
-          clearTimeout(subscribeFamilyRealtime.timer);
-          subscribeFamilyRealtime.timer = setTimeout(() => storageService.syncData(), 350);
-        })
-        .subscribe();
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "transactions", filter: `family_id=eq.${state.cloud.family.id}` }, payload => upsertRealtimeTransaction(payload.new, "INSERT"))
+        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "transactions", filter: `family_id=eq.${state.cloud.family.id}` }, payload => upsertRealtimeTransaction(payload.new, "UPDATE"))
+        .on("postgres_changes", { event: "*", schema: "public", table: "category_limits", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("category_limits"))
+        .on("postgres_changes", { event: "*", schema: "public", table: "beneficiary_limits", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("beneficiary_limits"))
+        .on("postgres_changes", { event: "*", schema: "public", table: "goals", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("goals"))
+        .on("postgres_changes", { event: "*", schema: "public", table: "family_settings", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("family_settings"))
+        .subscribe(status => {
+          if (status === "SUBSCRIBED") setSyncStatus("synced", "Облако активно");
+          else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") setSyncStatus(navigator.onLine ? "error" : "offline", navigator.onLine ? "Ошибка синхронизации" : "Нет подключения");
+          else if (status === "CLOSED" && cloudActive()) setSyncStatus(navigator.onLine ? "error" : "offline", navigator.onLine ? "Realtime отключен" : "Нет подключения");
+        });
     }
 
     function openAuthModal(mode) {
@@ -3444,10 +3644,15 @@
           updatedAt: raw.updatedAt || raw.createdAt || new Date().toISOString(),
           syncStatus: "synced"
         })).filter(Boolean);
+        const { data: existingRows, error: existingError } = await state.cloud.client.from("transactions").select("id").eq("family_id", state.cloud.family.id);
+        if (existingError) throw existingError;
+        const existingIds = new Set((existingRows || []).map(item => item.id));
+        const duplicateCount = transactions.filter(item => existingIds.has(item.id)).length;
         for (let index = 0; index < transactions.length; index += 200) {
           await upsertCloudTransactions(transactions.slice(index, index + 200));
         }
-        report.push(`Перенесено операций: ${transactions.length}`);
+        report.push(`Перенесено операций: ${transactions.length - duplicateCount}`);
+        report.push(`Пропущено дублей: ${duplicateCount}`);
 
         const limits = normalizeLimits(local.categoryLimits);
         if (Object.keys(limits).length) {
@@ -3455,6 +3660,10 @@
           if (error) throw error;
         }
         report.push(`Перенесено лимитов: ${Object.keys(limits).length}`);
+
+        const beneficiaryLimits = normalizeLimits(local.beneficiaryLimits);
+        if (Object.keys(beneficiaryLimits).length) await supabaseAdapter.saveBeneficiaryLimits(beneficiaryLimits);
+        report.push(`Перенесено лимитов получателей: ${Object.keys(beneficiaryLimits).length}`);
 
         const goals = (local.goals || []).map(raw => normalizeGoal({ ...raw, id: ensureUuid(raw.id) })).filter(Boolean);
         if (goals.length) {
@@ -4219,8 +4428,14 @@
       state.selectedMonth = date.slice(0, 7);
       closeModal("operationModal");
       renderAll();
-      if (wasFirst && !existing) toast("Первая операция добавлена. Отличное начало учета.", "success");
-      else toast(existing ? "Операция обновлена." : "Операция добавлена.", "success", !existing && type === "expense" ? { label: "Еще расход", action: () => openOperationModal("expense") } : null);
+      if (cloudActive() && transaction.syncStatus === "pending") return;
+      if (cloudActive()) {
+        toast(existing ? "Операция обновлена и синхронизирована." : "Операция добавлена и синхронизирована.", "success", !existing && type === "expense" ? { label: "Еще расход", action: () => openOperationModal("expense") } : null);
+      } else if (wasFirst && !existing) {
+        toast("Первая операция добавлена. Отличное начало учета.", "success");
+      } else {
+        toast(existing ? "Операция обновлена." : "Операция добавлена.", "success", !existing && type === "expense" ? { label: "Еще расход", action: () => openOperationModal("expense") } : null);
+      }
     }
 
     async function deleteTransaction(id) {
@@ -4232,7 +4447,7 @@
       renderAll();
       if ($("#categoryModal").classList.contains("open")) renderCategoryDetail();
       if ($("#beneficiaryModal").classList.contains("open")) renderBeneficiaryDetail();
-      toast("Операция удалена.", "success");
+      if (!(cloudActive() && state.pendingDeletes.includes(id))) toast(cloudActive() ? "Операция удалена и синхронизирована." : "Операция удалена.", "success");
     }
 
     // Аналитика
@@ -5118,7 +5333,12 @@
       const active = cloudActive();
       const status = active ? state.cloud.syncStatus : state.cloud.configured && state.cloud.user ? "local" : state.cloud.syncStatus;
       element.className = `cloud-status ${active ? "cloud" : ""} ${status}`;
-      $("#cloudStatusText").textContent = active ? "Семья активна" : "Локально";
+      $("#cloudStatusText").textContent = active
+        ? status === "syncing" ? "Синхронизация..."
+          : status === "offline" ? "Нет подключения"
+            : status === "error" ? "Ошибка синхронизации"
+              : state.cloud.syncLabel === "Облако активно" ? "Облако активно" : "Синхронизировано"
+        : "Локально";
       $("#cloudUserName").textContent = active
         ? `${currentActor().name} · ${state.cloud.syncLabel}`
         : state.cloud.user ? `${currentActor().name} · семья не выбрана` : state.cloud.configured ? "Вход не выполнен" : "Данные в этом браузере";
@@ -5133,16 +5353,24 @@
         ? active
           ? state.cloud.receiptColumnAvailable === false
             ? "Семейный режим подключен. Операции синхронизируются, но чеки пока остаются на этом устройстве: выполните актуальный supabase-family.sql."
-            : "Семейный режим подключен. Изменения сохраняются в общей базе и локальном кеше этого устройства."
+            : "Семейный режим подключен. Изменения сохраняются в общей базе, а несинхронизированные действия временно остаются в очереди этого устройства."
           : loggedIn ? "Вы вошли в аккаунт. Создайте семейную группу или подключитесь по коду." : "Supabase настроен. Войдите или зарегистрируйтесь, чтобы включить семейный режим."
         : "Облачный семейный режим не настроен. Укажите Supabase URL и anon key в коде приложения.";
-      $("#familyModeBadge").textContent = active ? "Семья активна" : "Локально";
+      $("#familyModeBadge").textContent = active ? "Облако активно" : "Локально";
       $("#familyModeBadge").classList.toggle("cloud", active);
+      const pendingCount = state.transactions.filter(item => item.syncStatus !== "synced").length + state.pendingDeletes.length;
+      const lastSuccessfulSync = state.cloud.lastSuccessfulSyncAt
+        ? new Intl.DateTimeFormat("ru-RU", { dateStyle: "short", timeStyle: "short" }).format(new Date(state.cloud.lastSuccessfulSyncAt))
+        : "Еще не было";
       $("#familyStatusStats").innerHTML = [
         ["Режим", active ? "Семейный облачный" : "Локальный"],
         ["Пользователь", loggedIn ? currentActor().name : "Не выполнен вход"],
         ["Email", state.cloud.user?.email || "—"],
+        ["Семейная группа", active ? state.cloud.family.name || "Без названия" : "—"],
+        ["Участники", active ? state.cloud.members.length : "—"],
         ["Синхронизация", state.cloud.syncLabel],
+        ["Последняя синхронизация", active ? lastSuccessfulSync : "—"],
+        ["В очереди", active ? pendingCount : "—"],
         ["Чеки", !active ? "Локально" : state.cloud.receiptColumnAvailable === false ? "Только на устройстве" : state.cloud.receiptColumnAvailable === true ? "Синхронизируются" : "Проверка"]
       ].map(([label, value]) => `<div class="settings-stat"><span>${escapeHtml(label)}</span><strong title="${escapeHtml(value)}">${escapeHtml(value)}</strong></div>`).join("");
       $("#familyDetails").innerHTML = active ? `<div class="family-card">
@@ -5988,7 +6216,7 @@
     $("#cloudJoinFamilyBtn").addEventListener("click", () => openFamilyModal("join"));
     $("#cloudCopyInviteBtn").addEventListener("click", copyInviteCode);
     $("#cloudSyncBtn").addEventListener("click", async () => {
-      const synced = await storageService.syncData();
+      const synced = await storageService.syncNow();
       toast(synced ? "Семейные данные синхронизированы." : "Не удалось синхронизировать данные.", synced ? "success" : "error");
     });
     $("#cloudMigrateBtn").addEventListener("click", migrateLocalDataToCloud);
@@ -6071,7 +6299,7 @@
     applyTheme();
     renderAll();
     if (state.storageWarning) setTimeout(() => toast(state.storageWarning, "error"), 0);
-    initSupabase();
+    storageService.init();
   </script>
 </body>
 </html>
