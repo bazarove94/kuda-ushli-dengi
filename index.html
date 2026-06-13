@@ -1161,6 +1161,13 @@
                 <div class="panel-head"><div><h3 class="panel-title">Где течет бюджет</h3><div class="panel-subtitle">Короткие подсказки на основе плана, лимитов и операций</div></div></div>
                 <div class="panel-body" id="dashboardInsights"></div>
               </div>
+              <div class="panel">
+                <div class="panel-head">
+                  <div><h3 class="panel-title">Последние события</h3><div class="panel-subtitle">Недавние изменения семейного бюджета</div></div>
+                  <button class="btn btn-sm btn-ghost" data-budget-open="audit">Журнал</button>
+                </div>
+                <div class="panel-body" id="dashboardAudit"></div>
+              </div>
             </div>
             <div class="stack">
               <div class="panel">
@@ -5106,6 +5113,12 @@
       const limitItems = EXPENSE_CATEGORIES.map(category => ({ category, ...limitStatus(category) })).filter(item => item.limit > 0 && item.percent >= 80).sort((a, b) => b.percent - a.percent).slice(0, 4);
       $("#dashboardLimits").innerHTML = limitItems.length ? limitItems.map(limitCompact).join("") : `<div class="panel-link-empty"><span>${Object.keys(state.categoryLimits).length ? "Все настроенные лимиты пока в безопасной зоне." : "Лимиты еще не настроены."}</span><button class="btn btn-sm" data-view-jump="limits">${Object.keys(state.categoryLimits).length ? "Открыть лимиты" : "Задать лимиты"}</button></div>`;
       $("#dashboardInsights").innerHTML = insightsMarkup(generateInsights(items, state.selectedMonth));
+      const recentAudit = state.auditLog.slice(0, 4);
+      $("#dashboardAudit").innerHTML = recentAudit.length ? recentAudit.map(item => {
+        const date = new Date(item.createdAt);
+        const iconName = item.action === "delete" ? "trash" : item.action === "create" || item.action === "auto_create" ? "plus" : item.action === "sync" ? "refresh" : "edit";
+        return `<div class="audit-item"><div class="audit-time">${date.toLocaleDateString("ru-RU")}<br>${date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}</div><div class="audit-icon">${icon(iconName)}</div><div class="audit-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.createdByName)} · ${escapeHtml(item.description || "Без подробностей")}</span></div></div>`;
+      }).join("") : emptyState("Событий пока нет", "Здесь появятся добавления и изменения операций, планов и лимитов.", "list", true);
       $("#dashboardAccounts").innerHTML = accountMovementMarkup(items);
       $("#familyMonthlySummary").innerHTML = familyMonthlySummaryMarkup(items, summary);
       $("#dashboardBeneficiaries").innerHTML = beneficiaryRankMarkup(items, 5);
