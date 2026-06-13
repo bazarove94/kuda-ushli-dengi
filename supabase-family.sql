@@ -47,10 +47,12 @@ create table if not exists public.transactions (
   created_by_email text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  deleted_at timestamptz
+  deleted_at timestamptz,
+  sync_status text not null default 'synced'
 );
 
 alter table public.transactions add column if not exists receipt jsonb;
+alter table public.transactions add column if not exists sync_status text not null default 'synced';
 
 create table if not exists public.category_limits (
   id uuid primary key default gen_random_uuid(),
@@ -362,11 +364,31 @@ grant select, insert, update, delete on public.beneficiary_limits to authenticat
 grant select, insert, update, delete on public.goals to authenticated;
 grant select, insert, update, delete on public.family_settings to authenticated;
 
--- Realtime для автоматического обновления операций на втором устройстве.
+-- Realtime для автоматического обновления семейных данных на втором устройстве.
+-- Replica identity full сохраняет идентификатор строки в событиях DELETE.
+alter table public.transactions replica identity full;
+alter table public.category_limits replica identity full;
+alter table public.beneficiary_limits replica identity full;
+alter table public.goals replica identity full;
+alter table public.family_settings replica identity full;
+
 do $$
+declare
+  realtime_table text;
 begin
-  alter publication supabase_realtime add table public.transactions;
-exception
-  when duplicate_object then null;
+  foreach realtime_table in array array[
+    'transactions',
+    'category_limits',
+    'beneficiary_limits',
+    'goals',
+    'family_settings'
+  ]
+  loop
+    begin
+      execute format('alter publication supabase_realtime add table public.%I', realtime_table);
+    exception
+      when duplicate_object then null;
+    end;
+  end loop;
 end;
 $$;
