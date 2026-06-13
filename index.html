@@ -2311,7 +2311,15 @@
           created_by_name: item.createdByName,
           created_at: item.createdAt
         }));
-        const { error } = await this.client().from("audit_log").upsert(payload, { onConflict: "id" });
+        const { data: existing, error: readError } = await this.client()
+          .from("audit_log")
+          .select("id")
+          .eq("family_id", this.familyId());
+        if (readError) throw readError;
+        const existingIds = new Set((existing || []).map(item => item.id));
+        const missing = payload.filter(item => !existingIds.has(item.id));
+        if (!missing.length) return;
+        const { error } = await this.client().from("audit_log").insert(missing);
         if (error) throw error;
       },
       async syncData() {
