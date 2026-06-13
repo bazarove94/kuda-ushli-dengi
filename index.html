@@ -828,6 +828,57 @@
     .beneficiary-detail-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .family-action-grid { display: flex; flex-wrap: wrap; gap: 7px; }
     .family-action-grid .btn.hidden { display: none; }
+    .budget-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; padding: 5px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2); }
+    .budget-tab { min-height: 36px; padding: 0 14px; border: 0; border-radius: 6px; color: var(--muted); background: transparent; cursor: pointer; font: inherit; font-size: 11px; font-weight: 700; }
+    .budget-tab.active { color: var(--text); background: var(--surface-3); box-shadow: inset 0 0 0 1px var(--border); }
+    .budget-pane { display: none; }
+    .budget-pane.active { display: block; }
+    .budget-dashboard-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+    .budget-card { min-width: 0; padding: 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+    .budget-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 13px; }
+    .budget-card-head strong { font-size: 13px; }
+    .budget-card-head span { color: var(--muted); font-size: 10px; }
+    .budget-big-value { display: block; overflow: hidden; margin-bottom: 5px; font-size: 24px; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+    .budget-card-copy { color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .budget-status { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; color: var(--muted); font-size: 10px; font-weight: 650; }
+    .budget-status.good { color: var(--income); }
+    .budget-status.warning { color: var(--warning); }
+    .budget-status.danger { color: var(--expense); }
+    .budget-progress { margin-top: 12px; }
+    .plan-editor { display: grid; gap: 14px; }
+    .plan-table { display: grid; gap: 7px; }
+    .plan-row { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(130px, .45fr) auto; gap: 8px; align-items: end; padding: 10px; border: 1px solid var(--border-soft); border-radius: 7px; background: var(--surface-2); }
+    .plan-row.expense { grid-template-columns: minmax(150px, .75fr) minmax(150px, 1fr) minmax(120px, .45fr) auto auto; }
+    .plan-required { min-height: 38px; display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .plan-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+    .variance-list { display: grid; gap: 7px; }
+    .variance-row { display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, minmax(92px, auto)); gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border-soft); font-size: 11px; }
+    .variance-row:last-child { border-bottom: 0; }
+    .variance-row span { color: var(--muted); text-align: right; }
+    .variance-row .over { color: var(--expense); }
+    .recurring-list { display: grid; gap: 9px; }
+    .recurring-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 13px; border: 1px solid var(--border-soft); border-radius: 7px; background: var(--surface-2); }
+    .recurring-main { min-width: 0; display: grid; gap: 3px; }
+    .recurring-main strong, .recurring-main span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .recurring-main span { color: var(--muted); font-size: 10px; }
+    .recurring-due { display: grid; gap: 2px; text-align: right; }
+    .recurring-due span { color: var(--muted); font-size: 9px; }
+    .audit-filters { display: grid; grid-template-columns: repeat(4, minmax(140px, 1fr)); gap: 8px; margin-bottom: 14px; }
+    .audit-list { display: grid; }
+    .audit-item { display: grid; grid-template-columns: 116px 32px minmax(0, 1fr); gap: 11px; padding: 12px 0; border-bottom: 1px solid var(--border-soft); }
+    .audit-item:last-child { border-bottom: 0; }
+    .audit-time { color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .audit-icon { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 7px; color: var(--accent); background: var(--surface-2); }
+    .audit-icon .icon { width: 15px; height: 15px; }
+    .audit-copy { min-width: 0; display: grid; gap: 3px; }
+    .audit-copy strong { font-size: 11px; }
+    .audit-copy span { color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .receipt-split-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 14px 0 8px; padding: 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface-2); }
+    .receipt-split-list { display: grid; gap: 8px; }
+    .receipt-split-row { display: grid; grid-template-columns: auto minmax(150px, 1.2fr) minmax(100px, .45fr) minmax(125px, .7fr) minmax(125px, .7fr) minmax(110px, .55fr); gap: 7px; align-items: end; padding: 9px; border: 1px solid var(--border-soft); border-radius: 7px; background: var(--surface-2); }
+    .receipt-split-name { min-width: 0; display: grid; gap: 3px; align-self: center; }
+    .receipt-split-name strong { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .receipt-split-name span { color: var(--muted); font-size: 9px; }
 
     .mobile-nav, .mobile-add-button { display: none; }
 
@@ -848,6 +899,11 @@
       .filters.filters-extended { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
       .limit-card-grid { grid-template-columns: 1fr; }
       .detail-filters { grid-template-columns: 1fr 1fr; }
+      .budget-dashboard-grid { grid-template-columns: 1fr 1fr; }
+      .audit-filters { grid-template-columns: 1fr 1fr; }
+      .plan-row.expense { grid-template-columns: 1fr 1fr; }
+      .plan-row.expense .plan-required, .plan-row.expense .action-btn { align-self: end; }
+      .receipt-split-row { grid-template-columns: auto minmax(150px, 1fr) minmax(130px, .7fr); }
     }
     @media (max-width: 760px) {
       body { padding-bottom: 67px; }
@@ -931,6 +987,14 @@
       .receipt-preview-meta { grid-template-columns: 1fr 1fr; }
       .receipt-review-summary { grid-template-columns: 1fr 1fr; }
       .receipt-qr-grid { grid-template-columns: 1fr 1fr; }
+      .budget-dashboard-grid { grid-template-columns: 1fr; }
+      .plan-row, .plan-row.expense { grid-template-columns: 1fr; }
+      .variance-row { grid-template-columns: minmax(0, 1fr) 1fr; }
+      .recurring-row { grid-template-columns: minmax(0, 1fr) auto; }
+      .recurring-due { grid-column: 1; text-align: left; }
+      .audit-item { grid-template-columns: 86px 28px minmax(0, 1fr); gap: 8px; }
+      .receipt-split-row { grid-template-columns: auto minmax(0, 1fr); }
+      .receipt-split-row .field { grid-column: 1 / -1; }
     }
     @media (max-width: 480px) {
       .topbar { gap: 8px; }
@@ -966,6 +1030,9 @@
       .calendar-day span { display: none; }
       .limit-card-values { grid-template-columns: 1fr 1fr; }
       .toast-region { right: 10px; bottom: 76px; width: calc(100vw - 20px); }
+      .audit-filters { grid-template-columns: 1fr; }
+      .budget-tabs { display: grid; grid-template-columns: repeat(3, 1fr); }
+      .budget-tab { padding: 0 6px; }
     }
     @media (max-width: 360px) {
       .topbar { gap: 6px; padding-inline: 8px; }
@@ -1020,6 +1087,7 @@
         <button class="nav-btn active" data-view="dashboard"><svg class="icon"><use href="#i-home"></use></svg><span>Главная</span></button>
         <button class="nav-btn" data-view="transactions"><svg class="icon"><use href="#i-list"></use></svg><span>Операции</span></button>
         <button class="nav-btn" data-view="analytics"><svg class="icon"><use href="#i-chart"></use></svg><span>Аналитика</span></button>
+        <button class="nav-btn" data-view="budget"><svg class="icon"><use href="#i-wallet"></use></svg><span>Бюджет</span></button>
         <button class="nav-btn" data-view="limits"><svg class="icon"><use href="#i-gauge"></use></svg><span>Лимиты</span></button>
         <button class="nav-btn" data-view="goals"><svg class="icon"><use href="#i-target"></use></svg><span>Цели</span></button>
         <button class="nav-btn" data-view="settings"><svg class="icon"><use href="#i-settings"></use></svg><span>Настройки</span></button>
@@ -1055,6 +1123,11 @@
       <div class="content">
         <section class="view active" id="view-dashboard">
           <div id="dashboardHero"></div>
+          <div class="budget-dashboard-grid">
+            <article class="budget-card" id="dashboardDailyBudget"></article>
+            <article class="budget-card" id="dashboardForecast"></article>
+            <article class="budget-card" id="dashboardUpcoming"></article>
+          </div>
           <div class="dashboard-cards">
             <div class="panel">
               <div class="panel-head"><div><h3 class="panel-title">Финансовое здоровье</h3><div class="panel-subtitle">Насколько комфортно устроен месяц</div></div></div>
@@ -1085,7 +1158,7 @@
                 <div class="panel-body" id="recentTransactions"></div>
               </div>
               <div class="panel">
-                <div class="panel-head"><div><h3 class="panel-title">Выводы месяца</h3><div class="panel-subtitle">Наблюдения на основе ваших данных</div></div></div>
+                <div class="panel-head"><div><h3 class="panel-title">Где течет бюджет</h3><div class="panel-subtitle">Короткие подсказки на основе плана, лимитов и операций</div></div></div>
                 <div class="panel-body" id="dashboardInsights"></div>
               </div>
             </div>
@@ -1315,6 +1388,74 @@
           <div id="goalsList"></div>
         </section>
 
+        <section class="view" id="view-budget">
+          <div class="budget-tabs" role="tablist" aria-label="Разделы бюджета">
+            <button class="budget-tab active" type="button" data-budget-tab="plan">План месяца</button>
+            <button class="budget-tab" type="button" data-budget-tab="recurring">Регулярные</button>
+            <button class="budget-tab" type="button" data-budget-tab="audit">Журнал</button>
+          </div>
+
+          <div class="budget-pane active" data-budget-pane="plan">
+            <div class="metrics" id="planMetrics"></div>
+            <div class="grid-2 section-space">
+              <div class="panel">
+                <div class="panel-head"><div><h3 class="panel-title">План месяца</h3><div class="panel-subtitle" id="planMonthLabel"></div></div><div class="plan-actions"><button class="btn btn-sm" id="copyPlanBtn">С прошлого месяца</button><button class="btn btn-sm btn-danger" id="clearPlanBtn">Очистить</button></div></div>
+                <div class="panel-body plan-editor">
+                  <div>
+                    <div class="panel-head"><div><h4 class="panel-title">Планируемые доходы</h4></div><button class="btn btn-sm" id="addPlanIncomeBtn"><svg class="icon icon-sm"><use href="#i-plus"></use></svg>Добавить</button></div>
+                    <div class="plan-table" id="planIncomeRows"></div>
+                  </div>
+                  <div>
+                    <div class="panel-head"><div><h4 class="panel-title">Планируемые расходы</h4></div><button class="btn btn-sm" id="addPlanExpenseBtn"><svg class="icon icon-sm"><use href="#i-plus"></use></svg>Добавить</button></div>
+                    <div class="plan-table" id="planExpenseRows"></div>
+                  </div>
+                  <div class="form-grid">
+                    <label class="field">План накоплений<input id="planSavings" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                    <label class="field field-wide">Комментарий к месяцу<textarea id="planComment" maxlength="240" placeholder="Например, месяц с отпуском"></textarea></label>
+                  </div>
+                  <div class="plan-actions"><button class="btn btn-primary" id="savePlanBtn"><svg class="icon icon-sm"><use href="#i-check"></use></svg>Сохранить план</button></div>
+                </div>
+              </div>
+              <div class="stack">
+                <div class="panel">
+                  <div class="panel-head"><div><h3 class="panel-title">Дневной лимит</h3><div class="panel-subtitle">Сколько можно тратить до конца месяца</div></div></div>
+                  <div class="panel-body" id="budgetDailyDetail"></div>
+                </div>
+                <div class="panel">
+                  <div class="panel-head"><div><h3 class="panel-title">Прогноз конца месяца</h3><div class="panel-subtitle">Оценка по текущему темпу расходов</div></div></div>
+                  <div class="panel-body" id="budgetForecastDetail"></div>
+                </div>
+                <div class="panel">
+                  <div class="panel-head"><div><h3 class="panel-title">План и факт по категориям</h3><div class="panel-subtitle">Отклонения от запланированных расходов</div></div></div>
+                  <div class="panel-body" id="planVarianceList"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="budget-pane" data-budget-pane="recurring">
+            <div class="panel">
+              <div class="panel-head"><div><h3 class="panel-title">Повторяющиеся платежи</h3><div class="panel-subtitle">Доходы и расходы, которые повторяются по расписанию</div></div><button class="btn btn-primary" id="addRecurringBtn"><svg class="icon icon-sm"><use href="#i-plus"></use></svg>Добавить платеж</button></div>
+              <div class="panel-body"><div class="recurring-list" id="recurringList"></div></div>
+            </div>
+          </div>
+
+          <div class="budget-pane" data-budget-pane="audit">
+            <div class="panel">
+              <div class="panel-head"><div><h3 class="panel-title">Журнал изменений</h3><div class="panel-subtitle">Кто и что изменил в семейном бюджете</div></div></div>
+              <div class="panel-body">
+                <div class="audit-filters">
+                  <label class="field">Период<select id="auditPeriod"><option value="month">Выбранный месяц</option><option value="all">Все время</option></select></label>
+                  <label class="field">Участник<select id="auditUser"><option value="all">Все участники</option></select></label>
+                  <label class="field">Событие<select id="auditAction"><option value="all">Все события</option><option value="create">Создание</option><option value="update">Изменение</option><option value="delete">Удаление</option><option value="auto_create">Автоматически</option><option value="sync">Синхронизация</option></select></label>
+                  <label class="field">Поиск<input id="auditSearch" type="search" placeholder="Операция, категория, сумма..."></label>
+                </div>
+                <div class="audit-list" id="auditList"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section class="view" id="view-settings">
           <div class="settings-grid">
             <div class="stack">
@@ -1389,7 +1530,7 @@
                   <div class="setting-row"><div class="setting-copy"><strong>Очистить все данные</strong><span>Удалит операции, лимиты и цели из браузера</span></div><button class="btn btn-sm btn-danger" id="clearDataBtn"><svg class="icon icon-sm"><use href="#i-trash"></use></svg>Очистить</button></div>
                 </div>
               </div>
-              <div class="app-version">Версия 3.3 family realtime · схема данных <span id="schemaVersionLabel"></span></div>
+              <div class="app-version">Версия 4.0 budget assistant · схема данных <span id="schemaVersionLabel"></span></div>
             </div>
           </div>
         </section>
@@ -1400,8 +1541,8 @@
       <button class="nav-btn active" data-view="dashboard"><svg class="icon"><use href="#i-home"></use></svg><span>Главная</span></button>
       <button class="nav-btn" data-view="transactions"><svg class="icon"><use href="#i-list"></use></svg><span>Операции</span></button>
       <button class="nav-btn" data-view="analytics"><svg class="icon"><use href="#i-chart"></use></svg><span>Аналитика</span></button>
+      <button class="nav-btn" data-view="budget"><svg class="icon"><use href="#i-wallet"></use></svg><span>Бюджет</span></button>
       <button class="nav-btn" data-view="limits"><svg class="icon"><use href="#i-gauge"></use></svg><span>Лимиты</span></button>
-      <button class="nav-btn" data-view="goals"><svg class="icon"><use href="#i-target"></use></svg><span>Цели</span></button>
       <button class="nav-btn" data-view="settings"><svg class="icon"><use href="#i-settings"></use></svg><span>Еще</span></button>
     </nav>
     <button class="mobile-add-button" data-action="add-expense" aria-label="Добавить операцию" title="Добавить операцию"><svg class="icon"><use href="#i-plus"></use></svg></button>
@@ -1539,13 +1680,48 @@
           <div class="panel-subtitle">Распознанные товары</div>
           <div class="receipt-items" id="receiptItems"></div>
         </div>
+        <div class="receipt-split-tools">
+          <div><strong>Разделить чек по категориям</strong><div class="panel-subtitle">Проверьте категории товаров и создайте несколько связанных операций</div></div>
+          <button class="btn btn-sm" id="receiptSplitToggle" type="button">Настроить разделение</button>
+        </div>
+        <div class="receipt-split-list hidden" id="receiptSplitItems"></div>
         <details class="receipt-raw"><summary>Распознанный текст</summary><pre id="receiptRawText"></pre></details>
       </div>
       <div class="modal-foot">
         <button class="btn" id="receiptAnotherBtn" type="button">Распознать другой чек</button>
         <button class="btn" id="receiptEditManualBtn" type="button">Редактировать вручную</button>
+        <button class="btn btn-primary hidden" id="receiptCreateSplitBtn" type="button">Создать несколько операций</button>
         <button class="btn btn-expense" id="receiptCreateExpenseBtn" type="button">Создать расход</button>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="recurringModal" role="dialog" aria-modal="true" aria-labelledby="recurringModalTitle">
+    <div class="modal modal-lg">
+      <div class="modal-head"><div><h3 class="modal-title" id="recurringModalTitle">Регулярный платеж</h3><div class="panel-subtitle">Настройте расписание и способ создания операции</div></div><button class="action-btn" data-close-modal="recurringModal" aria-label="Закрыть"><svg class="icon"><use href="#i-close"></use></svg></button></div>
+      <form id="recurringForm">
+        <div class="modal-body">
+          <input id="recurringId" type="hidden">
+          <div class="form-grid">
+            <label class="field">Тип<select id="recurringType"><option value="expense">Расход</option><option value="income">Доход</option></select></label>
+            <label class="field">Название<input id="recurringName" maxlength="80" required placeholder="Например, Интернет"></label>
+            <label class="field">Сумма<input id="recurringAmount" type="number" min="0.01" step="0.01" required inputmode="decimal"></label>
+            <label class="field">Категория<select id="recurringCategory" required></select></label>
+            <label class="field">Подкатегория<select id="recurringSubcategory"></select></label>
+            <label class="field" id="recurringBeneficiaryField">На кого<select id="recurringBeneficiary"></select></label>
+            <label class="field">Периодичность<select id="recurringFrequency"><option value="monthly">Ежемесячно</option><option value="weekly">Еженедельно</option><option value="yearly">Ежегодно</option></select></label>
+            <label class="field">Следующая дата<input id="recurringNextDate" type="date" required></label>
+            <label class="field">День месяца<input id="recurringDayOfMonth" type="number" min="1" max="31" value="1"></label>
+            <label class="field">День недели<select id="recurringDayOfWeek"><option value="1">Понедельник</option><option value="2">Вторник</option><option value="3">Среда</option><option value="4">Четверг</option><option value="5">Пятница</option><option value="6">Суббота</option><option value="0">Воскресенье</option></select></label>
+            <label class="field">Способ оплаты<select id="recurringPayment"><option>Карта</option><option>Наличные</option><option>Перевод</option></select></label>
+            <label class="field">Счет<select id="recurringAccount"><option>Основная карта</option><option>Наличные</option><option>Накопления</option></select></label>
+            <label class="field">Напомнить за дней<input id="recurringReminder" type="number" min="0" max="30" value="2"></label>
+            <label class="plan-required"><input id="recurringAutoCreate" type="checkbox">Создавать операцию автоматически</label>
+            <label class="plan-required"><input id="recurringActive" type="checkbox" checked>Платеж активен</label>
+          </div>
+        </div>
+        <div class="modal-foot"><button class="btn" type="button" data-close-modal="recurringModal">Отмена</button><button class="btn btn-primary" type="submit">Сохранить платеж</button></div>
+      </form>
     </div>
   </div>
 
@@ -1702,6 +1878,7 @@
       dashboard: ["Главная", "Обзор финансов за выбранный месяц"],
       transactions: ["Операции", "Все доходы и расходы в одном месте"],
       analytics: ["Аналитика", "Структура расходов и финансовая динамика"],
+      budget: ["Бюджет", "План месяца, регулярные платежи и журнал изменений"],
       limits: ["Лимиты", "Контроль месячного бюджета по категориям"],
       goals: ["Цели", "Прогресс ваших накоплений"],
       settings: ["Настройки", "Внешний вид, данные и резервные копии"]
@@ -1714,13 +1891,17 @@
       settings: "money_tracker_settings",
       beneficiaries: "money_tracker_beneficiaries",
       familySettings: "money_tracker_family_settings",
+      monthlyPlans: "monthlyPlans",
+      recurringPayments: "recurringPayments",
+      auditLog: "auditLog",
+      receiptSettings: "receiptSettings",
       cloudCachePrefix: "money_tracker_cloud_cache_",
       pendingCloudPrefix: "money_tracker_pending_cloud_"
     };
     const SUPABASE_URL = "https://joujmvjsvuaaqgbezson.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_06TyU60nTxr4VZOOyFN0QQ_vnpH4tnT";
-    const APP_VERSION = "3.3 family realtime";
-    const SCHEMA_VERSION = 6;
+    const APP_VERSION = "4.0 budget assistant";
+    const SCHEMA_VERSION = 7;
     const SMALL_EXPENSE_LIMIT = 500;
     const LARGE_EXPENSE_LIMIT = 5000;
     const ACCOUNTS = ["Основная карта", "Наличные", "Накопления"];
@@ -1774,14 +1955,21 @@
             settings: this.read(STORAGE_KEYS.settings, { currency: "RUB", theme: "graphite" }),
             beneficiaries: DEFAULT_BENEFICIARIES,
             familySettings: {},
+            monthlyPlans: [],
+            recurringPayments: [],
+            auditLog: [],
+            receiptSettings: this.read(STORAGE_KEYS.receiptSettings, {}),
             pendingDeletes: Array.isArray(pending.pendingDeletes) ? pending.pendingDeletes : [],
             pendingCloud: pending.pendingCloud && typeof pending.pendingCloud === "object"
               ? pending.pendingCloud
-              : { goals: false, limits: false, beneficiaryLimits: false, settings: false },
+              : { goals: false, limits: false, beneficiaryLimits: false, settings: false, plans: false, recurring: false, audit: false },
             pendingGoals: Array.isArray(pending.goals) ? pending.goals : [],
             pendingCategoryLimits: pending.categoryLimits && typeof pending.categoryLimits === "object" ? pending.categoryLimits : {},
             pendingBeneficiaryLimits: pending.beneficiaryLimits && typeof pending.beneficiaryLimits === "object" ? pending.beneficiaryLimits : {},
-            pendingFamilySettings: pending.familySettings && typeof pending.familySettings === "object" ? pending.familySettings : {}
+            pendingFamilySettings: pending.familySettings && typeof pending.familySettings === "object" ? pending.familySettings : {},
+            pendingMonthlyPlans: Array.isArray(pending.monthlyPlans) ? pending.monthlyPlans : [],
+            pendingRecurringPayments: Array.isArray(pending.recurringPayments) ? pending.recurringPayments : [],
+            pendingAuditLog: Array.isArray(pending.auditLog) ? pending.auditLog : []
           };
         }
         return {
@@ -1791,12 +1979,17 @@
           goals: this.read(STORAGE_KEYS.goals, []),
           settings: this.read(STORAGE_KEYS.settings, { currency: "RUB", theme: "graphite" }),
           beneficiaries: this.read(STORAGE_KEYS.beneficiaries, DEFAULT_BENEFICIARIES),
-          familySettings: this.read(STORAGE_KEYS.familySettings, {})
+          familySettings: this.read(STORAGE_KEYS.familySettings, {}),
+          monthlyPlans: this.read(STORAGE_KEYS.monthlyPlans, []),
+          recurringPayments: this.read(STORAGE_KEYS.recurringPayments, []),
+          auditLog: this.read(STORAGE_KEYS.auditLog, []),
+          receiptSettings: this.read(STORAGE_KEYS.receiptSettings, {})
         };
       },
       saveSnapshot(snapshot, familyId = "") {
         if (familyId) {
           this.write(STORAGE_KEYS.settings, snapshot.settings);
+          this.write(STORAGE_KEYS.receiptSettings, snapshot.receiptSettings || {});
           const pendingCloud = snapshot.pendingCloud || {};
           const pendingState = {
             transactions: (snapshot.transactions || []).filter(item => item.syncStatus !== "synced"),
@@ -1805,12 +1998,18 @@
               goals: Boolean(pendingCloud.goals),
               limits: Boolean(pendingCloud.limits),
               beneficiaryLimits: Boolean(pendingCloud.beneficiaryLimits),
-              settings: Boolean(pendingCloud.settings)
+              settings: Boolean(pendingCloud.settings),
+              plans: Boolean(pendingCloud.plans),
+              recurring: Boolean(pendingCloud.recurring),
+              audit: Boolean(pendingCloud.audit)
             },
             goals: pendingCloud.goals ? snapshot.goals || [] : [],
             categoryLimits: pendingCloud.limits ? snapshot.categoryLimits || {} : {},
             beneficiaryLimits: pendingCloud.beneficiaryLimits ? snapshot.beneficiaryLimits || {} : {},
-            familySettings: pendingCloud.settings ? snapshot.familySettings || {} : {}
+            familySettings: pendingCloud.settings ? snapshot.familySettings || {} : {},
+            monthlyPlans: pendingCloud.plans ? snapshot.monthlyPlans || [] : [],
+            recurringPayments: pendingCloud.recurring ? snapshot.recurringPayments || [] : [],
+            auditLog: pendingCloud.audit ? (snapshot.auditLog || []).filter(item => item.syncStatus !== "synced") : []
           };
           const hasPending = pendingState.transactions.length
             || pendingState.pendingDeletes.length
@@ -1826,6 +2025,10 @@
         this.write(STORAGE_KEYS.settings, snapshot.settings);
         this.write(STORAGE_KEYS.beneficiaries, snapshot.beneficiaries || DEFAULT_BENEFICIARIES);
         this.write(STORAGE_KEYS.familySettings, snapshot.familySettings || {});
+        this.write(STORAGE_KEYS.monthlyPlans, snapshot.monthlyPlans || []);
+        this.write(STORAGE_KEYS.recurringPayments, snapshot.recurringPayments || []);
+        this.write(STORAGE_KEYS.auditLog, snapshot.auditLog || []);
+        this.write(STORAGE_KEYS.receiptSettings, snapshot.receiptSettings || {});
       },
       getTransactions(familyId = "") { return this.getSnapshot(familyId).transactions || []; },
       addTransaction(transaction, familyId = "") {
@@ -1972,15 +2175,157 @@
         }, { onConflict: "family_id" });
         if (error) throw error;
       },
+      async getMonthlyPlans() {
+        const { data, error } = await this.client().from("monthly_plans").select("*").eq("family_id", this.familyId()).order("month");
+        if (error) throw error;
+        return (data || []).map(row => normalizeMonthlyPlan({
+          id: row.id,
+          month: row.month,
+          plannedIncomeItems: row.planned_income_items,
+          plannedExpenseItems: row.planned_expense_items,
+          plannedSavings: row.planned_savings,
+          comment: row.comment,
+          createdAt: row.created_at,
+          updatedAt: row.updated_at,
+          syncStatus: "synced"
+        })).filter(Boolean);
+      },
+      async saveMonthlyPlans(plans) {
+        const familyId = this.familyId();
+        const payload = plans.map(plan => ({
+          id: plan.id,
+          family_id: familyId,
+          month: plan.month,
+          planned_income_items: plan.plannedIncomeItems,
+          planned_expense_items: plan.plannedExpenseItems,
+          planned_savings: plan.plannedSavings,
+          comment: plan.comment || null,
+          created_at: plan.createdAt,
+          updated_at: new Date().toISOString()
+        }));
+        if (payload.length) {
+          const { error } = await this.client().from("monthly_plans").upsert(payload, { onConflict: "family_id,month" });
+          if (error) throw error;
+        }
+        const { data: current, error: readError } = await this.client().from("monthly_plans").select("id").eq("family_id", familyId);
+        if (readError) throw readError;
+        const keep = new Set(plans.map(item => item.id));
+        const stale = (current || []).map(item => item.id).filter(id => !keep.has(id));
+        if (stale.length) {
+          const { error } = await this.client().from("monthly_plans").delete().eq("family_id", familyId).in("id", stale);
+          if (error) throw error;
+        }
+      },
+      async getRecurringPayments() {
+        const { data, error } = await this.client().from("recurring_payments").select("*").eq("family_id", this.familyId()).order("next_date");
+        if (error) throw error;
+        return (data || []).map(row => normalizeRecurringPayment({
+          id: row.id,
+          type: row.type,
+          name: row.name,
+          amount: row.amount,
+          category: row.category,
+          subcategory: row.subcategory,
+          beneficiary: row.beneficiary,
+          paymentMethod: row.payment_method,
+          account: row.account,
+          frequency: row.frequency,
+          dayOfMonth: row.day_of_month,
+          dayOfWeek: row.day_of_week,
+          nextDate: row.next_date,
+          autoCreate: row.auto_create,
+          reminderDaysBefore: row.reminder_days_before,
+          isActive: row.is_active,
+          createdAt: row.created_at,
+          updatedAt: row.updated_at,
+          syncStatus: "synced"
+        })).filter(Boolean);
+      },
+      async saveRecurringPayments(payments) {
+        const familyId = this.familyId();
+        const payload = payments.map(item => ({
+          id: item.id,
+          family_id: familyId,
+          type: item.type,
+          name: item.name,
+          amount: item.amount,
+          category: item.category,
+          subcategory: item.subcategory || null,
+          beneficiary: item.beneficiary || null,
+          payment_method: item.paymentMethod,
+          account: item.account,
+          frequency: item.frequency,
+          day_of_month: item.dayOfMonth,
+          day_of_week: item.dayOfWeek,
+          next_date: item.nextDate,
+          auto_create: item.autoCreate,
+          reminder_days_before: item.reminderDaysBefore,
+          is_active: item.isActive,
+          created_at: item.createdAt,
+          updated_at: new Date().toISOString()
+        }));
+        if (payload.length) {
+          const { error } = await this.client().from("recurring_payments").upsert(payload, { onConflict: "id" });
+          if (error) throw error;
+        }
+        const { data: current, error: readError } = await this.client().from("recurring_payments").select("id").eq("family_id", familyId);
+        if (readError) throw readError;
+        const keep = new Set(payments.map(item => item.id));
+        const stale = (current || []).map(item => item.id).filter(id => !keep.has(id));
+        if (stale.length) {
+          const { error } = await this.client().from("recurring_payments").delete().eq("family_id", familyId).in("id", stale);
+          if (error) throw error;
+        }
+      },
+      async getAuditLog() {
+        const { data, error } = await this.client().from("audit_log").select("*").eq("family_id", this.familyId()).order("created_at", { ascending: false }).limit(500);
+        if (error) throw error;
+        return (data || []).map(row => normalizeAuditEntry({
+          id: row.id,
+          entityType: row.entity_type,
+          entityId: row.entity_id,
+          action: row.action,
+          title: row.title,
+          description: row.description,
+          before: row.before_data,
+          after: row.after_data,
+          createdByUserId: row.created_by_user_id,
+          createdByName: row.created_by_name,
+          createdAt: row.created_at,
+          syncStatus: "synced"
+        })).filter(Boolean);
+      },
+      async saveAuditEntries(entries) {
+        if (!entries.length) return;
+        const payload = entries.map(item => ({
+          id: item.id,
+          family_id: this.familyId(),
+          entity_type: item.entityType,
+          entity_id: isUuid(item.entityId) ? item.entityId : null,
+          action: item.action,
+          title: item.title,
+          description: item.description,
+          before_data: item.before || null,
+          after_data: item.after || null,
+          created_by_user_id: item.createdByUserId || state.cloud.user.id,
+          created_by_name: item.createdByName,
+          created_at: item.createdAt
+        }));
+        const { error } = await this.client().from("audit_log").upsert(payload, { onConflict: "id" });
+        if (error) throw error;
+      },
       async syncData() {
-        const [transactions, goals, categoryLimits, beneficiaryLimits, familySettings] = await Promise.all([
+        const [transactions, goals, categoryLimits, beneficiaryLimits, familySettings, monthlyPlans, recurringPayments, auditLog] = await Promise.all([
           this.getTransactions(),
           this.getGoals(),
           this.getCategoryLimits(),
           this.getBeneficiaryLimits(),
-          this.getSettings()
+          this.getSettings(),
+          this.getMonthlyPlans(),
+          this.getRecurringPayments(),
+          this.getAuditLog()
         ]);
-        return { transactions, goals, categoryLimits, beneficiaryLimits, familySettings };
+        return { transactions, goals, categoryLimits, beneficiaryLimits, familySettings, monthlyPlans, recurringPayments, auditLog };
       }
     };
 
@@ -2001,6 +2346,9 @@
       getGoals() { return state.goals; },
       getCategoryLimits() { return state.categoryLimits; },
       getSettings() { return state.settings; },
+      getMonthlyPlans() { return state.monthlyPlans; },
+      getRecurringPayments() { return state.recurringPayments; },
+      getAuditLog() { return state.auditLog; },
       subscribeToTransactions(callback) {
         if (typeof callback === "function") this.listeners.transactions.add(callback);
         return () => this.unsubscribeFromTransactions(callback);
@@ -2032,6 +2380,10 @@
           settings: state.settings,
           beneficiaries: state.beneficiaries,
           familySettings: state.familySettings,
+          monthlyPlans: state.monthlyPlans,
+          recurringPayments: state.recurringPayments,
+          auditLog: state.auditLog,
+          receiptSettings: state.receiptSettings,
           pendingDeletes: state.pendingDeletes,
           pendingCloud: state.pendingCloud
         }, familyId);
@@ -2141,6 +2493,45 @@
           }
         }
       },
+      async saveMonthlyPlans(plans) {
+        state.monthlyPlans = plans;
+        if (cloudActive()) state.pendingCloud.plans = true;
+        this.persistCurrentSnapshot();
+        if (cloudActive()) {
+          const synced = await runCloudMutation(() => supabaseAdapter.saveMonthlyPlans(plans));
+          if (synced) {
+            state.monthlyPlans.forEach(item => { item.syncStatus = "synced"; });
+            state.pendingCloud.plans = false;
+            this.persistCurrentSnapshot();
+          }
+        }
+      },
+      async saveRecurringPayments(payments) {
+        state.recurringPayments = payments;
+        if (cloudActive()) state.pendingCloud.recurring = true;
+        this.persistCurrentSnapshot();
+        if (cloudActive()) {
+          const synced = await runCloudMutation(() => supabaseAdapter.saveRecurringPayments(payments));
+          if (synced) {
+            state.recurringPayments.forEach(item => { item.syncStatus = "synced"; });
+            state.pendingCloud.recurring = false;
+            this.persistCurrentSnapshot();
+          }
+        }
+      },
+      async addAuditEntry(entry) {
+        state.auditLog = [entry, ...state.auditLog.filter(item => item.id !== entry.id)].slice(0, 500);
+        if (cloudActive()) state.pendingCloud.audit = true;
+        this.persistCurrentSnapshot();
+        if (cloudActive()) {
+          const synced = await runCloudMutation(() => supabaseAdapter.saveAuditEntries([entry]));
+          if (synced) {
+            entry.syncStatus = "synced";
+            state.pendingCloud.audit = state.auditLog.some(item => item.syncStatus !== "synced");
+            this.persistCurrentSnapshot();
+          }
+        }
+      },
       async syncData() {
         if (!cloudActive()) return false;
         setSyncStatus("syncing", "Синхронизация");
@@ -2155,6 +2546,9 @@
           state.categoryLimits = normalizeLimits(cloudData.categoryLimits);
           state.beneficiaryLimits = normalizeLimits(cloudData.beneficiaryLimits);
           state.familySettings = normalizeFamilySettings(cloudData.familySettings);
+          state.monthlyPlans = cloudData.monthlyPlans;
+          state.recurringPayments = cloudData.recurringPayments;
+          state.auditLog = cloudData.auditLog;
           state.beneficiaries = normalizeBeneficiaries(state.familySettings.beneficiaries || DEFAULT_BENEFICIARIES);
           state.settings.currency = ["RUB", "USD", "EUR"].includes(state.familySettings.currency) ? state.familySettings.currency : state.settings.currency;
           state.pendingDeletes = [];
@@ -2188,10 +2582,15 @@
       settings: initialLocalSnapshot.settings,
       beneficiaries: initialLocalSnapshot.beneficiaries,
       familySettings: initialLocalSnapshot.familySettings || {},
+      monthlyPlans: initialLocalSnapshot.monthlyPlans || [],
+      recurringPayments: initialLocalSnapshot.recurringPayments || [],
+      auditLog: initialLocalSnapshot.auditLog || [],
+      receiptSettings: initialLocalSnapshot.receiptSettings || {},
       pendingDeletes: initialLocalSnapshot.pendingDeletes || [],
-      pendingCloud: initialLocalSnapshot.pendingCloud || { goals: false, limits: false, beneficiaryLimits: false, settings: false },
+      pendingCloud: initialLocalSnapshot.pendingCloud || { goals: false, limits: false, beneficiaryLimits: false, settings: false, plans: false, recurring: false, audit: false },
       selectedMonth: currentMonth,
       currentView: "dashboard",
+      budgetTab: "plan",
       transactionSort: { field: "date", direction: "desc" },
       transactionPeriod: "month",
       selectedTransactionIds: new Set(),
@@ -2215,6 +2614,8 @@
         recognition: null,
         parsed: null,
         qrData: emptyReceiptQrData(),
+        splitMode: false,
+        splitItems: [],
         running: false,
         cancelled: false
       },
@@ -2302,7 +2703,9 @@
         name: String(item?.name || "").trim().slice(0, 240),
         qty: String(item?.qty || "").trim().slice(0, 40),
         price: item?.price === null || item?.price === undefined || item?.price === "" ? null : Math.max(0, safeNumber(item.price)),
-        total: item?.total === null || item?.total === undefined || item?.total === "" ? null : Math.max(0, safeNumber(item.total))
+        total: item?.total === null || item?.total === undefined || item?.total === "" ? null : Math.max(0, safeNumber(item.total)),
+        category: EXPENSE_CATEGORIES.includes(String(item?.category)) ? String(item.category) : "",
+        subcategory: String(item?.subcategory || "").trim().slice(0, 80)
       })).filter(item => item.name) : [];
       return {
         merchant: String(raw.merchant || "").trim().slice(0, 160),
@@ -2342,6 +2745,13 @@
         account: ACCOUNTS.includes(String(raw.account)) ? String(raw.account) : "Основная карта",
         tags: [...new Set(tags.map(tag => String(tag).trim().toLocaleLowerCase("ru")).filter(Boolean))].slice(0, 12),
         regular: raw.regular === true || raw.regular === 1 || String(raw.regular).toLocaleLowerCase("ru") === "true" || String(raw.regular).toLocaleLowerCase("ru") === "да",
+        recurringPaymentId: raw.recurringPaymentId ? String(raw.recurringPaymentId) : null,
+        receiptGroupInfo: raw.receiptGroupInfo && typeof raw.receiptGroupInfo === "object" ? {
+          groupId: String(raw.receiptGroupInfo.groupId || ""),
+          partIndex: Math.max(1, safeNumber(raw.receiptGroupInfo.partIndex)),
+          partsCount: Math.max(1, safeNumber(raw.receiptGroupInfo.partsCount)),
+          originalAmount: Math.max(0, safeNumber(raw.receiptGroupInfo.originalAmount))
+        } : null,
         receipt: type === "expense" ? normalizeReceipt(raw.receipt) : null,
         isDemo: Boolean(raw.isDemo),
         createdByUserId: String(raw.createdByUserId || ""),
@@ -2368,6 +2778,92 @@
         createdAt: isIsoDateTime(raw.createdAt) ? String(raw.createdAt) : new Date().toISOString(),
         updatedAt: isIsoDateTime(raw.updatedAt) ? String(raw.updatedAt) : new Date().toISOString()
       };
+    }
+
+    function normalizeMonthlyPlan(raw) {
+      if (!raw || !/^\d{4}-\d{2}$/.test(String(raw.month || ""))) return null;
+      const createdAt = isIsoDateTime(raw.createdAt) ? String(raw.createdAt) : new Date().toISOString();
+      const incomeItems = Array.isArray(raw.plannedIncomeItems) ? raw.plannedIncomeItems : [];
+      const expenseItems = Array.isArray(raw.plannedExpenseItems) ? raw.plannedExpenseItems : [];
+      return {
+        id: String(raw.id || newEntityId()),
+        month: String(raw.month),
+        plannedIncomeItems: incomeItems.map(item => ({
+          id: String(item?.id || newEntityId()),
+          name: String(item?.name || "Доход").trim().slice(0, 80) || "Доход",
+          amount: Math.max(0, safeNumber(item?.amount))
+        })).filter(item => item.amount > 0 || item.name),
+        plannedExpenseItems: expenseItems.map(item => ({
+          id: String(item?.id || newEntityId()),
+          category: EXPENSE_CATEGORIES.includes(String(item?.category)) ? String(item.category) : "Прочее",
+          name: String(item?.name || item?.category || "Расход").trim().slice(0, 80) || "Расход",
+          amount: Math.max(0, safeNumber(item?.amount)),
+          isRequired: item?.isRequired !== false
+        })).filter(item => item.amount > 0 || item.name),
+        plannedSavings: Math.max(0, safeNumber(raw.plannedSavings)),
+        comment: String(raw.comment || "").trim().slice(0, 240),
+        createdAt,
+        updatedAt: isIsoDateTime(raw.updatedAt) ? String(raw.updatedAt) : createdAt,
+        syncStatus: ["local", "pending", "synced"].includes(raw.syncStatus) ? raw.syncStatus : "local"
+      };
+    }
+
+    function normalizeRecurringPayment(raw) {
+      if (!raw || !["income", "expense"].includes(raw.type) || safeNumber(raw.amount) <= 0 || !isIsoDate(raw.nextDate)) return null;
+      const type = raw.type;
+      const categories = type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+      const category = categories.includes(String(raw.category)) ? String(raw.category) : "Прочее";
+      const createdAt = isIsoDateTime(raw.createdAt) ? String(raw.createdAt) : new Date().toISOString();
+      return {
+        id: String(raw.id || newEntityId()),
+        type,
+        name: String(raw.name || category).trim().slice(0, 80) || category,
+        amount: Math.max(0.01, safeNumber(raw.amount)),
+        category,
+        subcategory: type === "expense" && (EXPENSE_SUBCATEGORIES[category] || []).includes(String(raw.subcategory)) ? String(raw.subcategory) : "",
+        beneficiary: type === "expense" ? String(raw.beneficiary || "Общее").trim() || "Общее" : "",
+        paymentMethod: PAYMENT_METHODS.includes(String(raw.paymentMethod)) ? String(raw.paymentMethod) : "Карта",
+        account: ACCOUNTS.includes(String(raw.account)) ? String(raw.account) : "Основная карта",
+        frequency: ["monthly", "weekly", "yearly"].includes(raw.frequency) ? raw.frequency : "monthly",
+        dayOfMonth: Math.min(31, Math.max(1, safeNumber(raw.dayOfMonth) || new Date(`${raw.nextDate}T00:00:00`).getDate())),
+        dayOfWeek: Math.min(6, Math.max(0, safeNumber(raw.dayOfWeek))),
+        nextDate: raw.nextDate,
+        autoCreate: Boolean(raw.autoCreate),
+        reminderDaysBefore: Math.min(30, Math.max(0, safeNumber(raw.reminderDaysBefore))),
+        isActive: raw.isActive !== false,
+        createdAt,
+        updatedAt: isIsoDateTime(raw.updatedAt) ? String(raw.updatedAt) : createdAt,
+        syncStatus: ["local", "pending", "synced"].includes(raw.syncStatus) ? raw.syncStatus : "local"
+      };
+    }
+
+    function normalizeAuditEntry(raw) {
+      if (!raw || !String(raw.title || raw.description || "").trim()) return null;
+      return {
+        id: String(raw.id || newEntityId()),
+        entityType: ["transaction", "limit", "goal", "receipt", "recurringPayment", "settings", "sync", "plan"].includes(raw.entityType) ? raw.entityType : "settings",
+        entityId: raw.entityId ? String(raw.entityId) : null,
+        action: ["create", "update", "delete", "auto_create", "import", "sync"].includes(raw.action) ? raw.action : "update",
+        title: String(raw.title || "Изменение").trim().slice(0, 140),
+        description: String(raw.description || "").trim().slice(0, 400),
+        before: safeAuditData(raw.before),
+        after: safeAuditData(raw.after),
+        createdByUserId: String(raw.createdByUserId || ""),
+        createdByName: String(raw.createdByName || "Локальный пользователь").trim().slice(0, 80),
+        createdAt: isIsoDateTime(raw.createdAt) ? String(raw.createdAt) : new Date().toISOString(),
+        syncStatus: ["local", "pending", "synced"].includes(raw.syncStatus) ? raw.syncStatus : "local"
+      };
+    }
+
+    function safeAuditData(value) {
+      if (!value || typeof value !== "object") return null;
+      const blocked = /password|token|secret|key|rawtext|qrdata|receipt/i;
+      const result = {};
+      Object.entries(value).slice(0, 20).forEach(([key, item]) => {
+        if (blocked.test(key)) return;
+        if (["string", "number", "boolean"].includes(typeof item) || item === null) result[key] = typeof item === "string" ? item.slice(0, 160) : item;
+      });
+      return Object.keys(result).length ? result : null;
     }
 
     function normalizeSettings(raw) {
@@ -2415,7 +2911,21 @@
           if (item.type === "expense" && !state.beneficiaries.includes(item.beneficiary)) state.beneficiaries.push(item.beneficiary);
         });
         state.familySettings = normalizeFamilySettings(state.familySettings);
+        state.monthlyPlans = Array.isArray(state.monthlyPlans) ? state.monthlyPlans.map(normalizeMonthlyPlan).filter(Boolean) : [];
+        state.recurringPayments = Array.isArray(state.recurringPayments) ? state.recurringPayments.map(normalizeRecurringPayment).filter(Boolean) : [];
+        state.auditLog = Array.isArray(state.auditLog) ? state.auditLog.map(normalizeAuditEntry).filter(Boolean).slice(0, 500) : [];
+        state.receiptSettings = state.receiptSettings && typeof state.receiptSettings === "object" ? state.receiptSettings : {};
         if (previousVersion < SCHEMA_VERSION) {
+          const actor = currentActor();
+          state.auditLog.unshift(normalizeAuditEntry({
+            entityType: "sync",
+            action: "import",
+            title: "Данные приложения обновлены",
+            description: `Схема данных обновлена до версии ${SCHEMA_VERSION}.`,
+            createdByUserId: actor.id,
+            createdByName: actor.name,
+            createdAt: new Date().toISOString()
+          }));
           storageService.persistCurrentSnapshot();
         }
         if (startupStorageErrors.length) state.storageWarning = "Часть локальных данных была повреждена и восстановлена безопасными значениями.";
@@ -2427,6 +2937,10 @@
         state.settings = normalizeSettings({});
         state.beneficiaries = [...DEFAULT_BENEFICIARIES];
         state.familySettings = normalizeFamilySettings({});
+        state.monthlyPlans = [];
+        state.recurringPayments = [];
+        state.auditLog = [];
+        state.receiptSettings = {};
         state.storageWarning = `Ошибка миграции: ${error.message}`;
       }
     }
@@ -2478,6 +2992,8 @@
       state.receiptScan.recognition = null;
       state.receiptScan.parsed = null;
       state.receiptScan.qrData = emptyReceiptQrData();
+      state.receiptScan.splitMode = false;
+      state.receiptScan.splitItems = [];
       state.receiptScan.running = false;
       $("#receiptPreview").classList.remove("visible");
       $("#receiptPreviewImage").removeAttribute("src");
@@ -2777,8 +3293,8 @@
       const has = pattern => pattern.test(source);
       if (has(/вет|ветеринар|зоомагазин/)) return { category: "Здоровье", subcategory: "Врачи", beneficiary: "Кошка", confidence: .86, reason: "Найдены слова о ветеринарии" };
       if (has(/корм|наполнитель/)) return { category: "Продукты", subcategory: "Прочее", beneficiary: "Кошка", confidence: .78, reason: "Найдены товары для питомца" };
-      if (has(/детск|игрушк|подгузник|садик|ребенок|ребёнок/)) return { category: "Ребенок", subcategory: has(/игрушк/) ? "Игрушки" : "Прочее", beneficiary: "Сын", confidence: .78, reason: "Найдены детские товары" };
       if (has(/пят[её]рочк|перекр[её]сток|лента|магнит|окей|ашан|самокат|вкусвилл|супермаркет/)) return { category: "Продукты", subcategory: "Супермаркет", beneficiary: "Семья", confidence: .9, reason: "Распознан продуктовый магазин" };
+      if (has(/детск|игрушк|подгузник|садик|ребенок|ребёнок/)) return { category: "Ребенок", subcategory: has(/игрушк/) ? "Игрушки" : "Прочее", beneficiary: "Сын", confidence: .78, reason: "Найдены детские товары" };
       if (has(/азс|бензин|топливо|газпромнефть|лукойл|роснефть/)) return { category: "Авто", subcategory: "Бензин", beneficiary: "Общее", confidence: .9, reason: "Распознана заправка или топливо" };
       if (has(/аптек|фарм|лекарств/)) return { category: "Здоровье", subcategory: "Аптека", beneficiary: "Общее", confidence: .88, reason: "Распознана аптека" };
       if (has(/спорт|фитнес|протеин|креатин|абонемент/)) return { category: "Спорт", subcategory: has(/протеин|креатин|добавк/) ? "Добавки" : "Прочее", beneficiary: "Я", confidence: .78, reason: "Найдены спортивные товары или услуги" };
@@ -2787,6 +3303,82 @@
       if (has(/доставк|яндекс\s*еда|delivery/)) return { category: "Кафе и доставка", subcategory: "Доставка еды", beneficiary: "Семья", confidence: .82, reason: "Распознана доставка еды" };
       if (has(/cafe|кафе|бургер|пицц|ролл|суши|перекус/)) return { category: "Кафе и доставка", subcategory: "Кафе", beneficiary: "Общее", confidence: .75, reason: "Распознано заведение питания" };
       return { category: "Прочее", subcategory: "Другое", beneficiary: "Общее", confidence: .3, reason: "Подходящее правило не найдено" };
+    }
+
+    function classifyReceiptItem(item) {
+      const source = String(item?.name || "").toLocaleLowerCase("ru");
+      const rules = [
+        [/молок|хлеб|сыр|мяс|куриц|овощ|фрукт|круп|макарон|масл|яйц|вода|сок|йогурт|колбас|рыб/, "Продукты", "Супермаркет", "Семья"],
+        [/порошок|гель|салфет|губк|мыло|шампун|чистящ|туалетн|бумаг/, "Дом и ЖКХ", "Бытовая химия", "Дом"],
+        [/подгуз|детск|игруш|пюре|смесь/, "Ребенок", /игруш/.test(source) ? "Игрушки" : "Еда", "Сын"],
+        [/лекар|таблет|витамин|аптек|спрей|мазь/, "Здоровье", "Аптека", "Общее"],
+        [/кофе|капуч|латте|американо/, "Кафе и доставка", "Кофе", "Общее"],
+        [/бургер|пицц|ролл|суши|шаурм|обед|завтрак/, "Кафе и доставка", "Перекус", "Общее"],
+        [/бензин|топлив|дизел/, "Авто", "Бензин", "Общее"],
+        [/футболк|брюк|носк|обув|кроссов|куртк/, "Одежда", /обув|кроссов/.test(source) ? "Обувь" : "Одежда", "Я"],
+        [/корм|наполнитель/, "Продукты", "Прочее", "Кошка"]
+      ];
+      const match = rules.find(([pattern]) => pattern.test(source));
+      return match ? { category: match[1], subcategory: match[2], beneficiary: match[3] } : { category: "Прочее", subcategory: "Другое", beneficiary: "" };
+    }
+
+    function prepareReceiptSplitItems(items, defaultBeneficiary = "Общее") {
+      return (items || []).map(item => {
+        const guess = classifyReceiptItem(item);
+        return {
+          id: newEntityId(),
+          name: item.name,
+          qty: item.qty,
+          price: item.price,
+          total: Math.max(0, safeNumber(item.total)),
+          category: guess.category,
+          subcategory: guess.subcategory,
+          beneficiary: guess.beneficiary || defaultBeneficiary,
+          included: safeNumber(item.total) > 0
+        };
+      });
+    }
+
+    function readReceiptSplitItems() {
+      state.receiptScan.splitItems = $$("#receiptSplitItems [data-receipt-split-row]").map(row => ({
+        id: row.dataset.receiptSplitRow,
+        name: row.dataset.itemName,
+        qty: row.dataset.itemQty || "",
+        price: row.dataset.itemPrice === "" ? null : safeNumber(row.dataset.itemPrice),
+        total: Math.max(0, safeNumber($("[data-split-amount]", row).value)),
+        category: $("[data-split-category]", row).value,
+        subcategory: $("[data-split-subcategory]", row).value,
+        beneficiary: $("[data-split-beneficiary]", row).value,
+        included: $("[data-split-included]", row).checked
+      }));
+      return state.receiptScan.splitItems;
+    }
+
+    function renderReceiptSplitItems() {
+      const container = $("#receiptSplitItems");
+      container.classList.toggle("hidden", !state.receiptScan.splitMode);
+      $("#receiptCreateSplitBtn").classList.toggle("hidden", !state.receiptScan.splitMode);
+      $("#receiptCreateExpenseBtn").classList.toggle("hidden", state.receiptScan.splitMode);
+      $("#receiptSplitToggle").textContent = state.receiptScan.splitMode ? "Не разделять чек" : "Настроить разделение";
+      if (!state.receiptScan.splitMode) return;
+      const items = state.receiptScan.splitItems;
+      container.innerHTML = items.length ? items.map(item => {
+        const subcategories = EXPENSE_SUBCATEGORIES[item.category] || ["Другое"];
+        return `<div class="receipt-split-row" data-receipt-split-row="${escapeHtml(item.id)}" data-item-name="${escapeHtml(item.name)}" data-item-qty="${escapeHtml(item.qty || "")}" data-item-price="${item.price ?? ""}">
+          <label class="plan-required"><input data-split-included type="checkbox" ${item.included ? "checked" : ""}>Учесть</label>
+          <div class="receipt-split-name"><strong title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</strong><span>${item.qty ? `Количество ${escapeHtml(item.qty)}` : "Позиция чека"}</span></div>
+          <label class="field">Сумма<input data-split-amount type="number" min="0" step="0.01" value="${item.total || ""}"></label>
+          <label class="field">Категория<select data-split-category>${EXPENSE_CATEGORIES.map(value => `<option ${value === item.category ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></label>
+          <label class="field">Подкатегория<select data-split-subcategory>${subcategories.map(value => `<option ${value === item.subcategory ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></label>
+          <label class="field">На кого<select data-split-beneficiary>${state.beneficiaries.map(value => `<option ${value === item.beneficiary ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></label>
+        </div>`;
+      }).join("") : emptyState("Позиции не распознаны", "Для разделения нужны товары и их суммы. Можно вставить текст электронного чека.", "receipt", true);
+    }
+
+    function toggleReceiptSplit() {
+      if (state.receiptScan.splitMode) readReceiptSplitItems();
+      state.receiptScan.splitMode = !state.receiptScan.splitMode;
+      renderReceiptSplitItems();
     }
 
     function mergeReceiptQr(parsed, rawQrData) {
@@ -2855,6 +3447,8 @@
       parsed.warnings.push(`Категория определена автоматически: ${guess.category} · ${guess.subcategory}.`);
       state.receiptScan.recognition = recognition;
       state.receiptScan.parsed = { ...parsed, guess };
+      state.receiptScan.splitMode = false;
+      state.receiptScan.splitItems = prepareReceiptSplitItems(parsed.items, guess.beneficiary);
       $("#receiptMerchant").value = parsed.merchant;
       $("#receiptAmount").value = parsed.amount || "";
       $("#receiptDate").value = parsed.date;
@@ -2879,6 +3473,7 @@
         ? parsed.items.map(item => `<div class="receipt-item"><div class="receipt-item-main"><strong>${escapeHtml(item.name)}</strong><span>${item.qty ? `Количество: ${escapeHtml(item.qty)}` : "Количество не определено"}${item.price !== null ? ` · цена ${money(item.price)}` : ""}</span></div><strong>${item.total !== null ? money(item.total) : "—"}</strong></div>`).join("")
         : emptyState("Товары не распознаны", "Расход можно сохранить без списка товаров.", "receipt", true);
       $("#receiptRawText").textContent = recognition.rawText;
+      renderReceiptSplitItems();
       closeModal("receiptScanModal");
       openModal("receiptReviewModal");
     }
@@ -2989,6 +3584,7 @@
         return;
       }
       await storageService.addTransaction(transaction);
+      await addAuditEntry({ entityType: "receipt", entityId: transaction.id, action: "create", title: "Распознан чек", description: `${transaction.receipt?.merchant || "Магазин не указан"} · ${money(transaction.amount)}.`, after: { amount: transaction.amount, category: transaction.category, merchant: transaction.receipt?.merchant || "" } });
       state.selectedMonth = transaction.date.slice(0, 7);
       closeModal("receiptReviewModal");
       closeModal("operationModal");
@@ -2996,6 +3592,62 @@
       if (!(cloudActive() && transaction.syncStatus === "pending")) {
         toast(cloudActive() ? "Расход по чеку добавлен и синхронизирован." : "Расход по чеку добавлен.", "success");
       }
+    }
+
+    async function createSplitExpensesFromReceipt() {
+      const values = receiptReviewValues();
+      if (!validateReceiptReview(values)) return;
+      const items = readReceiptSplitItems().filter(item => item.included && item.total > 0);
+      if (!items.length) return toast("Выберите хотя бы одну позицию с суммой.", "error");
+      const itemTotal = items.reduce((sum, item) => sum + item.total, 0);
+      const difference = Math.round((values.amount - itemTotal) * 100) / 100;
+      if (difference < -0.01) {
+        toast(`Сумма позиций больше итога чека на ${money(Math.abs(difference))}. Исправьте суммы товаров.`, "error");
+        return;
+      }
+      if (difference > .01) {
+        const confirmed = await confirmAction("Суммы не совпадают", `Позиции дают <strong>${money(itemTotal)}</strong>, а чек — <strong>${money(values.amount)}</strong>.<br>Добавить разницу ${money(difference)} в категорию «Прочее»?`, "Добавить разницу");
+        if (!confirmed) return;
+        items.push({ id: newEntityId(), name: "Нераспознанная часть чека", qty: "", price: null, total: difference, category: "Прочее", subcategory: "Другое", beneficiary: values.beneficiary, included: true });
+      }
+      const grouped = Object.values(items.reduce((result, item) => {
+        const key = `${item.category}\u0001${item.subcategory}\u0001${item.beneficiary}`;
+        if (!result[key]) result[key] = { category: item.category, subcategory: item.subcategory, beneficiary: item.beneficiary, amount: 0, items: [] };
+        result[key].amount += item.total;
+        result[key].items.push(item);
+        return result;
+      }, {}));
+      const actor = currentActor();
+      const now = new Date().toISOString();
+      const groupId = newEntityId();
+      const transactions = grouped.map((group, index) => normalizeTransaction({
+        id: newEntityId(),
+        familyId: cloudActive() ? state.cloud.family.id : null,
+        type: "expense",
+        amount: Math.round(group.amount * 100) / 100,
+        date: values.date,
+        category: group.category,
+        subcategory: group.subcategory,
+        beneficiary: group.beneficiary,
+        comment: `${values.comment || "Чек"} · ${group.items.map(item => item.name).slice(0, 3).join(", ")}`,
+        paymentMethod: values.paymentMethod,
+        account: values.account,
+        tags: ["чек", "разделенный чек"],
+        receipt: normalizeReceipt({ ...values.receipt, items: group.items.map(item => ({ name: item.name, qty: item.qty, price: item.price, total: item.total, category: item.category, subcategory: item.subcategory })) }),
+        receiptGroupInfo: { groupId, partIndex: index + 1, partsCount: grouped.length, originalAmount: values.amount },
+        createdByUserId: actor.id,
+        createdByName: actor.name,
+        createdByEmail: actor.email,
+        createdAt: now,
+        updatedAt: now,
+        syncStatus: cloudActive() ? "pending" : "local"
+      })).filter(Boolean);
+      for (const transaction of transactions) await storageService.addTransaction(transaction);
+      await addAuditEntry({ entityType: "receipt", entityId: transactions[0]?.id, action: "create", title: "Чек разделен на несколько операций", description: `${values.receipt?.merchant || "Магазин не указан"} · ${transactions.length} операций · ${money(values.amount)}.`, after: { operationCount: transactions.length, amount: values.amount } });
+      state.selectedMonth = values.date.slice(0, 7);
+      closeModal("receiptReviewModal");
+      renderAll();
+      toast(`Чек разделен на ${transactions.length} операций.`, "success");
     }
 
     function editReceiptManually() {
@@ -3145,6 +3797,8 @@
         account: transaction.account,
         tags: transaction.tags || [],
         receipt: transaction.receipt || null,
+        recurring_payment_id: isUuid(transaction.recurringPaymentId) ? transaction.recurringPaymentId : null,
+        receipt_group_info: transaction.receiptGroupInfo || null,
         created_by_user_id: transaction.createdByUserId || state.cloud.user.id,
         created_by_name: transaction.createdByName || currentActor().name,
         created_by_email: transaction.createdByEmail || currentActor().email,
@@ -3170,6 +3824,8 @@
         account: row.account,
         tags: row.tags,
         receipt: row.receipt || null,
+        recurringPaymentId: row.recurring_payment_id || null,
+        receiptGroupInfo: row.receipt_group_info || null,
         createdByUserId: row.created_by_user_id,
         createdByName: row.created_by_name,
         createdByEmail: row.created_by_email,
@@ -3182,12 +3838,14 @@
 
     function isMissingReceiptColumnError(error) {
       const message = String(error?.message || "");
-      return String(error?.code || "") === "42703" || /transactions\.receipt|column.+receipt.+does not exist/i.test(message);
+      return String(error?.code || "") === "42703" || /transactions\.(receipt|recurring_payment_id|receipt_group_info)|column.+(receipt|recurring_payment_id|receipt_group_info).+does not exist/i.test(message);
     }
 
     function cloudPayloadWithoutReceipt(transaction) {
       const payload = toCloudTransaction(transaction);
       delete payload.receipt;
+      delete payload.recurring_payment_id;
+      delete payload.receipt_group_info;
       return payload;
     }
 
@@ -3295,6 +3953,22 @@
         await supabaseAdapter.saveSettings({ beneficiaries: state.beneficiaries, currency: state.settings.currency });
         state.pendingCloud.settings = false;
       }
+      if (state.pendingCloud.plans) {
+        await supabaseAdapter.saveMonthlyPlans(state.monthlyPlans);
+        state.monthlyPlans.forEach(item => { item.syncStatus = "synced"; });
+        state.pendingCloud.plans = false;
+      }
+      if (state.pendingCloud.recurring) {
+        await supabaseAdapter.saveRecurringPayments(state.recurringPayments);
+        state.recurringPayments.forEach(item => { item.syncStatus = "synced"; });
+        state.pendingCloud.recurring = false;
+      }
+      if (state.pendingCloud.audit) {
+        const pendingAudit = state.auditLog.filter(item => item.syncStatus !== "synced");
+        await supabaseAdapter.saveAuditEntries(pendingAudit);
+        pendingAudit.forEach(item => { item.syncStatus = "synced"; });
+        state.pendingCloud.audit = false;
+      }
       storageService.persistCurrentSnapshot();
     }
 
@@ -3305,10 +3979,14 @@
       state.beneficiaryLimits = snapshot.beneficiaryLimits && typeof snapshot.beneficiaryLimits === "object" ? snapshot.beneficiaryLimits : {};
       state.beneficiaries = normalizeBeneficiaries(snapshot.beneficiaries);
       state.familySettings = normalizeFamilySettings(snapshot.familySettings);
+      state.monthlyPlans = Array.isArray(snapshot.monthlyPlans) ? snapshot.monthlyPlans.map(normalizeMonthlyPlan).filter(Boolean) : [];
+      state.recurringPayments = Array.isArray(snapshot.recurringPayments) ? snapshot.recurringPayments.map(normalizeRecurringPayment).filter(Boolean) : [];
+      state.auditLog = Array.isArray(snapshot.auditLog) ? snapshot.auditLog.map(normalizeAuditEntry).filter(Boolean) : [];
+      state.receiptSettings = snapshot.receiptSettings && typeof snapshot.receiptSettings === "object" ? snapshot.receiptSettings : state.receiptSettings;
       state.pendingDeletes = Array.isArray(snapshot.pendingDeletes) ? snapshot.pendingDeletes.filter(Boolean) : [];
       state.pendingCloud = snapshot.pendingCloud && typeof snapshot.pendingCloud === "object"
-        ? { goals: false, limits: false, beneficiaryLimits: false, settings: false, ...snapshot.pendingCloud }
-        : { goals: false, limits: false, beneficiaryLimits: false, settings: false };
+        ? { goals: false, limits: false, beneficiaryLimits: false, settings: false, plans: false, recurring: false, audit: false, ...snapshot.pendingCloud }
+        : { goals: false, limits: false, beneficiaryLimits: false, settings: false, plans: false, recurring: false, audit: false };
       state.settings = normalizeSettings({ ...state.settings, ...(snapshot.settings || {}) });
     }
 
@@ -3379,6 +4057,10 @@
           beneficiaryLimits: pendingSnapshot.pendingCloud.beneficiaryLimits ? pendingSnapshot.pendingBeneficiaryLimits : {},
           beneficiaries: DEFAULT_BENEFICIARIES,
           familySettings: pendingSnapshot.pendingCloud.settings ? pendingSnapshot.pendingFamilySettings : {},
+          monthlyPlans: pendingSnapshot.pendingCloud.plans ? pendingSnapshot.pendingMonthlyPlans : [],
+          recurringPayments: pendingSnapshot.pendingCloud.recurring ? pendingSnapshot.pendingRecurringPayments : [],
+          auditLog: pendingSnapshot.pendingCloud.audit ? pendingSnapshot.pendingAuditLog : [],
+          receiptSettings: pendingSnapshot.receiptSettings,
           pendingDeletes: pendingSnapshot.pendingDeletes,
           pendingCloud: pendingSnapshot.pendingCloud,
           settings: state.settings
@@ -3453,6 +4135,12 @@
           state.familySettings = normalizeFamilySettings(await supabaseAdapter.getSettings());
           state.beneficiaries = normalizeBeneficiaries(state.familySettings.beneficiaries || DEFAULT_BENEFICIARIES);
           if (["RUB", "USD", "EUR"].includes(state.familySettings.currency)) state.settings.currency = state.familySettings.currency;
+        } else if (type === "monthly_plans") {
+          state.monthlyPlans = await supabaseAdapter.getMonthlyPlans();
+        } else if (type === "recurring_payments") {
+          state.recurringPayments = await supabaseAdapter.getRecurringPayments();
+        } else if (type === "audit_log") {
+          state.auditLog = await supabaseAdapter.getAuditLog();
         }
         setSyncStatus("synced", "Синхронизировано");
         renderAll();
@@ -3473,6 +4161,9 @@
         .on("postgres_changes", { event: "*", schema: "public", table: "beneficiary_limits", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("beneficiary_limits"))
         .on("postgres_changes", { event: "*", schema: "public", table: "goals", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("goals"))
         .on("postgres_changes", { event: "*", schema: "public", table: "family_settings", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("family_settings"))
+        .on("postgres_changes", { event: "*", schema: "public", table: "monthly_plans", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("monthly_plans"))
+        .on("postgres_changes", { event: "*", schema: "public", table: "recurring_payments", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("recurring_payments"))
+        .on("postgres_changes", { event: "*", schema: "public", table: "audit_log", filter: `family_id=eq.${state.cloud.family.id}` }, () => refreshRealtimeCollection("audit_log"))
         .subscribe(status => {
           if (status === "SUBSCRIBED") setSyncStatus("synced", "Облако активно");
           else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") setSyncStatus(navigator.onLine ? "error" : "offline", navigator.onLine ? "Ошибка синхронизации" : "Нет подключения");
@@ -3548,6 +4239,7 @@
         } else {
           state.cloud.user = result.data.user;
           await loadCloudContext();
+          await addAuditEntry({ entityType: "settings", action: "sync", title: "Выполнен вход", description: "Пользователь вошел в семейный режим." });
           toast(mode === "register" ? "Аккаунт создан." : "Вход выполнен.", "success");
         }
       } catch (error) {
@@ -3562,6 +4254,7 @@
 
     async function signOutCloud() {
       if (!state.cloud.client) return;
+      if (cloudActive()) await addAuditEntry({ entityType: "settings", action: "sync", title: "Выполнен выход", description: "Пользователь вышел из семейного режима." });
       const { error } = await state.cloud.client.auth.signOut();
       if (error) {
         toast("Не удалось выйти из аккаунта. Проверьте подключение и повторите попытку.", "error");
@@ -3674,6 +4367,18 @@
         }
         report.push(`Перенесено целей: ${goals.length}`);
 
+        const plans = (local.monthlyPlans || []).map(raw => normalizeMonthlyPlan({ ...raw, id: ensureUuid(raw.id), syncStatus: "synced" })).filter(Boolean);
+        if (plans.length) await supabaseAdapter.saveMonthlyPlans(plans);
+        report.push(`Перенесено планов: ${plans.length}`);
+
+        const recurring = (local.recurringPayments || []).map(raw => normalizeRecurringPayment({ ...raw, id: ensureUuid(raw.id), syncStatus: "synced" })).filter(Boolean);
+        if (recurring.length) await supabaseAdapter.saveRecurringPayments(recurring);
+        report.push(`Перенесено регулярных платежей: ${recurring.length}`);
+
+        const audit = (local.auditLog || []).map(raw => normalizeAuditEntry({ ...raw, id: ensureUuid(raw.id), createdByUserId: actor.id, createdByName: raw.createdByName || actor.name, syncStatus: "synced" })).filter(Boolean);
+        if (audit.length) await supabaseAdapter.saveAuditEntries(audit.slice(0, 500));
+        report.push(`Перенесено событий журнала: ${audit.length}`);
+
         const beneficiaries = normalizeBeneficiaries(local.beneficiaries);
         await supabaseAdapter.saveSettings({ beneficiaries, currency: local.settings?.currency || "RUB" });
         report.push(`Получателей: ${beneficiaries.length}`);
@@ -3681,6 +4386,7 @@
         $("#cloudSyncReport").textContent = report.join("\n");
         $("#cloudSyncReport").classList.remove("hidden");
         await storageService.syncData();
+        await addAuditEntry({ entityType: "sync", action: "sync", title: "Локальные данные перенесены в облако", description: `Операций: ${transactions.length}, лимитов: ${Object.keys(limits).length}, целей: ${goals.length}.` });
         toast("Локальные данные перенесены в семейное облако.", "success");
       } catch (error) {
         report.push(`Ошибка: ${friendlyCloudError(error, "Не все данные удалось перенести.")}`);
@@ -3771,7 +4477,7 @@
 
     function groupBy(items, key) {
       return items.reduce((result, item) => {
-        const label = item[key] || "Без подкатегории";
+        const label = (typeof key === "function" ? key(item) : item[key]) || "Без подкатегории";
         result[label] = (result[label] || 0) + item.amount;
         return result;
       }, {});
@@ -3841,6 +4547,455 @@
       return category.split(/\s+/).slice(0, 2).map(part => part[0]).join("").toUpperCase();
     }
 
+    // Планирование бюджета, прогноз и регулярные платежи
+    function getMonthlyPlan(month = state.selectedMonth) {
+      return state.monthlyPlans.find(item => item.month === month) || null;
+    }
+
+    function planTotals(plan) {
+      return {
+        income: (plan?.plannedIncomeItems || []).reduce((sum, item) => sum + safeNumber(item.amount), 0),
+        expenses: (plan?.plannedExpenseItems || []).reduce((sum, item) => sum + safeNumber(item.amount), 0),
+        requiredExpenses: (plan?.plannedExpenseItems || []).filter(item => item.isRequired).reduce((sum, item) => sum + safeNumber(item.amount), 0),
+        savings: safeNumber(plan?.plannedSavings)
+      };
+    }
+
+    function isoToday() {
+      const value = new Date();
+      return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
+    }
+
+    function remainingRecurringExpenses(month = state.selectedMonth) {
+      const todayIso = isoToday();
+      const start = `${month}-01`;
+      const end = `${month}-${String(daysInMonth(month)).padStart(2, "0")}`;
+      return state.recurringPayments
+        .filter(item => item.isActive && item.type === "expense" && item.nextDate >= start && item.nextDate <= end && (month !== currentMonth || item.nextDate >= todayIso))
+        .filter(item => !state.transactions.some(transaction => transaction.recurringPaymentId === item.id && transaction.date === item.nextDate))
+        .reduce((sum, item) => sum + item.amount, 0);
+    }
+
+    function calculateDailyBudget(month = state.selectedMonth) {
+      const plan = getMonthlyPlan(month);
+      const totals = planTotals(plan);
+      const items = selectedTransactions(month);
+      const summary = summarize(items);
+      const todayIso = isoToday();
+      const monthEnd = new Date(`${month}-${String(daysInMonth(month)).padStart(2, "0")}T00:00:00`);
+      const monthStart = new Date(`${month}-01T00:00:00`);
+      const now = new Date(`${todayIso}T00:00:00`);
+      const cursor = month === currentMonth ? now : month > currentMonth ? monthStart : monthEnd;
+      const daysLeft = month < currentMonth ? 0 : Math.max(1, Math.floor((monthEnd - cursor) / 86400000) + 1);
+      const remainingFixedPayments = remainingRecurringExpenses(month);
+      const freeBudget = totals.income - summary.expense - totals.savings - remainingFixedPayments;
+      const dailyLimit = daysLeft > 0 ? Math.max(0, freeBudget) / daysLeft : 0;
+      const spentToday = month === currentMonth ? items.filter(item => item.type === "expense" && item.date === todayIso).reduce((sum, item) => sum + item.amount, 0) : 0;
+      const todayOverLimit = Math.max(0, spentToday - dailyLimit);
+      let status = "good";
+      let message = "Сегодня идете в рамках плана.";
+      if (!plan || totals.income <= 0) {
+        status = "warning";
+        message = "Укажите план дохода, чтобы рассчитать дневной лимит.";
+      } else if (freeBudget < 0) {
+        status = "danger";
+        message = `Бюджет месяца уже в минусе на ${money(Math.abs(freeBudget))}.`;
+      } else if (todayOverLimit > 0) {
+        status = "danger";
+        message = `Сегодня перебор на ${money(todayOverLimit)}.`;
+      } else if (dailyLimit > 0 && spentToday / dailyLimit >= .7) {
+        status = "warning";
+        message = "Использовано больше 70% дневного лимита.";
+      }
+      return {
+        plannedIncome: totals.income,
+        actualIncome: summary.income,
+        actualExpenses: summary.expense,
+        plannedSavings: totals.savings,
+        remainingFixedPayments,
+        freeBudget,
+        daysLeft,
+        dailyLimit,
+        spentToday,
+        todayOverLimit,
+        status,
+        message
+      };
+    }
+
+    function calculateMonthForecast(month = state.selectedMonth) {
+      const items = selectedTransactions(month);
+      const summary = summarize(items);
+      const plan = getMonthlyPlan(month);
+      const totals = planTotals(plan);
+      const todayIso = isoToday();
+      const elapsedDays = month === currentMonth ? Math.max(1, new Date(`${todayIso}T00:00:00`).getDate()) : daysInMonth(month);
+      const totalDays = daysInMonth(month);
+      const projectedExpenses = summary.expense > 0 ? summary.expense / elapsedDays * totalDays : 0;
+      const projectedIncome = Math.max(summary.income, totals.income);
+      const projectedBalance = projectedIncome - projectedExpenses;
+      const confidence = items.length >= 20 ? "выше средней" : items.length >= 8 ? "средняя" : "низкая";
+      let status = "good";
+      let message = "При текущем темпе месяц завершится с положительным остатком.";
+      if (items.length < 5) message = "Данных пока мало, прогноз ориентировочный.";
+      if (projectedBalance < 0) {
+        status = "danger";
+        message = `При текущем темпе возможен минус ${money(Math.abs(projectedBalance))}.`;
+      } else if (totals.expenses > 0 && projectedExpenses > totals.expenses) {
+        status = "warning";
+        message = `Прогноз расходов выше плана на ${money(projectedExpenses - totals.expenses)}.`;
+      }
+      return { projectedExpenses, projectedIncome, projectedBalance, confidence, status, message, elapsedDays, totalDays };
+    }
+
+    function calculatePlanFact(month = state.selectedMonth) {
+      const plan = getMonthlyPlan(month);
+      const totals = planTotals(plan);
+      const summary = summarize(selectedTransactions(month));
+      const daily = calculateDailyBudget(month);
+      const actualByCategory = groupBy(selectedTransactions(month).filter(item => item.type === "expense"), "category");
+      const categoryPlans = {};
+      (plan?.plannedExpenseItems || []).forEach(item => { categoryPlans[item.category] = (categoryPlans[item.category] || 0) + item.amount; });
+      const categoryVariances = Object.keys({ ...categoryPlans, ...actualByCategory }).map(category => {
+        const planned = safeNumber(categoryPlans[category]);
+        const actual = safeNumber(actualByCategory[category]);
+        return { category, planned, actual, variance: actual - planned };
+      }).sort((a, b) => Math.abs(b.variance) - Math.abs(a.variance));
+      return {
+        plannedIncome: totals.income,
+        actualIncome: summary.income,
+        plannedExpenses: totals.expenses,
+        actualExpenses: summary.expense,
+        plannedSavings: totals.savings,
+        projectedSavings: summary.income - summary.expense,
+        freeBudget: totals.income - totals.expenses - totals.savings,
+        dailyLimit: daily.dailyLimit,
+        categoryVariances,
+        statusMessages: [daily.message]
+      };
+    }
+
+    function dailyBudgetMarkup(data, compact = false) {
+      const percent = data.dailyLimit > 0 ? data.spentToday / data.dailyLimit * 100 : 0;
+      const barClass = percent > 100 ? "danger" : percent >= 70 ? "warning" : "";
+      return `<div class="budget-card-head"><div><strong>Дневной лимит</strong><br><span>${data.daysLeft} дн. до конца месяца</span></div><button class="btn btn-sm btn-ghost" data-view-jump="budget">План</button></div>
+        <strong class="budget-big-value">${data.plannedIncome > 0 ? money(data.dailyLimit) : "Не рассчитан"}</strong>
+        <div class="budget-card-copy">${data.plannedIncome > 0 ? `Сегодня ${money(data.spentToday)} · свободно ${money(Math.max(0, data.freeBudget))}` : "Сначала задайте план доходов на месяц."}</div>
+        ${data.plannedIncome > 0 ? `<div class="budget-progress"><div class="bar ${barClass}"><span style="width:${Math.min(100, percent)}%"></span></div></div>` : ""}
+        <div class="budget-status ${data.status}">${icon(data.status === "good" ? "check" : "info", "icon-sm")}${escapeHtml(data.message)}</div>`;
+    }
+
+    function forecastMarkup(data) {
+      return `<div class="budget-card-head"><div><strong>Прогноз месяца</strong><br><span>Точность: ${escapeHtml(data.confidence)}</span></div><button class="btn btn-sm btn-ghost" data-view-jump="budget">Подробнее</button></div>
+        <strong class="budget-big-value ${data.projectedBalance < 0 ? "amount expense" : ""}">${money(data.projectedBalance)}</strong>
+        <div class="budget-card-copy">Ожидаемые расходы ${money(data.projectedExpenses)} при текущем темпе.</div>
+        <div class="budget-status ${data.status}">${icon(data.status === "good" ? "check" : "info", "icon-sm")}${escapeHtml(data.message)}</div>`;
+    }
+
+    function upcomingRecurringMarkup(limit = 3) {
+      const todayIso = isoToday();
+      const items = state.recurringPayments.filter(item => item.isActive && item.nextDate >= todayIso).sort((a, b) => a.nextDate.localeCompare(b.nextDate)).slice(0, limit);
+      return `<div class="budget-card-head"><div><strong>Ближайшие платежи</strong><br><span>Активных: ${state.recurringPayments.filter(item => item.isActive).length}</span></div><button class="btn btn-sm btn-ghost" data-budget-open="recurring">Открыть</button></div>
+        ${items.length ? `<div class="data-list">${items.map(item => `<div class="data-row"><div class="data-row-main"><strong>${escapeHtml(item.name)}</strong><span>${formatDate(item.nextDate)} · ${item.autoCreate ? "автоматически" : "напоминание"}</span></div><span class="amount ${item.type}">${money(item.amount)}</span></div>`).join("")}</div>` : `<div class="budget-card-copy">Регулярные платежи еще не настроены.</div>`}`;
+    }
+
+    function planIncomeRow(item = {}) {
+      return `<div class="plan-row" data-plan-income-row="${escapeHtml(item.id || newEntityId())}">
+        <label class="field">Источник<input data-plan-income-name maxlength="80" value="${escapeHtml(item.name || "")}" placeholder="Например, Зарплата"></label>
+        <label class="field">Сумма<input data-plan-income-amount type="number" min="0" step="0.01" value="${safeNumber(item.amount) || ""}"></label>
+        <button class="action-btn" type="button" data-remove-plan-row title="Удалить">${icon("trash")}</button>
+      </div>`;
+    }
+
+    function planExpenseRow(item = {}) {
+      const category = EXPENSE_CATEGORIES.includes(item.category) ? item.category : "Прочее";
+      return `<div class="plan-row expense" data-plan-expense-row="${escapeHtml(item.id || newEntityId())}">
+        <label class="field">Категория<select data-plan-expense-category>${EXPENSE_CATEGORIES.map(value => `<option ${value === category ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></label>
+        <label class="field">Название<input data-plan-expense-name maxlength="80" value="${escapeHtml(item.name || "")}" placeholder="Например, Интернет"></label>
+        <label class="field">Сумма<input data-plan-expense-amount type="number" min="0" step="0.01" value="${safeNumber(item.amount) || ""}"></label>
+        <label class="plan-required"><input data-plan-expense-required type="checkbox" ${item.isRequired !== false ? "checked" : ""}>Обязательный</label>
+        <button class="action-btn" type="button" data-remove-plan-row title="Удалить">${icon("trash")}</button>
+      </div>`;
+    }
+
+    function renderBudget() {
+      $$("[data-budget-tab]").forEach(button => button.classList.toggle("active", button.dataset.budgetTab === state.budgetTab));
+      $$("[data-budget-pane]").forEach(pane => pane.classList.toggle("active", pane.dataset.budgetPane === state.budgetTab));
+      const plan = getMonthlyPlan();
+      const fact = calculatePlanFact();
+      const daily = calculateDailyBudget();
+      const forecast = calculateMonthForecast();
+      $("#planMonthLabel").textContent = capitalize(monthLabel(state.selectedMonth));
+      $("#planMetrics").innerHTML = [
+        metricCard("План доходов", money(fact.plannedIncome), `Факт ${money(fact.actualIncome)}`, "income"),
+        metricCard("План расходов", money(fact.plannedExpenses), `Факт ${money(fact.actualExpenses)}`, "expense"),
+        metricCard("Накопления", money(fact.plannedSavings), `Расчетный остаток ${money(fact.projectedSavings)}`),
+        metricCard("Свободный бюджет", money(fact.freeBudget), fact.freeBudget >= 0 ? "После плана расходов" : "План требует корректировки", fact.freeBudget < 0 ? "warning" : "")
+      ].join("");
+      $("#planIncomeRows").innerHTML = (plan?.plannedIncomeItems?.length ? plan.plannedIncomeItems : [{ name: "Зарплата", amount: 0 }]).map(planIncomeRow).join("");
+      $("#planExpenseRows").innerHTML = (plan?.plannedExpenseItems?.length ? plan.plannedExpenseItems : [{ category: "Продукты", name: "Продукты", amount: 0, isRequired: true }]).map(planExpenseRow).join("");
+      $("#planSavings").value = safeNumber(plan?.plannedSavings) || "";
+      $("#planComment").value = plan?.comment || "";
+      $("#budgetDailyDetail").innerHTML = dailyBudgetMarkup(daily);
+      $("#budgetForecastDetail").innerHTML = forecastMarkup(forecast);
+      $("#planVarianceList").innerHTML = fact.categoryVariances.length ? `<div class="variance-list">${fact.categoryVariances.map(item => `<div class="variance-row"><strong>${escapeHtml(item.category)}</strong><span>План ${money(item.planned)}</span><span>Факт ${money(item.actual)}</span><span class="${item.variance > 0 ? "over" : ""}">${item.variance > 0 ? "+" : ""}${money(item.variance)}</span></div>`).join("")}</div>` : emptyState("Сравнивать пока нечего", "Добавьте плановые расходы и операции за месяц.", "chart", true);
+      renderRecurringPayments();
+      renderAuditLog();
+    }
+
+    async function saveMonthlyPlanFromUi() {
+      const existing = getMonthlyPlan();
+      const now = new Date().toISOString();
+      const incomeItems = $$("[data-plan-income-row]").map(row => ({
+        id: row.dataset.planIncomeRow,
+        name: $("[data-plan-income-name]", row).value.trim() || "Доход",
+        amount: Math.max(0, safeNumber($("[data-plan-income-amount]", row).value))
+      })).filter(item => item.amount > 0);
+      const expenseItems = $$("[data-plan-expense-row]").map(row => ({
+        id: row.dataset.planExpenseRow,
+        category: $("[data-plan-expense-category]", row).value,
+        name: $("[data-plan-expense-name]", row).value.trim() || $("[data-plan-expense-category]", row).value,
+        amount: Math.max(0, safeNumber($("[data-plan-expense-amount]", row).value)),
+        isRequired: $("[data-plan-expense-required]", row).checked
+      })).filter(item => item.amount > 0);
+      const plan = normalizeMonthlyPlan({
+        id: existing?.id || newEntityId(),
+        month: state.selectedMonth,
+        plannedIncomeItems: incomeItems,
+        plannedExpenseItems: expenseItems,
+        plannedSavings: $("#planSavings").value,
+        comment: $("#planComment").value,
+        createdAt: existing?.createdAt || now,
+        updatedAt: now,
+        syncStatus: cloudActive() ? "pending" : "local"
+      });
+      await storageService.saveMonthlyPlans([...state.monthlyPlans.filter(item => item.month !== state.selectedMonth), plan]);
+      await addAuditEntry({
+        entityType: "plan",
+        entityId: plan.id,
+        action: existing ? "update" : "create",
+        title: existing ? "План месяца изменен" : "Создан план месяца",
+        description: `${capitalize(monthLabel(plan.month))}: доходы ${money(planTotals(plan).income)}, расходы ${money(planTotals(plan).expenses)}.`,
+        before: existing,
+        after: plan
+      });
+      renderAll();
+      toast("План месяца сохранен.");
+    }
+
+    async function copyPreviousPlan() {
+      const previous = getMonthlyPlan(monthShift(state.selectedMonth, -1));
+      if (!previous) return toast("За прошлый месяц план не найден.", "error");
+      const copy = normalizeMonthlyPlan({
+        ...previous,
+        id: getMonthlyPlan()?.id || newEntityId(),
+        month: state.selectedMonth,
+        plannedIncomeItems: previous.plannedIncomeItems.map(item => ({ ...item, id: newEntityId() })),
+        plannedExpenseItems: previous.plannedExpenseItems.map(item => ({ ...item, id: newEntityId() })),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        syncStatus: cloudActive() ? "pending" : "local"
+      });
+      await storageService.saveMonthlyPlans([...state.monthlyPlans.filter(item => item.month !== state.selectedMonth), copy]);
+      await addAuditEntry({ entityType: "plan", entityId: copy.id, action: "create", title: "План скопирован", description: `План на ${monthLabel(state.selectedMonth)} создан из прошлого месяца.`, after: copy });
+      renderAll();
+      toast("План прошлого месяца скопирован.");
+    }
+
+    async function clearMonthlyPlan() {
+      const plan = getMonthlyPlan();
+      if (!plan) return;
+      if (!await confirmAction("Очистить план месяца?", "Плановые доходы, расходы и накопления выбранного месяца будут удалены.", "Очистить")) return;
+      await storageService.saveMonthlyPlans(state.monthlyPlans.filter(item => item.id !== plan.id));
+      await addAuditEntry({ entityType: "plan", entityId: plan.id, action: "delete", title: "План месяца удален", description: capitalize(monthLabel(plan.month)), before: plan });
+      renderAll();
+    }
+
+    function recurringFrequencyLabel(value) {
+      return value === "weekly" ? "Еженедельно" : value === "yearly" ? "Ежегодно" : "Ежемесячно";
+    }
+
+    function renderRecurringPayments() {
+      const items = [...state.recurringPayments].sort((a, b) => Number(b.isActive) - Number(a.isActive) || a.nextDate.localeCompare(b.nextDate));
+      $("#recurringList").innerHTML = items.length ? items.map(item => `<div class="recurring-row">
+        <div class="recurring-main"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.category)}${item.subcategory ? ` · ${escapeHtml(item.subcategory)}` : ""} · ${recurringFrequencyLabel(item.frequency)} · ${item.autoCreate ? "автосоздание" : "напоминание"}</span></div>
+        <div class="recurring-due"><strong class="amount ${item.type}">${money(item.amount)}</strong><span>${item.isActive ? `следующий ${formatDate(item.nextDate)}` : "приостановлен"}</span></div>
+        <div class="actions"><button class="action-btn" data-create-recurring="${item.id}" title="Создать операцию">${icon("plus")}</button><button class="action-btn" data-edit-recurring="${item.id}" title="Редактировать">${icon("edit")}</button><button class="action-btn danger" data-delete-recurring="${item.id}" title="Удалить">${icon("trash")}</button></div>
+      </div>`).join("") : emptyState("Регулярных платежей пока нет", "Добавьте зарплату, ЖКХ, подписки или другие повторяющиеся операции.", "refresh");
+    }
+
+    function renderRecurringFormOptions(selectedCategory = "", selectedSubcategory = "") {
+      const type = $("#recurringType").value;
+      const categories = type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+      $("#recurringCategory").innerHTML = categories.map(item => `<option>${escapeHtml(item)}</option>`).join("");
+      $("#recurringCategory").value = categories.includes(selectedCategory) ? selectedCategory : categories[0];
+      const subcategories = type === "expense" ? (EXPENSE_SUBCATEGORIES[$("#recurringCategory").value] || []) : [];
+      $("#recurringSubcategory").innerHTML = type === "expense" ? subcategories.map(item => `<option value="${item === "Без подкатегории" ? "" : escapeHtml(item)}">${escapeHtml(item)}</option>`).join("") : `<option value="">Без подкатегории</option>`;
+      $("#recurringSubcategory").value = subcategories.includes(selectedSubcategory) ? selectedSubcategory : "";
+      $("#recurringBeneficiaryField").classList.toggle("hidden", type !== "expense");
+      $("#recurringBeneficiary").innerHTML = state.beneficiaries.map(item => `<option>${escapeHtml(item)}</option>`).join("");
+    }
+
+    function openRecurringModal(id = "") {
+      const item = state.recurringPayments.find(value => value.id === id);
+      $("#recurringId").value = item?.id || "";
+      $("#recurringModalTitle").textContent = item ? "Редактировать регулярный платеж" : "Новый регулярный платеж";
+      $("#recurringType").value = item?.type || "expense";
+      renderRecurringFormOptions(item?.category, item?.subcategory);
+      $("#recurringName").value = item?.name || "";
+      $("#recurringAmount").value = item?.amount || "";
+      $("#recurringBeneficiary").value = item?.beneficiary || "Общее";
+      $("#recurringFrequency").value = item?.frequency || "monthly";
+      $("#recurringNextDate").value = item?.nextDate || isoToday();
+      $("#recurringDayOfMonth").value = item?.dayOfMonth || new Date().getDate();
+      $("#recurringDayOfWeek").value = String(item?.dayOfWeek ?? new Date().getDay());
+      $("#recurringPayment").value = item?.paymentMethod || "Карта";
+      $("#recurringAccount").value = item?.account || "Основная карта";
+      $("#recurringReminder").value = item?.reminderDaysBefore ?? 2;
+      $("#recurringAutoCreate").checked = Boolean(item?.autoCreate);
+      $("#recurringActive").checked = item?.isActive !== false;
+      openModal("recurringModal");
+    }
+
+    async function saveRecurringPayment(event) {
+      event.preventDefault();
+      const existing = state.recurringPayments.find(item => item.id === $("#recurringId").value);
+      const now = new Date().toISOString();
+      const item = normalizeRecurringPayment({
+        id: existing?.id || newEntityId(),
+        type: $("#recurringType").value,
+        name: $("#recurringName").value,
+        amount: $("#recurringAmount").value,
+        category: $("#recurringCategory").value,
+        subcategory: $("#recurringSubcategory").value,
+        beneficiary: $("#recurringBeneficiary").value,
+        frequency: $("#recurringFrequency").value,
+        nextDate: $("#recurringNextDate").value,
+        dayOfMonth: $("#recurringDayOfMonth").value,
+        dayOfWeek: $("#recurringDayOfWeek").value,
+        paymentMethod: $("#recurringPayment").value,
+        account: $("#recurringAccount").value,
+        reminderDaysBefore: $("#recurringReminder").value,
+        autoCreate: $("#recurringAutoCreate").checked,
+        isActive: $("#recurringActive").checked,
+        createdAt: existing?.createdAt || now,
+        updatedAt: now,
+        syncStatus: cloudActive() ? "pending" : "local"
+      });
+      if (!item) return toast("Проверьте сумму и дату платежа.", "error");
+      await storageService.saveRecurringPayments([...state.recurringPayments.filter(value => value.id !== item.id), item]);
+      await addAuditEntry({ entityType: "recurringPayment", entityId: item.id, action: existing ? "update" : "create", title: existing ? "Регулярный платеж изменен" : "Создан регулярный платеж", description: `${item.name} · ${money(item.amount)}.`, before: existing, after: item });
+      closeModal("recurringModal");
+      renderAll();
+      toast("Регулярный платеж сохранен.");
+    }
+
+    function advanceRecurringDate(item, fromDate = item.nextDate) {
+      const date = new Date(`${fromDate}T00:00:00`);
+      if (item.frequency === "weekly") date.setDate(date.getDate() + 7);
+      else if (item.frequency === "yearly") date.setFullYear(date.getFullYear() + 1);
+      else {
+        date.setDate(1);
+        date.setMonth(date.getMonth() + 1);
+        date.setDate(Math.min(item.dayOfMonth, new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()));
+      }
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    }
+
+    async function createTransactionFromRecurring(id, dueDate = "") {
+      const item = state.recurringPayments.find(value => value.id === id);
+      if (!item) return false;
+      const date = dueDate || item.nextDate;
+      if (state.transactions.some(value => value.recurringPaymentId === item.id && value.date === date)) return false;
+      const actor = currentActor();
+      const transaction = normalizeTransaction({
+        id: newEntityId(),
+        type: item.type,
+        amount: item.amount,
+        date,
+        category: item.category,
+        subcategory: item.subcategory,
+        beneficiary: item.beneficiary,
+        comment: `Автоматически создано из регулярного платежа: ${item.name}`,
+        paymentMethod: item.paymentMethod,
+        account: item.account,
+        regular: true,
+        recurringPaymentId: item.id,
+        createdByUserId: actor.id,
+        createdByName: actor.name,
+        createdByEmail: actor.email,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        syncStatus: cloudActive() ? "pending" : "local"
+      });
+      await storageService.addTransaction(transaction);
+      await addAuditEntry({ entityType: "recurringPayment", entityId: item.id, action: "auto_create", title: "Создана регулярная операция", description: `${item.name} · ${money(item.amount)} · ${formatDate(date)}.`, after: transaction });
+      return true;
+    }
+
+    async function processRecurringPayments() {
+      const todayIso = isoToday();
+      let changed = false;
+      for (const item of state.recurringPayments.filter(value => value.isActive && value.autoCreate)) {
+        let guard = 0;
+        while (item.nextDate <= todayIso && guard < 24) {
+          await createTransactionFromRecurring(item.id, item.nextDate);
+          item.nextDate = advanceRecurringDate(item, item.nextDate);
+          item.updatedAt = new Date().toISOString();
+          item.syncStatus = cloudActive() ? "pending" : "local";
+          changed = true;
+          guard++;
+        }
+      }
+      if (changed) await storageService.saveRecurringPayments([...state.recurringPayments]);
+      renderAll();
+    }
+
+    async function deleteRecurringPayment(id) {
+      const item = state.recurringPayments.find(value => value.id === id);
+      if (!item || !await confirmAction("Удалить регулярный платеж?", `<strong>${escapeHtml(item.name)} · ${money(item.amount)}</strong><br>Уже созданные операции останутся в истории.`, "Удалить")) return;
+      await storageService.saveRecurringPayments(state.recurringPayments.filter(value => value.id !== id));
+      await addAuditEntry({ entityType: "recurringPayment", entityId: id, action: "delete", title: "Регулярный платеж удален", description: `${item.name} · ${money(item.amount)}.`, before: item });
+      renderAll();
+    }
+
+    async function addAuditEntry(input) {
+      const actor = currentActor();
+      const entry = normalizeAuditEntry({
+        id: newEntityId(),
+        ...input,
+        createdByUserId: input.createdByUserId || actor.id,
+        createdByName: input.createdByName || actor.name,
+        createdAt: input.createdAt || new Date().toISOString(),
+        syncStatus: cloudActive() ? "pending" : "local"
+      });
+      if (entry) await storageService.addAuditEntry(entry);
+      return entry;
+    }
+
+    function renderAuditLog() {
+      const userSelect = $("#auditUser");
+      const previousUser = userSelect.value || "all";
+      const users = [...new Set(state.auditLog.map(item => item.createdByName).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ru"));
+      userSelect.innerHTML = `<option value="all">Все участники</option>${users.map(item => `<option>${escapeHtml(item)}</option>`).join("")}`;
+      userSelect.value = users.includes(previousUser) ? previousUser : "all";
+      const period = $("#auditPeriod").value || "month";
+      const action = $("#auditAction").value || "all";
+      const search = ($("#auditSearch").value || "").trim().toLocaleLowerCase("ru");
+      const user = userSelect.value;
+      const items = state.auditLog.filter(item =>
+        (period === "all" || item.createdAt.slice(0, 7) === state.selectedMonth) &&
+        (action === "all" || item.action === action) &&
+        (user === "all" || item.createdByName === user) &&
+        (!search || `${item.title} ${item.description} ${item.createdByName}`.toLocaleLowerCase("ru").includes(search))
+      );
+      $("#auditList").innerHTML = items.length ? items.map(item => {
+        const date = new Date(item.createdAt);
+        const iconName = item.action === "delete" ? "trash" : item.action === "create" || item.action === "auto_create" ? "plus" : item.action === "sync" ? "refresh" : "edit";
+        return `<div class="audit-item"><div class="audit-time">${date.toLocaleDateString("ru-RU")}<br>${date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}</div><div class="audit-icon">${icon(iconName)}</div><div class="audit-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.createdByName)} · ${escapeHtml(item.description || "Без подробностей")}</span></div></div>`;
+      }).join("") : emptyState("Событий не найдено", "Измените фильтры или добавьте первую операцию.", "list", true);
+    }
+
     // Навигация и общая отрисовка
     function setView(view) {
       if (!PAGE_META[view]) return;
@@ -3857,6 +5012,7 @@
       renderDashboard();
       if (state.currentView === "transactions") renderTransactions();
       if (state.currentView === "analytics") requestAnimationFrame(renderAnalytics);
+      if (state.currentView === "budget") renderBudget();
       if (state.currentView === "limits") renderLimits();
       if (state.currentView === "goals") renderGoals();
       if (state.currentView === "settings") renderSettings();
@@ -3878,6 +5034,7 @@
       renderTransactions();
       renderLimits();
       renderGoals();
+      renderBudget();
       renderSettings();
       if (state.currentView === "analytics") requestAnimationFrame(renderAnalytics);
     }
@@ -3906,6 +5063,11 @@
       const items = selectedTransactions();
       const summary = summarize(items);
       const groups = getExpenseGroups();
+      const dailyBudget = calculateDailyBudget();
+      const forecast = calculateMonthForecast();
+      $("#dashboardDailyBudget").innerHTML = dailyBudgetMarkup(dailyBudget, true);
+      $("#dashboardForecast").innerHTML = forecastMarkup(forecast);
+      $("#dashboardUpcoming").innerHTML = upcomingRecurringMarkup();
       $("#recentSubtitle").textContent = capitalize(monthLabel(state.selectedMonth));
       const status = summary.balance > 0 ? { text: "Месяц в плюсе", cls: "good" } : summary.balance < 0 ? { text: "Расходы выше доходов", cls: "bad" } : { text: "Месяц в ноль", cls: "neutral" };
       const ratioCopy = summary.ratio === null ? "Доходы пока не внесены" : `Расходы занимают ${Math.round(summary.ratio)}% от доходов`;
@@ -4052,6 +5214,10 @@
       const summary = summarize(items);
       const previous = summarize(selectedTransactions(monthShift(month, -1)));
       const groups = sortedEntries(groupBy(items.filter(item => item.type === "expense"), "category"));
+      const planFact = calculatePlanFact(month);
+      const forecast = calculateMonthForecast(month);
+      const smallItems = items.filter(item => item.type === "expense" && item.amount <= SMALL_EXPENSE_LIMIT);
+      const smallTotal = smallItems.reduce((sum, item) => sum + item.amount, 0);
       const insights = [];
       if (summary.expense > summary.income && summary.expense > 0) insights.push({ type: "danger", text: `Расходы выше доходов на ${money(summary.expense - summary.income)}. Месяц закрывается в минус.` });
       if (!summary.income) insights.push({ type: "warning", text: "За выбранный период доходы не внесены, поэтому доля расходов не рассчитывается." });
@@ -4060,13 +5226,18 @@
       EXPENSE_CATEGORIES.map(category => ({ category, ...limitStatus(category, month) })).filter(item => item.exceeded).slice(0, 2).forEach(item => insights.push({ type: "danger", text: `Лимит по категории «${item.category}» превышен на ${money(Math.abs(item.remaining))}.` }));
       if (previous.expense > 0 && summary.expense < previous.expense) insights.push({ type: "good", text: `Расходы ниже прошлого месяца на ${money(previous.expense - summary.expense)}. Хорошая динамика.` });
       if (previous.expense > 0 && summary.expense > previous.expense) insights.push({ type: "warning", text: `Расходы выше прошлого месяца на ${money(summary.expense - previous.expense)}. Стоит посмотреть категории роста.` });
+      const largestVariance = planFact.categoryVariances.find(item => item.planned > 0 && item.variance > 0);
+      if (largestVariance) insights.push({ type: "danger", text: `Категория «${largestVariance.category}» выше плана на ${money(largestVariance.variance)}.`, category: largestVariance.category });
+      if (smallItems.length >= 8 && smallTotal > 0) insights.push({ type: "warning", text: `${smallItems.length} мелких расходов до ${money(SMALL_EXPENSE_LIMIT)} сложились в ${money(smallTotal)}.`, view: "transactions" });
+      if (forecast.projectedBalance < 0) insights.push({ type: "danger", text: `Прогноз конца месяца показывает возможный минус ${money(Math.abs(forecast.projectedBalance))}.`, view: "budget" });
+      if (!getMonthlyPlan(month)) insights.push({ type: "", text: "План месяца еще не создан. Без него дневной лимит и отклонения менее точны.", view: "budget" });
       if (summary.count > 0 && summary.count < 5) insights.push({ type: "", text: "Операций пока мало, поэтому аналитика может быть неточной." });
       if (!insights.length) insights.push({ type: "good", text: "Месяц выглядит спокойно: явных отклонений и превышений не найдено." });
       return insights.slice(0, 6);
     }
 
     function insightsMarkup(insights) {
-      return `<div class="insight-list">${insights.map(item => `<div class="insight ${item.type || ""}">${icon(item.type === "good" ? "check" : "info")}<span>${escapeHtml(item.text)}</span></div>`).join("")}</div>`;
+      return `<div class="insight-list">${insights.map(item => `<div class="insight ${item.type || ""}">${icon(item.type === "good" ? "check" : "info")}<span>${escapeHtml(item.text)}${item.category ? ` <button class="category-link" data-category-detail="${escapeHtml(item.category)}">Посмотреть категорию</button>` : item.view ? ` <button class="category-link" data-view-jump="${escapeHtml(item.view)}">Открыть</button>` : ""}</span></div>`).join("")}</div>`;
     }
 
     // Операции
@@ -4425,6 +5596,15 @@
       }
       if (existing) await storageService.updateTransaction(transaction);
       else await storageService.addTransaction(transaction);
+      await addAuditEntry({
+        entityType: "transaction",
+        entityId: transaction.id,
+        action: existing ? "update" : "create",
+        title: existing ? "Операция изменена" : "Добавлена операция",
+        description: `${type === "income" ? "Доход" : "Расход"} ${money(transaction.amount)} · ${transaction.category}.`,
+        before: existing,
+        after: transaction
+      });
       state.selectedMonth = date.slice(0, 7);
       closeModal("operationModal");
       renderAll();
@@ -4444,6 +5624,7 @@
       const confirmed = await confirmAction("Удалить операцию?", `<strong>${escapeHtml(item.category)} · ${money(item.amount)}</strong><br>Операция от ${formatDate(item.date)} будет удалена без возможности восстановления.`, "Удалить");
       if (!confirmed) return;
       await storageService.deleteTransaction(id);
+      await addAuditEntry({ entityType: "transaction", entityId: id, action: "delete", title: "Операция удалена", description: `${item.category} · ${money(item.amount)} · ${formatDate(item.date)}.`, before: item });
       renderAll();
       if ($("#categoryModal").classList.contains("open")) renderCategoryDetail();
       if ($("#beneficiaryModal").classList.contains("open")) renderBeneficiaryDetail();
@@ -5170,19 +6351,23 @@
     }
 
     async function saveLimits() {
+      const before = { ...state.categoryLimits };
       $$("[data-limit-category]").forEach(input => {
         const value = Math.max(0, safeNumber(input.value));
         if (value > 0) state.categoryLimits[input.dataset.limitCategory] = value;
         else delete state.categoryLimits[input.dataset.limitCategory];
       });
       await storageService.saveCategoryLimits({ ...state.categoryLimits });
+      await addAuditEntry({ entityType: "limit", action: "update", title: "Лимиты категорий изменены", description: `Настроено категорий: ${Object.keys(state.categoryLimits).length}.`, before, after: state.categoryLimits });
       renderAll();
       toast("Лимиты сохранены.", "success");
     }
 
     async function setLimitPreset(category, value) {
+      const before = state.categoryLimits[category] || 0;
       state.categoryLimits[category] = Math.max(0, safeNumber(value));
       await storageService.saveCategoryLimits({ ...state.categoryLimits });
+      await addAuditEntry({ entityType: "limit", action: before ? "update" : "create", title: before ? "Лимит изменен" : "Лимит создан", description: `${category}: ${money(before)} → ${money(state.categoryLimits[category])}.`, before: { category, amount: before }, after: { category, amount: state.categoryLimits[category] } });
       renderLimits();
       renderDashboard();
       if (state.currentView === "analytics") renderAnalytics();
@@ -5242,6 +6427,7 @@
     async function saveGoal(event) {
       event.preventDefault();
       const id = $("#goalId").value;
+      const existingGoal = state.goals.find(item => item.id === id);
       const goal = normalizeGoal({
         id: id || newEntityId(),
         name: $("#goalName").value.trim(),
@@ -5258,6 +6444,7 @@
       }
       const goals = id ? state.goals.map(item => item.id === id ? goal : item) : [...state.goals, goal];
       await storageService.saveGoals(goals);
+      await addAuditEntry({ entityType: "goal", entityId: goal.id, action: id ? "update" : "create", title: id ? "Цель изменена" : "Создана цель", description: `${goal.name} · ${money(goal.target)}.`, before: existingGoal, after: goal });
       closeModal("goalModal");
       renderGoals();
       toast(id ? "Цель обновлена." : "Цель создана.", "success");
@@ -5285,10 +6472,12 @@
         toast("Укажите сумму больше нуля.", "error");
         return;
       }
+      const before = { ...goal };
       goal.saved = mode === "add" ? goal.saved + amount : Math.max(0, goal.saved - amount);
       goal.updatedAt = new Date().toISOString();
       const reached = goal.saved >= goal.target;
       await storageService.saveGoals([...state.goals]);
+      await addAuditEntry({ entityType: "goal", entityId: goal.id, action: "update", title: "Накопления цели изменены", description: `${goal.name}: ${money(before.saved)} → ${money(goal.saved)}.`, before, after: goal });
       closeModal("goalAdjustModal");
       renderGoals();
       toast(reached ? "Цель достигнута. Отличная работа!" : "Накопления обновлены.", "success");
@@ -5299,6 +6488,7 @@
       if (!goal) return;
       if (!await confirmAction("Удалить цель?", `<strong>${escapeHtml(goal.name)}</strong><br>Прогресс цели будет удален.`, "Удалить")) return;
       await storageService.saveGoals(state.goals.filter(item => item.id !== id));
+      await addAuditEntry({ entityType: "goal", entityId: id, action: "delete", title: "Цель удалена", description: `${goal.name} · ${money(goal.target)}.`, before: goal });
       renderGoals();
       toast("Цель удалена.", "success");
     }
@@ -5657,7 +6847,11 @@
         goals: state.goals,
         settings: state.settings,
         familySettings: state.familySettings,
-        beneficiaries: state.beneficiaries
+        beneficiaries: state.beneficiaries,
+        monthlyPlans: state.monthlyPlans,
+        recurringPayments: state.recurringPayments,
+        auditLog: state.auditLog,
+        receiptSettings: state.receiptSettings
       };
       downloadFile(`finansy-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(backup, null, 2), "application/json");
       toast("Резервная копия создана.", "success");
@@ -5676,6 +6870,10 @@
         state.settings = normalizeSettings(backup.settings);
         state.beneficiaries = normalizeBeneficiaries(backup.beneficiaries || backup.familySettings?.beneficiaries);
         state.familySettings = normalizeFamilySettings(backup.familySettings || { beneficiaries: state.beneficiaries, currency: state.settings.currency });
+        state.monthlyPlans = Array.isArray(backup.monthlyPlans) ? backup.monthlyPlans.map(normalizeMonthlyPlan).filter(Boolean) : [];
+        state.recurringPayments = Array.isArray(backup.recurringPayments) ? backup.recurringPayments.map(normalizeRecurringPayment).filter(Boolean) : [];
+        state.auditLog = Array.isArray(backup.auditLog) ? backup.auditLog.map(normalizeAuditEntry).filter(Boolean).slice(0, 500) : [];
+        state.receiptSettings = backup.receiptSettings && typeof backup.receiptSettings === "object" ? backup.receiptSettings : {};
         persist();
         if (cloudActive()) {
           const actor = currentActor();
@@ -5695,10 +6893,14 @@
             await supabaseAdapter.saveGoals(state.goals);
             await supabaseAdapter.saveCategoryLimits(state.categoryLimits);
             await supabaseAdapter.saveSettings(state.familySettings);
+            await supabaseAdapter.saveMonthlyPlans(state.monthlyPlans);
+            await supabaseAdapter.saveRecurringPayments(state.recurringPayments);
+            await supabaseAdapter.saveAuditEntries(state.auditLog);
           });
           if (synced) state.transactions.forEach(item => { item.syncStatus = "synced"; });
           persist();
         }
+        await addAuditEntry({ entityType: "sync", action: "import", title: "Импортирована резервная копия", description: `Операций: ${state.transactions.length}, планов: ${state.monthlyPlans.length}, регулярных платежей: ${state.recurringPayments.length}.` });
         renderAll();
         toast("Резервная копия восстановлена.", "success");
       } catch (error) {
@@ -5880,13 +7082,16 @@
     }
 
     async function clearAllData() {
-      const confirmed = await confirmAction("Очистить все данные?", "Будут удалены все операции, лимиты и цели. Перед очисткой рекомендуется создать резервную копию.", "Очистить все", "УДАЛИТЬ");
+      const confirmed = await confirmAction("Очистить все данные?", "Будут удалены все операции, лимиты, цели, планы, регулярные платежи и журнал. Перед очисткой рекомендуется создать резервную копию.", "Очистить все", "УДАЛИТЬ");
       if (!confirmed) return;
       const deletedIds = state.transactions.map(item => item.id);
       state.transactions = [];
       state.categoryLimits = {};
       state.beneficiaryLimits = {};
       state.goals = [];
+      state.monthlyPlans = [];
+      state.recurringPayments = [];
+      state.auditLog = [];
       if (cloudActive()) state.pendingDeletes = [...new Set([...state.pendingDeletes, ...deletedIds])];
       state.selectedTransactionIds.clear();
       persist();
@@ -5896,6 +7101,8 @@
         if (error) throw error;
         await supabaseAdapter.saveGoals([]);
         await supabaseAdapter.saveCategoryLimits({});
+        await supabaseAdapter.saveMonthlyPlans([]);
+        await supabaseAdapter.saveRecurringPayments([]);
         });
         if (synced) {
           state.pendingDeletes = [];
@@ -5975,6 +7182,18 @@
 
       const jump = event.target.closest("[data-view-jump]");
       if (jump) setView(jump.dataset.viewJump);
+
+      const budgetTab = event.target.closest("[data-budget-tab]");
+      if (budgetTab) {
+        state.budgetTab = budgetTab.dataset.budgetTab;
+        renderBudget();
+      }
+
+      const budgetOpen = event.target.closest("[data-budget-open]");
+      if (budgetOpen) {
+        state.budgetTab = budgetOpen.dataset.budgetOpen;
+        setView("budget");
+      }
 
       const action = event.target.closest("[data-action]");
       if (action?.dataset.action === "add-income") openOperationModal("income");
@@ -6091,6 +7310,23 @@
 
       const deleteBeneficiaryButton = event.target.closest("[data-delete-beneficiary]");
       if (deleteBeneficiaryButton) deleteBeneficiary(deleteBeneficiaryButton.dataset.deleteBeneficiary);
+
+      const removePlanRow = event.target.closest("[data-remove-plan-row]");
+      if (removePlanRow) removePlanRow.closest(".plan-row")?.remove();
+
+      const editRecurring = event.target.closest("[data-edit-recurring]");
+      if (editRecurring) openRecurringModal(editRecurring.dataset.editRecurring);
+
+      const deleteRecurring = event.target.closest("[data-delete-recurring]");
+      if (deleteRecurring) deleteRecurringPayment(deleteRecurring.dataset.deleteRecurring);
+
+      const createRecurring = event.target.closest("[data-create-recurring]");
+      if (createRecurring) createTransactionFromRecurring(createRecurring.dataset.createRecurring).then(created => {
+        if (created) {
+          renderAll();
+          toast("Операция из регулярного платежа создана.");
+        } else toast("Такая операция за эту дату уже существует.", "error");
+      });
     });
 
     document.addEventListener("change", event => {
@@ -6104,6 +7340,12 @@
         storageService.saveCategoryLimits({ ...state.categoryLimits });
         renderLimits();
         renderDashboard();
+      }
+      if (event.target.matches("[data-split-category]")) {
+        readReceiptSplitItems();
+        const item = state.receiptScan.splitItems.find(value => value.id === event.target.closest("[data-receipt-split-row]")?.dataset.receiptSplitRow);
+        if (item) item.subcategory = EXPENSE_SUBCATEGORIES[item.category]?.[0] || "Другое";
+        renderReceiptSplitItems();
       }
     });
 
@@ -6156,6 +7398,8 @@
     });
     $("#receiptEditManualBtn").addEventListener("click", editReceiptManually);
     $("#receiptCreateExpenseBtn").addEventListener("click", createExpenseFromReceipt);
+    $("#receiptSplitToggle").addEventListener("click", toggleReceiptSplit);
+    $("#receiptCreateSplitBtn").addEventListener("click", createSplitExpensesFromReceipt);
     $("#receiptFileInput").addEventListener("change", event => {
       if (event.target.files[0]) handleReceiptFile(event.target.files[0]);
       event.target.value = "";
@@ -6183,6 +7427,17 @@
     $("#familyForm").addEventListener("submit", submitFamily);
     $("#goalForm").addEventListener("submit", saveGoal);
     $("#goalAdjustForm").addEventListener("submit", adjustGoal);
+    $("#recurringForm").addEventListener("submit", saveRecurringPayment);
+    $("#recurringType").addEventListener("change", () => renderRecurringFormOptions());
+    $("#recurringCategory").addEventListener("change", () => renderRecurringFormOptions($("#recurringCategory").value));
+    $("#addRecurringBtn").addEventListener("click", () => openRecurringModal());
+    $("#addPlanIncomeBtn").addEventListener("click", () => $("#planIncomeRows").insertAdjacentHTML("beforeend", planIncomeRow()));
+    $("#addPlanExpenseBtn").addEventListener("click", () => $("#planExpenseRows").insertAdjacentHTML("beforeend", planExpenseRow()));
+    $("#savePlanBtn").addEventListener("click", saveMonthlyPlanFromUi);
+    $("#copyPlanBtn").addEventListener("click", copyPreviousPlan);
+    $("#clearPlanBtn").addEventListener("click", clearMonthlyPlan);
+    ["auditPeriod", "auditUser", "auditAction"].forEach(id => $(`#${id}`).addEventListener("change", renderAuditLog));
+    $("#auditSearch").addEventListener("input", renderAuditLog);
     $("#addGoalBtn").addEventListener("click", () => openGoalModal());
     $("#saveLimitsBtn").addEventListener("click", saveLimits);
     $("#limitFilter").addEventListener("change", event => { state.limitFilter = event.target.value; renderLimits(); });
@@ -6299,7 +7554,7 @@
     applyTheme();
     renderAll();
     if (state.storageWarning) setTimeout(() => toast(state.storageWarning, "error"), 0);
-    storageService.init();
+    storageService.init().then(() => processRecurringPayments()).catch(() => {});
   </script>
 </body>
 </html>
