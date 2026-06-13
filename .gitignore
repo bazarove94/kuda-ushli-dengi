@@ -1,0 +1,7 @@
+.env
+.env.local
+.env.production
+secrets.json
+config.local.js
+*.key
+*.pem
