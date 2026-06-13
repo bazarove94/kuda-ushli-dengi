@@ -682,6 +682,15 @@
     .receipt-warning-list { display: grid; gap: 6px; margin-bottom: 14px; }
     .receipt-warning { display: flex; gap: 7px; padding: 9px 10px; border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--border)); border-radius: 6px; color: var(--muted); background: color-mix(in srgb, var(--warning) 7%, var(--surface-2)); font-size: 10px; line-height: 1.45; }
     .receipt-warning .icon { width: 15px; height: 15px; flex: 0 0 auto; color: var(--warning); }
+    .receipt-qr-panel { margin-bottom: 14px; padding: 12px; border: 1px solid color-mix(in srgb, var(--accent-2) 32%, var(--border)); border-radius: 7px; background: color-mix(in srgb, var(--accent-2) 6%, var(--surface-2)); }
+    .receipt-qr-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .receipt-qr-head strong { font-size: 12px; }
+    .receipt-qr-status { color: var(--accent-2); font-size: 10px; font-weight: 700; }
+    .receipt-qr-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
+    .receipt-qr-field { min-width: 0; padding: 8px; border: 1px solid var(--border-soft); border-radius: 6px; background: color-mix(in srgb, var(--bg) 50%, transparent); }
+    .receipt-qr-field span { display: block; color: var(--muted); font-size: 9px; }
+    .receipt-qr-field strong { display: block; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; }
+    .receipt-qr-note { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
     .receipt-items { display: grid; gap: 6px; }
     .receipt-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-soft); }
     .receipt-item:last-child { border-bottom: 0; }
@@ -921,6 +930,7 @@
       .receipt-preview { grid-template-columns: 1fr; }
       .receipt-preview-meta { grid-template-columns: 1fr 1fr; }
       .receipt-review-summary { grid-template-columns: 1fr 1fr; }
+      .receipt-qr-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 480px) {
       .topbar { gap: 8px; }
@@ -1378,7 +1388,7 @@
                   <div class="setting-row"><div class="setting-copy"><strong>Очистить все данные</strong><span>Удалит операции, лимиты и цели из браузера</span></div><button class="btn btn-sm btn-danger" id="clearDataBtn"><svg class="icon icon-sm"><use href="#i-trash"></use></svg>Очистить</button></div>
                 </div>
               </div>
-              <div class="app-version">Версия 3.1 receipts · схема данных <span id="schemaVersionLabel"></span></div>
+              <div class="app-version">Версия 3.2 fiscal QR · схема данных <span id="schemaVersionLabel"></span></div>
             </div>
           </div>
         </section>
@@ -1492,7 +1502,7 @@
             <textarea id="electronicReceiptText" rows="14" placeholder="Вставьте сюда текст из письма, SMS, PDF или приложения банка"></textarea>
           </label>
         </div>
-        <p class="receipt-privacy">Распознавание выполняется в браузере. Само изображение чека не попадает в localStorage и не отправляется в базу приложения.</p>
+        <p class="receipt-privacy">Распознавание выполняется в браузере. Само изображение чека не сохраняется. QR-код используется только для извлечения суммы, даты и фискальных параметров. Данные никуда не отправляются без вашего подтверждения.</p>
       </div>
       <div class="modal-foot">
         <button class="btn" id="receiptClearBtn" type="button">Очистить</button>
@@ -1511,6 +1521,7 @@
       <div class="modal-body">
         <div class="receipt-review-summary" id="receiptReviewSummary"></div>
         <div class="receipt-warning-list" id="receiptWarnings"></div>
+        <div id="receiptQrReview"></div>
         <div class="form-grid">
           <label class="field field-wide">Магазин или продавец<input id="receiptMerchant" maxlength="160" placeholder="Название магазина"></label>
           <label class="field">Сумма<input id="receiptAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></label>
@@ -1618,8 +1629,10 @@
           <div class="form-grid">
             <label class="field field-wide hidden" id="authNameField">Имя<input id="authDisplayName" maxlength="60" autocomplete="name" placeholder="Например, Женя"></label>
             <label class="field field-wide">Email<input id="authEmail" type="email" autocomplete="email" required placeholder="name@example.com"></label>
-            <label class="field field-wide">Пароль<input id="authPassword" type="password" minlength="6" autocomplete="current-password" required></label>
+            <label class="field field-wide">Пароль<input id="authPassword" type="password" minlength="8" autocomplete="current-password" required></label>
+            <label class="field field-wide hidden" id="authPasswordConfirmField">Повторите пароль<input id="authPasswordConfirm" type="password" minlength="8" autocomplete="new-password"></label>
           </div>
+          <p class="receipt-privacy hidden" id="authPasswordHint">Минимум 8 символов. Используйте отдельный пароль с буквами, цифрами и символами и храните его в менеджере паролей. Не используйте пароль от банка или почты.</p>
         </div>
         <div class="modal-foot"><button class="btn" type="button" data-close-modal="authModal">Отмена</button><button class="btn btn-primary" id="authSubmit" type="submit">Войти</button></div>
       </form>
@@ -1704,8 +1717,8 @@
     };
     const SUPABASE_URL = "https://joujmvjsvuaaqgbezson.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_06TyU60nTxr4VZOOyFN0QQ_vnpH4tnT";
-    const APP_VERSION = "3.1 receipts";
-    const SCHEMA_VERSION = 4;
+    const APP_VERSION = "3.2 fiscal QR";
+    const SCHEMA_VERSION = 5;
     const SMALL_EXPENSE_LIMIT = 500;
     const LARGE_EXPENSE_LIMIT = 5000;
     const ACCOUNTS = ["Основная карта", "Наличные", "Накопления"];
@@ -1737,10 +1750,25 @@
       cacheKey(familyId) {
         return `${STORAGE_KEYS.cloudCachePrefix}${familyId}`;
       },
+      clearCloudCaches() {
+        const keys = [];
+        for (let index = 0; index < localStorage.length; index++) {
+          const key = localStorage.key(index);
+          if (key?.startsWith(STORAGE_KEYS.cloudCachePrefix)) keys.push(key);
+        }
+        keys.forEach(key => localStorage.removeItem(key));
+      },
       getSnapshot(familyId = "") {
         if (familyId) {
-          const cached = this.read(this.cacheKey(familyId), null);
-          if (cached) return cached;
+          return {
+            transactions: [],
+            categoryLimits: {},
+            beneficiaryLimits: {},
+            goals: [],
+            settings: this.read(STORAGE_KEYS.settings, { currency: "RUB", theme: "graphite" }),
+            beneficiaries: DEFAULT_BENEFICIARIES,
+            familySettings: {}
+          };
         }
         return {
           transactions: this.read(STORAGE_KEYS.transactions, []),
@@ -1754,7 +1782,6 @@
       },
       saveSnapshot(snapshot, familyId = "") {
         if (familyId) {
-          this.write(this.cacheKey(familyId), snapshot);
           this.write(STORAGE_KEYS.settings, snapshot.settings);
           return;
         }
@@ -2017,7 +2044,7 @@
           return true;
         } catch (error) {
           setSyncStatus(navigator.onLine ? "error" : "offline", navigator.onLine ? "Ошибка синхронизации" : "Нет подключения");
-          state.cloud.lastError = error.message;
+          state.cloud.lastError = friendlyCloudError(error);
           renderSettings();
           return false;
         }
@@ -2063,7 +2090,7 @@
         worker: null,
         recognition: null,
         parsed: null,
-        qrData: { found: false, raw: "", parsed: null },
+        qrData: emptyReceiptQrData(),
         running: false,
         cancelled: false
       },
@@ -2106,6 +2133,42 @@
       }
     }
 
+    function emptyReceiptQrData() {
+      return {
+        found: false,
+        raw: "",
+        parsed: null,
+        usedForAmount: false,
+        usedForDate: false,
+        warnings: []
+      };
+    }
+
+    function normalizeReceiptQrData(raw) {
+      if (!raw || typeof raw !== "object") return emptyReceiptQrData();
+      const source = raw.parsed && typeof raw.parsed === "object" ? raw.parsed : {};
+      const amountValue = source.amount === null || source.amount === undefined || source.amount === ""
+        ? null
+        : Number(source.amount);
+      const parsed = raw.found ? {
+        date: isIsoDate(source.date) ? source.date : null,
+        time: /^\d{2}:\d{2}$/.test(String(source.time || "")) ? String(source.time) : null,
+        amount: Number.isFinite(amountValue) && amountValue > 0 ? amountValue : null,
+        fn: source.fn ? String(source.fn).slice(0, 80) : null,
+        fiscalDocumentNumber: source.fiscalDocumentNumber || source.i ? String(source.fiscalDocumentNumber || source.i).slice(0, 80) : null,
+        fiscalSign: source.fiscalSign || source.fp ? String(source.fiscalSign || source.fp).slice(0, 80) : null,
+        operationType: source.operationType || source.n ? String(source.operationType || source.n).slice(0, 20) : null
+      } : null;
+      return {
+        found: Boolean(raw.found),
+        raw: String(raw.raw || "").slice(0, 4000),
+        parsed,
+        usedForAmount: Boolean(raw.usedForAmount),
+        usedForDate: Boolean(raw.usedForDate),
+        warnings: Array.isArray(raw.warnings) ? raw.warnings.map(item => String(item || "").trim()).filter(Boolean).slice(0, 20) : []
+      };
+    }
+
     function normalizeReceipt(raw) {
       if (!raw || typeof raw !== "object") return null;
       const time = /^\d{2}:\d{2}(?::\d{2})?$/.test(String(raw.time || "")) ? String(raw.time).slice(0, 5) : "";
@@ -2116,7 +2179,6 @@
         price: item?.price === null || item?.price === undefined || item?.price === "" ? null : Math.max(0, safeNumber(item.price)),
         total: item?.total === null || item?.total === undefined || item?.total === "" ? null : Math.max(0, safeNumber(item.total))
       })).filter(item => item.name) : [];
-      const qrRaw = raw.qrData && typeof raw.qrData === "object" ? raw.qrData : {};
       return {
         merchant: String(raw.merchant || "").trim().slice(0, 160),
         time,
@@ -2126,11 +2188,7 @@
         recognizedAt: isIsoDateTime(raw.recognizedAt) ? String(raw.recognizedAt) : new Date().toISOString(),
         confidence: confidenceValue,
         warnings: Array.isArray(raw.warnings) ? raw.warnings.map(item => String(item || "").trim()).filter(Boolean).slice(0, 20) : [],
-        qrData: {
-          found: Boolean(qrRaw.found),
-          raw: String(qrRaw.raw || "").slice(0, 4000),
-          parsed: qrRaw.parsed && typeof qrRaw.parsed === "object" ? qrRaw.parsed : null
-        }
+        qrData: normalizeReceiptQrData(raw.qrData)
       };
     }
 
@@ -2294,7 +2352,7 @@
       state.receiptScan.objectUrl = "";
       state.receiptScan.recognition = null;
       state.receiptScan.parsed = null;
-      state.receiptScan.qrData = { found: false, raw: "", parsed: null };
+      state.receiptScan.qrData = emptyReceiptQrData();
       state.receiptScan.running = false;
       $("#receiptPreview").classList.remove("visible");
       $("#receiptPreviewImage").removeAttribute("src");
@@ -2333,7 +2391,7 @@
       if (state.receiptScan.objectUrl) URL.revokeObjectURL(state.receiptScan.objectUrl);
       state.receiptScan.file = file;
       state.receiptScan.objectUrl = URL.createObjectURL(file);
-      state.receiptScan.qrData = { found: false, raw: "", parsed: null };
+      state.receiptScan.qrData = emptyReceiptQrData();
       $("#receiptPreviewImage").src = state.receiptScan.objectUrl;
       $("#receiptFileName").textContent = file.name || "Фото с камеры";
       $("#receiptFileSize").textContent = formatFileSize(file.size);
@@ -2342,7 +2400,9 @@
       setReceiptProgress(0, "Изображение загружено");
       try {
         state.receiptScan.qrData = await recognizeReceiptQr(file);
-        $("#receiptQrStatus").textContent = state.receiptScan.qrData.found ? "QR найден" : "QR не найден";
+        $("#receiptQrStatus").textContent = state.receiptScan.qrData.found
+          ? (state.receiptScan.qrData.parsed?.date || state.receiptScan.qrData.parsed?.amount) ? "QR чека найден" : "QR найден, формат неизвестен"
+          : state.receiptScan.qrData.warnings.length ? "QR не прочитан, будет OCR" : "QR не найден";
       } catch (error) {
         $("#receiptQrStatus").textContent = "QR не прочитан";
       }
@@ -2362,30 +2422,90 @@
       return { canvas, imageData: context.getImageData(0, 0, width, height) };
     }
 
-    function parseReceiptQr(raw) {
-      if (!raw) return null;
+    function parseReceiptQrData(qrRaw) {
+      const raw = String(qrRaw || "").trim();
+      if (!raw) return emptyReceiptQrData();
       const query = raw.includes("?") ? raw.slice(raw.indexOf("?") + 1) : raw;
       const params = new URLSearchParams(query);
-      if (![...params.keys()].length) return { raw };
-      const result = {};
-      params.forEach((value, key) => { result[key] = value; });
-      if (params.get("s")) result.amount = parseMoneyToken(params.get("s"));
-      const dateToken = params.get("t") || "";
-      const dateMatch = dateToken.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/);
-      if (dateMatch) {
-        result.date = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
-        if (dateMatch[4]) result.time = `${dateMatch[4]}:${dateMatch[5]}`;
+      const warnings = [];
+      const fiscalKeys = ["t", "s", "fn", "i", "fp", "n"];
+      const looksFiscal = fiscalKeys.some(key => params.has(key));
+      const parsed = {
+        date: null,
+        time: null,
+        amount: null,
+        fn: params.get("fn") || null,
+        fiscalDocumentNumber: params.get("i") || null,
+        fiscalSign: params.get("fp") || null,
+        operationType: params.get("n") || null
+      };
+
+      const amountToken = params.get("s");
+      if (amountToken !== null) {
+        const normalizedAmount = Number(String(amountToken).trim().replace(",", "."));
+        if (Number.isFinite(normalizedAmount) && normalizedAmount > 0) parsed.amount = normalizedAmount;
+        else warnings.push("Сумма в QR-коде имеет неизвестный формат.");
+      } else if (looksFiscal) {
+        warnings.push("В QR-коде не найдена сумма.");
       }
-      return result;
+
+      const dateToken = String(params.get("t") || "").trim();
+      const compactDate = dateToken.match(/^(\d{4})(\d{2})(\d{2})T?(\d{2})(\d{2})(?:\d{2})?$/);
+      const isoDate = dateToken.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::\d{2})?/);
+      const dateMatch = compactDate || isoDate;
+      if (dateMatch) {
+        const candidate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+        if (isIsoDate(candidate)) {
+          parsed.date = candidate;
+          parsed.time = `${dateMatch[4]}:${dateMatch[5]}`;
+        } else {
+          warnings.push("Дата в QR-коде некорректна.");
+        }
+      } else if (dateToken) {
+        warnings.push("Дата в QR-коде имеет неизвестный формат.");
+      } else if (looksFiscal) {
+        warnings.push("В QR-коде не найдена дата.");
+      }
+
+      if (!looksFiscal) warnings.unshift("QR найден, но формат не похож на кассовый чек.");
+      return normalizeReceiptQrData({
+        found: true,
+        raw,
+        parsed,
+        usedForAmount: false,
+        usedForDate: false,
+        warnings
+      });
+    }
+
+    async function detectReceiptQrCode(imageFile) {
+      if (typeof window.jsQR !== "function") {
+        const error = new Error("QR-код не удалось обработать, используется OCR.");
+        error.code = "QR_LIBRARY_UNAVAILABLE";
+        throw error;
+      }
+      const { imageData } = await imageDataFromFile(imageFile, 2200);
+      const result = window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "attemptBoth" });
+      return String(result?.data || "").trim() || null;
     }
 
     async function recognizeReceiptQr(file) {
-      if (typeof window.jsQR !== "function") return { found: false, raw: "", parsed: null };
-      const { imageData } = await imageDataFromFile(file, 1600);
-      const result = window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "attemptBoth" });
-      return result?.data
-        ? { found: true, raw: result.data, parsed: parseReceiptQr(result.data) }
-        : { found: false, raw: "", parsed: null };
+      try {
+        const raw = await detectReceiptQrCode(file);
+        return raw ? parseReceiptQrData(raw) : emptyReceiptQrData();
+      } catch (error) {
+        return {
+          ...emptyReceiptQrData(),
+          warnings: [error?.code === "QR_LIBRARY_UNAVAILABLE"
+            ? "QR-код не удалось обработать, используется OCR."
+            : "QR-код не удалось прочитать. Возможно, фото темное или QR смазан. Используется OCR."]
+        };
+      }
+    }
+
+    // Будущая интеграция с API проверки чеков. Сейчас не используется.
+    async function fetchReceiptFromFiscalApi(qrData) {
+      return null;
     }
 
     async function recognizeReceiptImage(file) {
@@ -2544,21 +2664,56 @@
       return { category: "Прочее", subcategory: "Другое", beneficiary: "Общее", confidence: .3, reason: "Подходящее правило не найдено" };
     }
 
-    function mergeReceiptQr(parsed, qrData) {
-      if (!qrData?.found || !qrData.parsed) return parsed;
+    function mergeReceiptQr(parsed, rawQrData) {
+      const qrData = normalizeReceiptQrData(rawQrData);
+      const result = { ...parsed, warnings: [...parsed.warnings, ...qrData.warnings] };
+      if (!qrData.found || !qrData.parsed) return { parsed: result, qrData };
       const qr = qrData.parsed;
-      const result = { ...parsed, warnings: [...parsed.warnings] };
-      if (qr.amount > 0) {
-        if (result.amount > 0 && Math.abs(result.amount - qr.amount) > .01) result.warnings.push("Сумма OCR отличается от суммы в QR-коде. Использована сумма из QR.");
+      if (qr.amount !== null) {
+        if (result.amount > 0 && result.amountConfidence >= .4 && Math.abs(result.amount - qr.amount) > .01) {
+          result.warnings.push("Сумма из QR отличается от суммы, найденной OCR. Проверьте чек.");
+          qrData.warnings.push("Сумма QR и OCR различается.");
+        }
         result.amount = qr.amount;
-        result.amountConfidence = .98;
+        result.amountConfidence = .99;
+        qrData.usedForAmount = true;
       }
-      if (isIsoDate(qr.date)) {
+      if (qr.date) {
+        if (result.date && result.dateConfidence >= .8 && result.date !== qr.date) {
+          result.warnings.push("Дата из QR отличается от даты, найденной OCR. Проверьте чек.");
+          qrData.warnings.push("Дата QR и OCR различается.");
+        }
         result.date = qr.date;
-        result.dateConfidence = .98;
+        result.dateConfidence = .99;
+        qrData.usedForDate = true;
       }
       if (qr.time) result.time = qr.time;
-      return result;
+      return { parsed: result, qrData };
+    }
+
+    function receiptQrReviewMarkup(qrData) {
+      const qr = normalizeReceiptQrData(qrData);
+      if (!qr.found) {
+        return `<div class="receipt-qr-panel"><div class="receipt-qr-head"><strong>QR-код</strong><span class="receipt-qr-status">Не найден</span></div><p class="receipt-qr-note">${escapeHtml(qr.warnings[0] || "QR-код не найден. Данные получены через OCR.")}</p></div>`;
+      }
+      const parsed = qr.parsed;
+      const hasFiscalData = parsed && [parsed.date, parsed.time, parsed.amount, parsed.fn, parsed.fiscalDocumentNumber, parsed.fiscalSign].some(Boolean);
+      if (!hasFiscalData) {
+        return `<div class="receipt-qr-panel"><div class="receipt-qr-head"><strong>QR-код</strong><span class="receipt-qr-status">Формат не распознан</span></div><p class="receipt-qr-note">QR-код найден, но его не удалось разобрать. Используется OCR.</p></div>`;
+      }
+      const status = qr.usedForAmount || qr.usedForDate
+        ? `Используется${qr.usedForAmount && qr.usedForDate ? " для суммы и даты" : qr.usedForAmount ? " для суммы" : " для даты"}`
+        : "Дополнительные данные";
+      const fields = [
+        ["Сумма из QR", parsed.amount !== null ? money(parsed.amount) : "—"],
+        ["Дата из QR", parsed.date ? formatDate(parsed.date) : "—"],
+        ["Время из QR", parsed.time || "—"],
+        ["ФН", parsed.fn || "—"],
+        ["ФД", parsed.fiscalDocumentNumber || "—"],
+        ["ФП", parsed.fiscalSign || "—"],
+        ["Тип операции", parsed.operationType || "—"]
+      ];
+      return `<div class="receipt-qr-panel"><div class="receipt-qr-head"><strong>QR-код найден</strong><span class="receipt-qr-status">${escapeHtml(status)}</span></div><div class="receipt-qr-grid">${fields.map(([label, value]) => `<div class="receipt-qr-field"><span>${escapeHtml(label)}</span><strong title="${escapeHtml(value)}">${escapeHtml(value)}</strong></div>`).join("")}</div></div>`;
     }
 
     function reviewSubcategoryOptions(category, selected = "") {
@@ -2568,7 +2723,9 @@
     }
 
     function renderReceiptReview(recognition, qrData) {
-      const parsed = mergeReceiptQr(parseReceiptText(recognition.rawText), qrData);
+      const merged = mergeReceiptQr(parseReceiptText(recognition.rawText), qrData);
+      const parsed = merged.parsed;
+      state.receiptScan.qrData = merged.qrData;
       const guess = guessCategoryFromReceipt(parsed);
       parsed.warnings.push(`Категория определена автоматически: ${guess.category} · ${guess.subcategory}.`);
       state.receiptScan.recognition = recognition;
@@ -2592,6 +2749,7 @@
         ["Уверенность OCR", confidence]
       ].map(([label, value]) => `<div class="receipt-review-stat"><span>${escapeHtml(label)}</span><strong title="${escapeHtml(value)}">${escapeHtml(value)}</strong></div>`).join("");
       $("#receiptWarnings").innerHTML = parsed.warnings.map(message => `<div class="receipt-warning">${icon("info")}<span>${escapeHtml(message)}</span></div>`).join("");
+      $("#receiptQrReview").innerHTML = receiptQrReviewMarkup(state.receiptScan.qrData);
       $("#receiptItems").innerHTML = parsed.items.length
         ? parsed.items.map(item => `<div class="receipt-item"><div class="receipt-item-main"><strong>${escapeHtml(item.name)}</strong><span>${item.qty ? `Количество: ${escapeHtml(item.qty)}` : "Количество не определено"}${item.price !== null ? ` · цена ${money(item.price)}` : ""}</span></div><strong>${item.total !== null ? money(item.total) : "—"}</strong></div>`).join("")
         : emptyState("Товары не распознаны", "Расход можно сохранить без списка товаров.", "receipt", true);
@@ -2615,7 +2773,7 @@
           const rawText = $("#electronicReceiptText").value.trim();
           if (!rawText) throw new Error("Вставьте текст электронного чека");
           setReceiptProgress(100, "Текст готов");
-          renderReceiptReview({ rawText, lines: rawText.split(/\r?\n/).filter(Boolean), confidence: null, sourceType: "electronic" }, { found: false, raw: "", parsed: null });
+          renderReceiptReview({ rawText, lines: rawText.split(/\r?\n/).filter(Boolean), confidence: null, sourceType: "electronic" }, emptyReceiptQrData());
           return;
         }
         if (!state.receiptScan.file) throw new Error("Сначала выберите или сфотографируйте чек");
@@ -2734,6 +2892,24 @@
         : emptyState("Товаров нет", "В этом чеке список товаров не распознан.", "receipt", true);
     }
 
+    function receiptQrDetailsMarkup(qrData) {
+      const qr = normalizeReceiptQrData(qrData);
+      if (!qr.found) return "";
+      const parsed = qr.parsed || {};
+      const rows = [
+        ["Дата", parsed.date ? formatDate(parsed.date) : "—"],
+        ["Время", parsed.time || "—"],
+        ["Сумма", parsed.amount !== null && parsed.amount !== undefined ? money(parsed.amount) : "—"],
+        ["ФН", parsed.fn || "—"],
+        ["ФД", parsed.fiscalDocumentNumber || "—"],
+        ["ФП", parsed.fiscalSign || "—"],
+        ["Тип операции", parsed.operationType || "—"],
+        ["QR использован для суммы", qr.usedForAmount ? "Да" : "Нет"],
+        ["QR использован для даты", qr.usedForDate ? "Да" : "Нет"]
+      ];
+      return `<details class="receipt-raw"><summary>QR-данные</summary><div style="padding:0 12px 12px"><div class="receipt-qr-grid">${rows.map(([label, value]) => `<div class="receipt-qr-field"><span>${escapeHtml(label)}</span><strong title="${escapeHtml(value)}">${escapeHtml(value)}</strong></div>`).join("")}</div><div class="panel-subtitle" style="margin-top:10px">Исходная строка QR</div><pre>${escapeHtml(qr.raw || "—")}</pre></div></details>`;
+    }
+
     function openReceiptDetail(id) {
       const transaction = state.transactions.find(item => item.id === id);
       if (!transaction?.receipt) return;
@@ -2749,7 +2925,7 @@
         </div>
         ${receipt.warnings?.length ? `<div class="receipt-warning-list">${receipt.warnings.map(message => `<div class="receipt-warning">${icon("info")}<span>${escapeHtml(message)}</span></div>`).join("")}</div>` : ""}
         <div class="panel-subtitle">Товары</div>${receiptItemsMarkup(receipt)}
-        ${receipt.qrData?.found ? `<div class="detail-conclusion">QR-код найден и использован как дополнительный источник данных.</div>` : ""}
+        ${receiptQrDetailsMarkup(receipt.qrData)}
         <details class="receipt-raw"><summary>Распознанный текст</summary><pre>${escapeHtml(receipt.rawText || "Текст не сохранен")}</pre></details>`;
       openModal("receiptDetailModal");
     }
@@ -2921,6 +3097,15 @@
       if (typeof renderCloudStatus === "function" && document.body) renderCloudStatus();
     }
 
+    function friendlyCloudError(error, fallback = "Не удалось синхронизировать данные. Повторите попытку.") {
+      const message = String(error?.message || "").toLocaleLowerCase("ru");
+      if (!navigator.onLine || /fetch|network|connection/.test(message)) return "Нет подключения к интернету.";
+      if (/код приглашения не найден/.test(message)) return "Код приглашения неверный или больше не действует.";
+      if (/уже состоит в семейной группе/.test(message)) return "Этот пользователь уже подключён к семейной группе.";
+      if (/row-level security|permission denied|not authorized|jwt/.test(message)) return "Доступ запрещён. Войдите снова и проверьте семейную группу.";
+      return fallback;
+    }
+
     async function runCloudMutation(action) {
       if (!cloudActive()) return true;
       setSyncStatus("syncing", "Синхронизация");
@@ -2929,9 +3114,9 @@
         setSyncStatus("synced", "Синхронизировано");
         return true;
       } catch (error) {
-        state.cloud.lastError = error.message;
+        state.cloud.lastError = friendlyCloudError(error);
         setSyncStatus(navigator.onLine ? "error" : "offline", navigator.onLine ? "Ошибка синхронизации" : "Нет подключения");
-        toast("Изменение сохранено локально, но облачная синхронизация не выполнена.", "error");
+        toast("Облачная синхронизация не выполнена. Не закрывайте страницу и повторите после восстановления связи.", "error");
         return false;
       }
     }
@@ -2986,6 +3171,7 @@
     }
 
     async function initSupabase() {
+      localStorageAdapter.clearCloudCaches();
       if (!state.cloud.configured) {
         setSyncStatus("local", "Локальный режим");
         renderSettings();
@@ -3014,7 +3200,7 @@
           }, 0);
         });
       } catch (error) {
-        state.cloud.lastError = error.message;
+        state.cloud.lastError = friendlyCloudError(error, "Не удалось подключиться к семейному облаку.");
         setSyncStatus("error", "Ошибка подключения");
       }
       renderAll();
@@ -3043,8 +3229,17 @@
         }
         const familyData = Array.isArray(membership.families) ? membership.families[0] : membership.families;
         state.cloud.family = { ...familyData, id: membership.family_id, role: membership.role };
-        const cached = localStorageAdapter.getSnapshot(state.cloud.family.id);
-        if (cached?.transactions?.length) applySnapshot(cached);
+        applySnapshot({
+          transactions: [],
+          goals: [],
+          categoryLimits: {},
+          beneficiaryLimits: {},
+          beneficiaries: DEFAULT_BENEFICIARIES,
+          familySettings: {},
+          pendingDeletes: [],
+          pendingCloud: { goals: false, limits: false, settings: false },
+          settings: state.settings
+        });
         const { data: members, error: membersError } = await state.cloud.client.from("family_members").select("user_id,role,display_name,created_at").eq("family_id", state.cloud.family.id).order("created_at");
         if (membersError) throw membersError;
         state.cloud.members = members || [];
@@ -3052,7 +3247,7 @@
         subscribeFamilyRealtime();
         await storageService.syncData();
       } catch (error) {
-        state.cloud.lastError = error.message;
+        state.cloud.lastError = friendlyCloudError(error, "Не удалось загрузить семейные данные.");
         setSyncStatus(navigator.onLine ? "error" : "offline", navigator.onLine ? "Ошибка семьи" : "Нет подключения");
         renderAll();
       }
@@ -3065,6 +3260,8 @@
       state.cloud.profile = null;
       state.cloud.family = null;
       state.cloud.members = [];
+      state.cloud.receiptColumnAvailable = null;
+      localStorageAdapter.clearCloudCaches();
       applySnapshot(localStorageAdapter.getSnapshot());
       setSyncStatus("local", "Локальный режим");
       renderAll();
@@ -3091,11 +3288,25 @@
       $("#authModalTitle").textContent = mode === "register" ? "Регистрация" : "Вход в семейный режим";
       $("#authModalSubtitle").textContent = mode === "register" ? "Создайте аккаунт для общей семейной базы" : "Введите email и пароль";
       $("#authNameField").classList.toggle("hidden", mode !== "register");
+      $("#authPasswordConfirmField").classList.toggle("hidden", mode !== "register");
+      $("#authPasswordHint").classList.toggle("hidden", mode !== "register");
       $("#authDisplayName").required = mode === "register";
+      $("#authPasswordConfirm").required = mode === "register";
       $("#authSubmit").textContent = mode === "register" ? "Зарегистрироваться" : "Войти";
       $("#authPassword").autocomplete = mode === "register" ? "new-password" : "current-password";
       openModal("authModal");
       setTimeout(() => (mode === "register" ? $("#authDisplayName") : $("#authEmail")).focus(), 50);
+    }
+
+    function friendlyAuthError(error) {
+      const message = String(error?.message || "").toLocaleLowerCase("en");
+      if (!navigator.onLine || /fetch|network|connection/.test(message)) return "Нет подключения к интернету. Проверьте сеть и повторите попытку.";
+      if (/invalid login credentials|invalid credentials/.test(message)) return "Неверный email или пароль.";
+      if (/user already registered|already been registered/.test(message)) return "Этот email уже зарегистрирован.";
+      if (/email not confirmed/.test(message)) return "Сначала подтвердите email по ссылке из письма.";
+      if (/password/.test(message) && /weak|short|least|characters/.test(message)) return "Пароль слишком простой. Используйте не менее 8 символов.";
+      if (/rate limit|too many requests/.test(message)) return "Слишком много попыток. Подождите немного и повторите.";
+      return "Не удалось выполнить вход или регистрацию. Проверьте данные и повторите попытку.";
     }
 
     async function submitAuth(event) {
@@ -3107,7 +3318,20 @@
       const mode = $("#authMode").value;
       const email = $("#authEmail").value.trim();
       const password = $("#authPassword").value;
+      const passwordConfirm = $("#authPasswordConfirm").value;
       const displayName = $("#authDisplayName").value.trim();
+      if (mode === "register" && !displayName) {
+        toast("Укажите отображаемое имя.", "error");
+        return;
+      }
+      if (mode === "register" && password.length < 8) {
+        toast("Пароль должен содержать не менее 8 символов.", "error");
+        return;
+      }
+      if (mode === "register" && password !== passwordConfirm) {
+        toast("Пароли не совпадают.", "error");
+        return;
+      }
       $("#authSubmit").disabled = true;
       setSyncStatus("syncing", mode === "register" ? "Регистрация" : "Вход");
       try {
@@ -3126,9 +3350,9 @@
           toast(mode === "register" ? "Аккаунт создан." : "Вход выполнен.", "success");
         }
       } catch (error) {
-        state.cloud.lastError = error.message;
+        state.cloud.lastError = friendlyAuthError(error);
         setSyncStatus("error", "Ошибка авторизации");
-        toast(`Не удалось выполнить действие: ${error.message}`, "error");
+        toast(state.cloud.lastError, "error");
       } finally {
         $("#authSubmit").disabled = false;
         renderSettings();
@@ -3139,7 +3363,7 @@
       if (!state.cloud.client) return;
       const { error } = await state.cloud.client.auth.signOut();
       if (error) {
-        toast(`Не удалось выйти: ${error.message}`, "error");
+        toast("Не удалось выйти из аккаунта. Проверьте подключение и повторите попытку.", "error");
         return;
       }
       switchToLocalData();
@@ -3153,7 +3377,7 @@
       $("#familyModalTitle").textContent = create ? "Создать семейную группу" : "Подключиться к семье";
       $("#familyModalSubtitle").textContent = create ? "После создания появится код приглашения" : "Введите код, полученный от владельца семьи";
       $("#familyValueLabel").childNodes[0].nodeValue = create ? "Название семьи" : "Код приглашения";
-      $("#familyValue").placeholder = create ? "Например, Семья Базаровых" : "Например, A7K9M2QX";
+      $("#familyValue").placeholder = create ? "Например, Семья Базаровых" : "Например, FAMILY-A7K9M2";
       $("#familySubmit").textContent = create ? "Создать" : "Подключиться";
       openModal("familyModal");
       setTimeout(() => $("#familyValue").focus(), 50);
@@ -3177,9 +3401,9 @@
         await loadCloudContext();
         toast(action === "create" ? "Семейная группа создана." : "Вы подключились к семье.", "success");
       } catch (error) {
-        state.cloud.lastError = error.message;
+        state.cloud.lastError = friendlyCloudError(error, "Не удалось создать или подключить семейную группу.");
         setSyncStatus("error", "Ошибка семейной группы");
-        toast(`Не удалось выполнить действие: ${error.message}`, "error");
+        toast(state.cloud.lastError, "error");
       } finally {
         $("#familySubmit").disabled = false;
       }
@@ -3249,10 +3473,10 @@
         await storageService.syncData();
         toast("Локальные данные перенесены в семейное облако.", "success");
       } catch (error) {
-        report.push(`Ошибка: ${error.message}`);
+        report.push(`Ошибка: ${friendlyCloudError(error, "Не все данные удалось перенести.")}`);
         $("#cloudSyncReport").textContent = report.join("\n");
         $("#cloudSyncReport").classList.remove("hidden");
-        state.cloud.lastError = error.message;
+        state.cloud.lastError = friendlyCloudError(error, "Не все данные удалось перенести.");
         setSyncStatus("error", "Ошибка переноса");
         toast("Перенос завершился с ошибкой. Локальные данные не удалены.", "error");
       }
@@ -5293,7 +5517,7 @@
           recognizedAt: new Date().toISOString(),
           confidence: 96,
           warnings: [],
-          qrData: { found: false, raw: "", parsed: null }
+          qrData: emptyReceiptQrData()
         };
       };
       const templates = [
