@@ -4,6 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0b0e11">
+  <meta name="description" content="Личный и семейный учет доходов, расходов и финансовых привычек">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Куда деньги?">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-180.png">
   <title>Куда ушли деньги?</title>
   <style>
     :root {
@@ -469,6 +478,10 @@
     .setting-copy strong { display: block; margin-bottom: 4px; font-size: 13px; }
     .setting-copy span { color: var(--muted); font-size: 11px; }
     .setting-control { min-width: 180px; }
+    .install-status { display: inline-flex; align-items: center; gap: 7px; margin-top: 7px; color: var(--muted); font-size: 10px; }
+    .install-status::before { width: 7px; height: 7px; border-radius: 50%; background: var(--muted-2); content: ""; }
+    .install-status.ready::before { background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent); }
+    .install-status.installed::before { background: var(--income); }
     .theme-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 13px; }
     .theme-card {
       display: grid;
@@ -881,6 +894,40 @@
     .receipt-split-name { min-width: 0; display: grid; gap: 3px; align-self: center; }
     .receipt-split-name strong { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
     .receipt-split-name span { color: var(--muted); font-size: 9px; }
+    .install-banner {
+      position: fixed;
+      z-index: 96;
+      right: 22px;
+      bottom: 22px;
+      width: min(390px, calc(100vw - var(--sidebar) - 44px));
+      display: none;
+      grid-template-columns: 42px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px;
+      border: 1px solid color-mix(in srgb, var(--accent) 36%, var(--border));
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--surface) 96%, transparent);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+    .install-banner.visible { display: grid; }
+    .install-banner-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 8px; color: #07130e; background: var(--accent); }
+    .install-banner-icon .icon { width: 22px; height: 22px; }
+    .install-banner-copy { min-width: 0; display: grid; gap: 3px; }
+    .install-banner-copy strong { font-size: 12px; }
+    .install-banner-copy span { color: var(--muted); font-size: 10px; line-height: 1.4; }
+    .install-banner-actions { display: flex; gap: 6px; align-items: center; }
+    .install-guide { display: grid; gap: 10px; }
+    .install-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px; border: 1px solid var(--border-soft); border-radius: 7px; background: var(--surface-2); }
+    .install-step b { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 7px; color: var(--accent); background: var(--accent-soft); font-size: 12px; }
+    .install-step strong { display: block; margin-bottom: 3px; font-size: 12px; }
+    .install-step span { color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .standalone-only { display: none; }
+    @media (display-mode: standalone) {
+      .browser-only { display: none !important; }
+      .standalone-only { display: block; }
+    }
 
     .mobile-nav, .mobile-add-button { display: none; }
 
@@ -970,6 +1017,9 @@
       }
       .mobile-add-button .icon { width: 21px; height: 21px; }
       .mobile-add-button:active { transform: translateY(1px); }
+      .install-banner { right: 10px; bottom: 77px; width: calc(100vw - 20px); grid-template-columns: 38px minmax(0, 1fr); }
+      .install-banner-icon { width: 38px; height: 38px; }
+      .install-banner-actions { grid-column: 1 / -1; justify-content: flex-end; }
       .hide-mobile { display: none !important; }
       .chart-box { min-height: 255px; }
       .chart-box canvas { height: 225px; }
@@ -1511,6 +1561,23 @@
                 </div>
               </div>
               <div class="panel">
+                <div class="panel-head"><div><h3 class="panel-title">Приложение на телефоне</h3><div class="panel-subtitle">Запуск с главного экрана без поиска ссылки</div></div></div>
+                <div class="panel-body">
+                  <div class="setting-row">
+                    <div class="setting-copy">
+                      <strong>Установить «Куда ушли деньги?»</strong>
+                      <span id="pwaInstallDescription">Добавьте иконку на главный экран и открывайте приложение отдельным окном.</span>
+                      <div class="install-status" id="pwaInstallStatus">Проверяем возможность установки</div>
+                    </div>
+                    <button class="btn btn-sm btn-primary" id="installAppBtn" type="button"><svg class="icon icon-sm"><use href="#i-download"></use></svg><span>Установить</span></button>
+                  </div>
+                  <div class="setting-row">
+                    <div class="setting-copy"><strong>Обновить приложение</strong><span>Проверить и загрузить последнюю опубликованную версию.</span></div>
+                    <button class="btn btn-sm" id="updateAppBtn" type="button"><svg class="icon icon-sm"><use href="#i-refresh"></use></svg>Обновить</button>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
                 <div class="panel-head"><div><h3 class="panel-title">Основные настройки</h3><div class="panel-subtitle">Формат отображения сумм</div></div></div>
                 <div class="panel-body">
                   <div class="setting-row">
@@ -1545,7 +1612,7 @@
                   <div class="setting-row"><div class="setting-copy"><strong>Очистить все данные</strong><span>Удалит операции, лимиты и цели из браузера</span></div><button class="btn btn-sm btn-danger" id="clearDataBtn"><svg class="icon icon-sm"><use href="#i-trash"></use></svg>Очистить</button></div>
                 </div>
               </div>
-              <div class="app-version">Версия 4.1 receipt engine · схема данных <span id="schemaVersionLabel"></span></div>
+              <div class="app-version">Версия 4.2 mobile app · схема данных <span id="schemaVersionLabel"></span></div>
             </div>
           </div>
         </section>
@@ -1562,6 +1629,15 @@
     </nav>
     <button class="mobile-add-button" data-action="add-expense" aria-label="Добавить операцию" title="Добавить операцию"><svg class="icon"><use href="#i-plus"></use></svg></button>
   </div>
+
+  <aside class="install-banner browser-only" id="installBanner" aria-live="polite">
+    <div class="install-banner-icon"><svg class="icon"><use href="#i-wallet"></use></svg></div>
+    <div class="install-banner-copy"><strong>Добавить приложение на телефон</strong><span id="installBannerText">Открывайте финансы с главного экрана без поиска ссылки.</span></div>
+    <div class="install-banner-actions">
+      <button class="btn btn-sm btn-primary" id="installBannerBtn" type="button">Установить</button>
+      <button class="action-btn" id="installBannerClose" type="button" aria-label="Не сейчас"><svg class="icon"><use href="#i-close"></use></svg></button>
+    </div>
+  </aside>
 
   <div class="modal-backdrop" id="operationModal" role="dialog" aria-modal="true" aria-labelledby="operationTitle">
     <div class="modal">
@@ -1797,6 +1873,20 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="installGuideModal" role="dialog" aria-modal="true" aria-labelledby="installGuideTitle">
+    <div class="modal modal-sm">
+      <div class="modal-head">
+        <div><h3 class="modal-title" id="installGuideTitle">Установка на телефон</h3><div class="panel-subtitle" id="installGuideSubtitle">После установки ссылка больше не понадобится</div></div>
+        <button class="action-btn" data-close-modal="installGuideModal" aria-label="Закрыть"><svg class="icon"><use href="#i-close"></use></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="install-guide" id="installGuideSteps"></div>
+        <p class="receipt-privacy">Данные и семейная синхронизация останутся прежними. Установка не передает финансовую информацию сторонним сервисам.</p>
+      </div>
+      <div class="modal-foot"><button class="btn btn-primary" type="button" data-close-modal="installGuideModal">Понятно</button></div>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="categoryModal" role="dialog" aria-modal="true" aria-labelledby="categoryDetailTitle">
     <div class="modal modal-lg">
       <div class="modal-head">
@@ -1921,7 +2011,7 @@
     };
     const SUPABASE_URL = "https://joujmvjsvuaaqgbezson.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_06TyU60nTxr4VZOOyFN0QQ_vnpH4tnT";
-    const APP_VERSION = "4.1 receipt engine";
+    const APP_VERSION = "4.2 mobile app";
     const SCHEMA_VERSION = 7;
     const SMALL_EXPENSE_LIMIT = 500;
     const LARGE_EXPENSE_LIMIT = 5000;
@@ -2649,6 +2739,13 @@
         splitItems: [],
         running: false,
         cancelled: false
+      },
+      pwa: {
+        installPrompt: null,
+        registration: null,
+        installed: window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true,
+        ios: /iphone|ipad|ipod/i.test(navigator.userAgent),
+        mobile: /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent)
       },
       cloud: {
         configured: Boolean(SUPABASE_URL.trim() && SUPABASE_ANON_KEY.trim()),
@@ -7004,6 +7101,143 @@
     }
 
     // Настройки и темы
+    function isStandaloneApp() {
+      return Boolean(window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true);
+    }
+
+    function renderInstallGuide() {
+      const steps = state.pwa.ios
+        ? [
+            ["1", "Откройте меню «Поделиться»", "Используйте Safari и нажмите квадрат со стрелкой вверх."],
+            ["2", "Выберите «На экран Домой»", "Если пункта не видно, прокрутите список действий ниже."],
+            ["3", "Нажмите «Добавить»", "Иконка появится на главном экране как у обычного приложения."]
+          ]
+        : [
+            ["1", "Откройте меню браузера", "Нажмите три точки в правом верхнем углу Chrome или Яндекс Браузера."],
+            ["2", "Выберите установку", "Нажмите «Установить приложение» или «Добавить на главный экран»."],
+            ["3", "Подтвердите установку", "Приложение появится на главном экране и в списке приложений."]
+          ];
+      $("#installGuideTitle").textContent = state.pwa.ios ? "Установка на iPhone" : "Установка на Android";
+      $("#installGuideSubtitle").textContent = "После установки искать ссылку больше не понадобится";
+      $("#installGuideSteps").innerHTML = steps.map(([number, title, text]) => `
+        <div class="install-step">
+          <b>${number}</b>
+          <div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(text)}</span></div>
+        </div>
+      `).join("");
+    }
+
+    function updatePwaInstallUi() {
+      state.pwa.installed = isStandaloneApp() || state.pwa.installed;
+      const status = $("#pwaInstallStatus");
+      const installButton = $("#installAppBtn");
+      const installButtonLabel = installButton?.querySelector("span");
+      const banner = $("#installBanner");
+      const bannerText = $("#installBannerText");
+      if (!status || !installButton || !banner) return;
+
+      status.className = "install-status";
+      installButton.disabled = false;
+      if (state.pwa.installed) {
+        status.textContent = "Установлено на этом устройстве";
+        status.classList.add("installed");
+        installButton.disabled = true;
+        if (installButtonLabel) installButtonLabel.textContent = "Установлено";
+        banner.classList.remove("visible");
+        document.documentElement.dataset.pwaInstall = "installed";
+        return;
+      }
+
+      if (state.pwa.installPrompt) {
+        status.textContent = "Готово к установке";
+        status.classList.add("ready");
+        if (installButtonLabel) installButtonLabel.textContent = "Установить";
+        if (bannerText) bannerText.textContent = "Установите приложение и открывайте финансы одним нажатием.";
+        document.documentElement.dataset.pwaInstall = "ready";
+      } else if (state.pwa.ios) {
+        status.textContent = "Можно добавить через меню Safari";
+        status.classList.add("ready");
+        if (installButtonLabel) installButtonLabel.textContent = "Как установить";
+        if (bannerText) bannerText.textContent = "В Safari нажмите «Поделиться», затем «На экран Домой».";
+        document.documentElement.dataset.pwaInstall = "guide-ios";
+      } else {
+        status.textContent = location.protocol === "file:"
+          ? "Установка доступна по опубликованной ссылке"
+          : "Установка доступна через меню браузера";
+        if (installButtonLabel) installButtonLabel.textContent = "Инструкция";
+        if (bannerText) bannerText.textContent = "Добавьте приложение на главный экран через меню браузера.";
+        document.documentElement.dataset.pwaInstall = "guide";
+      }
+
+      const dismissedAt = localStorage.getItem("money_tracker_pwa_dismissed");
+      const dismissalIsActive = dismissedAt && Date.now() - new Date(dismissedAt).getTime() < 7 * 24 * 60 * 60 * 1000;
+      banner.classList.toggle("visible", Boolean(state.pwa.mobile && !dismissalIsActive));
+    }
+
+    function openInstallGuide() {
+      renderInstallGuide();
+      openModal("installGuideModal");
+    }
+
+    async function installPwa() {
+      if (isStandaloneApp()) {
+        toast("Приложение уже установлено.", "success");
+        updatePwaInstallUi();
+        return;
+      }
+      if (!state.pwa.installPrompt) {
+        openInstallGuide();
+        return;
+      }
+      const prompt = state.pwa.installPrompt;
+      state.pwa.installPrompt = null;
+      await prompt.prompt();
+      const choice = await prompt.userChoice;
+      if (choice.outcome === "accepted") {
+        localStorage.removeItem("money_tracker_pwa_dismissed");
+        toast("Установка началась.", "success");
+      }
+      updatePwaInstallUi();
+    }
+
+    function dismissInstallBanner() {
+      localStorage.setItem("money_tracker_pwa_dismissed", new Date().toISOString());
+      $("#installBanner")?.classList.remove("visible");
+    }
+
+    async function registerServiceWorker() {
+      if (!("serviceWorker" in navigator) || location.protocol === "file:") {
+        document.documentElement.dataset.pwaServiceWorker = "unavailable";
+        updatePwaInstallUi();
+        return;
+      }
+      try {
+        state.pwa.registration = await navigator.serviceWorker.register("./sw.js");
+        document.documentElement.dataset.pwaServiceWorker = "ready";
+        state.pwa.registration.update().catch(() => {});
+      } catch (error) {
+        document.documentElement.dataset.pwaServiceWorker = "error";
+        console.warn("Service worker registration failed:", error);
+      }
+      updatePwaInstallUi();
+    }
+
+    async function updatePwaApp() {
+      if (!state.pwa.registration) {
+        await registerServiceWorker();
+      }
+      try {
+        await state.pwa.registration?.update();
+        if (state.pwa.registration?.waiting) {
+          state.pwa.registration.waiting.postMessage({ type: "SKIP_WAITING" });
+        }
+        toast("Проверяем последнюю версию приложения.", "success");
+        setTimeout(() => location.reload(), 700);
+      } catch (error) {
+        toast("Не удалось проверить обновление. Проверьте интернет.", "error");
+      }
+    }
+
     function applyTheme() {
       document.documentElement.dataset.theme = state.settings.theme || "graphite";
       document.documentElement.style.colorScheme = "dark";
@@ -7025,6 +7259,7 @@
       $("#schemaVersionLabel").textContent = String(state.settings.schemaVersion || SCHEMA_VERSION);
       renderFamilySettings();
       renderBeneficiarySettings();
+      updatePwaInstallUi();
     }
 
     function renderCloudStatus() {
@@ -8063,12 +8298,42 @@
     window.addEventListener("offline", () => {
       if (cloudActive()) setSyncStatus("offline", "Нет подключения");
     });
+    $("#installAppBtn").addEventListener("click", installPwa);
+    $("#installBannerBtn").addEventListener("click", installPwa);
+    $("#installBannerClose").addEventListener("click", dismissInstallBanner);
+    $("#updateAppBtn").addEventListener("click", updatePwaApp);
+    window.addEventListener("beforeinstallprompt", event => {
+      event.preventDefault();
+      state.pwa.installPrompt = event;
+      updatePwaInstallUi();
+    });
+    window.addEventListener("appinstalled", () => {
+      state.pwa.installed = true;
+      state.pwa.installPrompt = null;
+      localStorage.removeItem("money_tracker_pwa_dismissed");
+      updatePwaInstallUi();
+      toast("Приложение установлено на телефон.", "success");
+    });
+    let serviceWorkerReloading = false;
+    navigator.serviceWorker?.addEventListener("controllerchange", () => {
+      if (serviceWorkerReloading) return;
+      serviceWorkerReloading = true;
+      location.reload();
+    });
 
     // Запуск
     $("#globalMonth").value = state.selectedMonth;
     $("#transactionsMonth").value = state.selectedMonth;
     applyTheme();
     renderAll();
+    updatePwaInstallUi();
+    registerServiceWorker();
+    const launchAction = new URLSearchParams(location.search).get("action");
+    if (launchAction === "income" || launchAction === "expense") {
+      setTimeout(() => openOperationModal(launchAction), 0);
+    } else if (launchAction === "receipt") {
+      setTimeout(() => openReceiptScanner(), 0);
+    }
     const receiptSelfTests = runReceiptRecognitionSelfTests();
     document.documentElement.dataset.receiptTests = receiptSelfTests.every(item => item.passed) ? "ok" : receiptSelfTests.filter(item => !item.passed).map(item => item.name).join(", ");
     document.documentElement.dataset.receiptTestDetails = JSON.stringify(receiptSelfTests);
