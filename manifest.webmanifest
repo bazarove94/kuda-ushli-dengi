@@ -1,0 +1,53 @@
+{
+  "id": "./",
+  "name": "Куда ушли деньги?",
+  "short_name": "Куда деньги?",
+  "description": "Личный и семейный учет доходов, расходов и финансовых привычек",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0b0e11",
+  "theme_color": "#0b0e11",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "./app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Добавить расход",
+      "short_name": "Расход",
+      "description": "Быстро добавить новый расход",
+      "url": "./?action=expense",
+      "icons": [{"src": "./app-icon.svg", "sizes": "any", "type": "image/svg+xml"}]
+    },
+    {
+      "name": "Добавить доход",
+      "short_name": "Доход",
+      "description": "Быстро добавить новый доход",
+      "url": "./?action=income",
+      "icons": [{"src": "./app-icon.svg", "sizes": "any", "type": "image/svg+xml"}]
+    },
+    {
+      "name": "Сканировать чек",
+      "short_name": "Чек",
+      "description": "Открыть распознавание чека",
+      "url": "./?action=receipt",
+      "icons": [{"src": "./app-icon.svg", "sizes": "any", "type": "image/svg+xml"}]
+    }
+  ]
+}
