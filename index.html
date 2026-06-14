@@ -675,6 +675,8 @@
     .receipt-progress-line { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 10px; }
     .receipt-progress .bar { height: 7px; }
     .receipt-progress .bar span { transition: width .2s ease; }
+    .receipt-tool-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .receipt-scan-hint { padding: 9px 10px; border: 1px solid var(--border-soft); border-radius: 6px; color: var(--muted); background: color-mix(in srgb, var(--bg) 45%, transparent); font-size: 10px; line-height: 1.45; }
     .receipt-review-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; margin-bottom: 14px; }
     .receipt-review-stat { min-width: 0; padding: 11px; border: 1px solid var(--border-soft); border-radius: 7px; background: var(--surface-2); }
     .receipt-review-stat span { display: block; color: var(--muted); font-size: 9px; }
@@ -933,6 +935,8 @@
       .modal-backdrop { padding: 0; align-items: flex-end; }
       .modal { width: 100%; max-height: 92vh; border-radius: 8px 8px 0 0; }
       .modal-lg { width: 100%; }
+      .modal-foot { flex-wrap: wrap; padding: 12px 14px; }
+      .modal-foot .btn { min-width: 0; }
       .detail-metrics { grid-template-columns: 1fr 1fr; }
       .mobile-nav {
         position: fixed;
@@ -1033,6 +1037,10 @@
       .audit-filters { grid-template-columns: 1fr; }
       .budget-tabs { display: grid; grid-template-columns: repeat(3, 1fr); }
       .budget-tab { padding: 0 6px; }
+      #receiptScanModal .modal-foot { display: grid; grid-template-columns: 1fr 1fr; }
+      #receiptScanModal .modal-foot #receiptRecognizeBtn { grid-column: 1 / -1; }
+      #receiptReviewModal .modal-foot { display: grid; grid-template-columns: 1fr 1fr; }
+      #receiptReviewModal .modal-foot .btn-primary { grid-column: 1 / -1; }
     }
     @media (max-width: 360px) {
       .topbar { gap: 6px; padding-inline: 8px; }
@@ -1537,7 +1545,7 @@
                   <div class="setting-row"><div class="setting-copy"><strong>Очистить все данные</strong><span>Удалит операции, лимиты и цели из браузера</span></div><button class="btn btn-sm btn-danger" id="clearDataBtn"><svg class="icon icon-sm"><use href="#i-trash"></use></svg>Очистить</button></div>
                 </div>
               </div>
-              <div class="app-version">Версия 4.0 budget assistant · схема данных <span id="schemaVersionLabel"></span></div>
+              <div class="app-version">Версия 4.1 receipt engine · схема данных <span id="schemaVersionLabel"></span></div>
             </div>
           </div>
         </section>
@@ -1643,6 +1651,11 @@
                 <div class="bar"><span id="receiptProgressBar" style="width:0%"></span></div>
               </div>
               <div class="receipt-review-stat"><span>QR-код</span><strong id="receiptQrStatus">Проверим автоматически</strong></div>
+              <div class="receipt-tool-row">
+                <button class="btn btn-sm hidden" id="receiptQrRetryBtn" type="button">Повторить поиск QR</button>
+                <button class="btn btn-sm hidden" id="receiptQrCloseupBtn" type="button"><svg class="icon icon-sm"><use href="#i-camera"></use></svg>QR крупным планом</button>
+              </div>
+              <div class="receipt-scan-hint hidden" id="receiptScanHint"></div>
             </div>
           </div>
         </div>
@@ -1853,6 +1866,7 @@
   <input class="hidden" id="jsonFileInput" type="file" accept=".json,application/json">
   <input class="hidden" id="receiptFileInput" type="file" accept="image/jpeg,image/png,image/webp">
   <input class="hidden" id="receiptCameraInput" type="file" accept="image/*" capture="environment">
+  <input class="hidden" id="receiptQrCameraInput" type="file" accept="image/*" capture="environment">
   <div class="toast-region" id="toastRegion" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1907,7 +1921,7 @@
     };
     const SUPABASE_URL = "https://joujmvjsvuaaqgbezson.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_06TyU60nTxr4VZOOyFN0QQ_vnpH4tnT";
-    const APP_VERSION = "4.0 budget assistant";
+    const APP_VERSION = "4.1 receipt engine";
     const SCHEMA_VERSION = 7;
     const SMALL_EXPENSE_LIMIT = 500;
     const LARGE_EXPENSE_LIMIT = 5000;
@@ -2629,6 +2643,8 @@
         recognition: null,
         parsed: null,
         qrData: emptyReceiptQrData(),
+        qrPromise: null,
+        qrMessage: "",
         splitMode: false,
         splitItems: [],
         running: false,
@@ -3007,6 +3023,8 @@
       state.receiptScan.recognition = null;
       state.receiptScan.parsed = null;
       state.receiptScan.qrData = emptyReceiptQrData();
+      state.receiptScan.qrPromise = null;
+      state.receiptScan.qrMessage = "";
       state.receiptScan.splitMode = false;
       state.receiptScan.splitItems = [];
       state.receiptScan.running = false;
@@ -3015,6 +3033,10 @@
       $("#receiptFileName").textContent = "—";
       $("#receiptFileSize").textContent = "—";
       $("#receiptQrStatus").textContent = "Проверим автоматически";
+      $("#receiptQrRetryBtn").classList.add("hidden");
+      $("#receiptQrCloseupBtn").classList.add("hidden");
+      $("#receiptScanHint").classList.add("hidden");
+      $("#receiptScanHint").textContent = "";
       $("#electronicReceiptText").value = "";
       $("#receiptRecognizeBtn").disabled = false;
       setReceiptProgress(0, "Готов к распознаванию");
@@ -3037,7 +3059,7 @@
       if (!file) return;
       const supported = ["image/jpeg", "image/png", "image/webp"];
       if (!supported.includes(file.type)) {
-        toast("Поддерживаются только изображения JPG, PNG и WEBP.", "error");
+        toast("Поддерживаются изображения JPG, PNG и WEBP. Формат HEIC сначала сохраните как JPG.", "error");
         return;
       }
       if (file.size > 15 * 1024 * 1024) {
@@ -3048,72 +3070,255 @@
       state.receiptScan.file = file;
       state.receiptScan.objectUrl = URL.createObjectURL(file);
       state.receiptScan.qrData = emptyReceiptQrData();
+      state.receiptScan.qrMessage = "";
       $("#receiptPreviewImage").src = state.receiptScan.objectUrl;
       $("#receiptFileName").textContent = file.name || "Фото с камеры";
       $("#receiptFileSize").textContent = formatFileSize(file.size);
       $("#receiptPreview").classList.add("visible");
       $("#receiptQrStatus").textContent = "Поиск QR...";
+      $("#receiptQrRetryBtn").classList.add("hidden");
+      $("#receiptQrCloseupBtn").classList.remove("hidden");
+      $("#receiptScanHint").classList.remove("hidden");
+      $("#receiptScanHint").textContent = "Ищем QR на полном снимке и в нижней части чека. Для OCR изображение будет автоматически усилено.";
       setReceiptProgress(0, "Изображение загружено");
-      try {
-        state.receiptScan.qrData = await recognizeReceiptQr(file);
-        $("#receiptQrStatus").textContent = state.receiptScan.qrData.found
-          ? (state.receiptScan.qrData.parsed?.date || state.receiptScan.qrData.parsed?.amount) ? "QR чека найден" : "QR найден, формат неизвестен"
-          : state.receiptScan.qrData.warnings.length ? "QR не прочитан, будет OCR" : "QR не найден";
-      } catch (error) {
-        $("#receiptQrStatus").textContent = "QR не прочитан";
-      }
+      const selectedFile = file;
+      state.receiptScan.qrPromise = recognizeReceiptQr(file).then(qrData => {
+        if (state.receiptScan.file !== selectedFile) return qrData;
+        state.receiptScan.qrData = qrData;
+        updateReceiptQrScanStatus(qrData);
+        return qrData;
+      });
+      await state.receiptScan.qrPromise;
     }
 
-    async function imageDataFromFile(file, maxSide = 1800) {
-      const bitmap = await createImageBitmap(file);
-      const ratio = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
-      const width = Math.max(1, Math.round(bitmap.width * ratio));
-      const height = Math.max(1, Math.round(bitmap.height * ratio));
+    function updateReceiptQrScanStatus(qrData) {
+      const qr = normalizeReceiptQrData(qrData);
+      $("#receiptQrStatus").textContent = qr.found
+        ? (qr.parsed?.date || qr.parsed?.amount) ? "QR чека найден" : "QR найден, формат неизвестен"
+        : qr.warnings.length ? "QR не прочитан, будет OCR" : "QR не найден";
+      $("#receiptQrRetryBtn").classList.toggle("hidden", qr.found);
+      const message = qr.found
+        ? "QR прочитан. Сумма и дата из него получат приоритет над OCR."
+        : state.receiptScan.qrMessage || "QR не найден. Попробуйте повторный поиск или сфотографируйте код крупным планом.";
+      $("#receiptScanHint").classList.remove("hidden");
+      $("#receiptScanHint").textContent = message;
+    }
+
+    async function loadReceiptImageSource(file) {
+      if (typeof createImageBitmap === "function") {
+        try {
+          const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+          return { source: bitmap, width: bitmap.width, height: bitmap.height, close: () => bitmap.close?.() };
+        } catch {
+          try {
+            const bitmap = await createImageBitmap(file);
+            return { source: bitmap, width: bitmap.width, height: bitmap.height, close: () => bitmap.close?.() };
+          } catch {}
+        }
+      }
+      const url = URL.createObjectURL(file);
+      const image = new Image();
+      image.decoding = "async";
+      image.src = url;
+      try {
+        if (image.decode) await image.decode();
+        else await new Promise((resolve, reject) => {
+          image.onload = resolve;
+          image.onerror = () => reject(new Error("Браузер не смог открыть изображение"));
+        });
+      } catch (error) {
+        URL.revokeObjectURL(url);
+        throw error;
+      }
+      return { source: image, width: image.naturalWidth, height: image.naturalHeight, close: () => URL.revokeObjectURL(url) };
+    }
+
+    function canvasFromImageRegion(image, region = {}, options = {}) {
+      const x = Math.max(0, Math.round(region.x || 0));
+      const y = Math.max(0, Math.round(region.y || 0));
+      const sourceWidth = Math.max(1, Math.min(image.width - x, Math.round(region.width || image.width)));
+      const sourceHeight = Math.max(1, Math.min(image.height - y, Math.round(region.height || image.height)));
+      const maxSide = options.maxSide || 2400;
+      const maxPixels = options.maxPixels || 6500000;
+      const upscaleLimit = options.upscaleLimit || 1;
+      const scale = Math.max(.05, Math.min(maxSide / Math.max(sourceWidth, sourceHeight), Math.sqrt(maxPixels / (sourceWidth * sourceHeight)), upscaleLimit));
+      const width = Math.max(1, Math.round(sourceWidth * scale));
+      const height = Math.max(1, Math.round(sourceHeight * scale));
       const canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
       const context = canvas.getContext("2d", { willReadFrequently: true });
-      context.drawImage(bitmap, 0, 0, width, height);
-      bitmap.close?.();
-      return { canvas, imageData: context.getImageData(0, 0, width, height) };
+      context.fillStyle = "#fff";
+      context.fillRect(0, 0, width, height);
+      context.imageSmoothingEnabled = scale < 1;
+      context.drawImage(image.source, x, y, sourceWidth, sourceHeight, 0, 0, width, height);
+      return canvas;
+    }
+
+    function analyzeReceiptCanvas(canvas) {
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      const { data, width, height } = context.getImageData(0, 0, canvas.width, canvas.height);
+      const step = Math.max(1, Math.floor(Math.sqrt(width * height / 90000)));
+      let count = 0;
+      let sum = 0;
+      let sumSquares = 0;
+      let gradients = 0;
+      let gradientCount = 0;
+      for (let y = 0; y < height; y += step) {
+        for (let x = 0; x < width; x += step) {
+          const index = (y * width + x) * 4;
+          const luminance = data[index] * .299 + data[index + 1] * .587 + data[index + 2] * .114;
+          sum += luminance;
+          sumSquares += luminance * luminance;
+          count++;
+          if (x >= step) {
+            const previous = index - step * 4;
+            const previousLuminance = data[previous] * .299 + data[previous + 1] * .587 + data[previous + 2] * .114;
+            gradients += Math.abs(luminance - previousLuminance);
+            gradientCount++;
+          }
+        }
+      }
+      const brightness = count ? sum / count : 0;
+      const contrast = count ? Math.sqrt(Math.max(0, sumSquares / count - brightness * brightness)) : 0;
+      const sharpness = gradientCount ? gradients / gradientCount : 0;
+      const messages = [];
+      if (brightness < 70) messages.push("Снимок темный");
+      if (contrast < 32) messages.push("Низкий контраст");
+      if (sharpness < 8) messages.push("Возможен смаз");
+      return { brightness, contrast, sharpness, messages };
+    }
+
+    function enhancedImageData(imageData, mode = "contrast") {
+      const source = imageData.data;
+      const output = new Uint8ClampedArray(source.length);
+      const histogram = new Uint32Array(256);
+      for (let index = 0; index < source.length; index += 4) {
+        const gray = Math.round(source[index] * .299 + source[index + 1] * .587 + source[index + 2] * .114);
+        histogram[gray]++;
+      }
+      const pixelCount = imageData.width * imageData.height;
+      const percentile = target => {
+        let sum = 0;
+        for (let value = 0; value < 256; value++) {
+          sum += histogram[value];
+          if (sum >= pixelCount * target) return value;
+        }
+        return target < .5 ? 0 : 255;
+      };
+      const low = percentile(.02);
+      const high = Math.max(low + 24, percentile(.98));
+      const normalizedHistogram = new Uint32Array(256);
+      for (let value = 0; value < 256; value++) {
+        const normalized = Math.max(0, Math.min(255, Math.round((value - low) * 255 / (high - low))));
+        normalizedHistogram[normalized] += histogram[value];
+      }
+      let threshold = 150;
+      if (mode === "binary") {
+        let total = 0;
+        for (let value = 0; value < 256; value++) total += value * normalizedHistogram[value];
+        let backgroundWeight = 0;
+        let backgroundSum = 0;
+        let maxVariance = -1;
+        for (let value = 0; value < 256; value++) {
+          backgroundWeight += normalizedHistogram[value];
+          if (!backgroundWeight) continue;
+          const foregroundWeight = pixelCount - backgroundWeight;
+          if (!foregroundWeight) break;
+          backgroundSum += value * normalizedHistogram[value];
+          const meanBackground = backgroundSum / backgroundWeight;
+          const meanForeground = (total - backgroundSum) / foregroundWeight;
+          const variance = backgroundWeight * foregroundWeight * (meanBackground - meanForeground) ** 2;
+          if (variance > maxVariance) {
+            maxVariance = variance;
+            threshold = value;
+          }
+        }
+      }
+      for (let index = 0; index < source.length; index += 4) {
+        const gray = Math.round(source[index] * .299 + source[index + 1] * .587 + source[index + 2] * .114);
+        let value = Math.max(0, Math.min(255, Math.round((gray - low) * 255 / (high - low))));
+        if (mode === "binary") value = value > threshold ? 255 : 0;
+        output[index] = value;
+        output[index + 1] = value;
+        output[index + 2] = value;
+        output[index + 3] = 255;
+      }
+      return { data: output, width: imageData.width, height: imageData.height };
+    }
+
+    function enhancedReceiptCanvas(canvas, mode = "contrast") {
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      const enhanced = enhancedImageData(context.getImageData(0, 0, canvas.width, canvas.height), mode);
+      const output = document.createElement("canvas");
+      output.width = canvas.width;
+      output.height = canvas.height;
+      output.getContext("2d").putImageData(new ImageData(enhanced.data, enhanced.width, enhanced.height), 0, 0);
+      return output;
+    }
+
+    function rotatedReceiptCanvas(canvas) {
+      const output = document.createElement("canvas");
+      output.width = canvas.height;
+      output.height = canvas.width;
+      const context = output.getContext("2d");
+      context.translate(output.width, 0);
+      context.rotate(Math.PI / 2);
+      context.drawImage(canvas, 0, 0);
+      return output;
     }
 
     function parseReceiptQrData(qrRaw) {
       const raw = String(qrRaw || "").trim();
       if (!raw) return emptyReceiptQrData();
-      const query = raw.includes("?") ? raw.slice(raw.indexOf("?") + 1) : raw;
-      const params = new URLSearchParams(query);
+      let query = raw.includes("?") ? raw.slice(raw.indexOf("?") + 1) : raw;
+      query = query.replace(/&amp;/gi, "&").replace(/[;\n]+/g, "&");
+      const values = {};
+      for (const match of query.matchAll(/(?:^|&|\s)([a-z]{1,4})=([^&\s]+)/gi)) {
+        const key = match[1].toLowerCase();
+        try {
+          values[key] = decodeURIComponent(match[2].replace(/\+/g, " "));
+        } catch {
+          values[key] = match[2];
+        }
+      }
+      const getValue = key => values[key] ?? null;
       const warnings = [];
       const fiscalKeys = ["t", "s", "fn", "i", "fp", "n"];
-      const looksFiscal = fiscalKeys.some(key => params.has(key));
+      const looksFiscal = fiscalKeys.some(key => getValue(key) !== null);
       const parsed = {
         date: null,
         time: null,
         amount: null,
-        fn: params.get("fn") || null,
-        fiscalDocumentNumber: params.get("i") || null,
-        fiscalSign: params.get("fp") || null,
-        operationType: params.get("n") || null
+        fn: getValue("fn") || null,
+        fiscalDocumentNumber: getValue("i") || null,
+        fiscalSign: getValue("fp") || null,
+        operationType: getValue("n") || null
       };
 
-      const amountToken = params.get("s");
+      const amountToken = getValue("s");
       if (amountToken !== null) {
-        const normalizedAmount = Number(String(amountToken).trim().replace(",", "."));
+        const normalizedAmount = Number(String(amountToken).trim().replace(/\s/g, "").replace(",", "."));
         if (Number.isFinite(normalizedAmount) && normalizedAmount > 0) parsed.amount = normalizedAmount;
         else warnings.push("Сумма в QR-коде имеет неизвестный формат.");
       } else if (looksFiscal) {
         warnings.push("В QR-коде не найдена сумма.");
       }
 
-      const dateToken = String(params.get("t") || "").trim();
-      const compactDate = dateToken.match(/^(\d{4})(\d{2})(\d{2})T?(\d{2})(\d{2})(?:\d{2})?$/);
+      const dateToken = String(getValue("t") || "").trim();
+      const compactDate = dateToken.match(/^(\d{4})(\d{2})(\d{2})(?:T?(\d{2})(\d{2})(?:\d{2})?)?$/);
       const isoDate = dateToken.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::\d{2})?/);
       const dateMatch = compactDate || isoDate;
       if (dateMatch) {
         const candidate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
         if (isIsoDate(candidate)) {
           parsed.date = candidate;
-          parsed.time = `${dateMatch[4]}:${dateMatch[5]}`;
+          if (dateMatch[4] !== undefined && dateMatch[5] !== undefined) {
+            const hour = Number(dateMatch[4]);
+            const minute = Number(dateMatch[5]);
+            if (hour <= 23 && minute <= 59) parsed.time = `${dateMatch[4]}:${dateMatch[5]}`;
+            else warnings.push("Время в QR-коде некорректно.");
+          }
         } else {
           warnings.push("Дата в QR-коде некорректна.");
         }
@@ -3134,21 +3339,131 @@
       });
     }
 
-    async function detectReceiptQrCode(imageFile) {
-      if (typeof window.jsQR !== "function") {
+    function runReceiptRecognitionSelfTests() {
+      const qrCases = [
+        ["t=20260613T1842&s=394.79&fn=9999078900000000&i=12345&fp=1234567890&n=1", "2026-06-13", "18:42", 394.79],
+        ["t=2026-06-13T18:42:00&s=1898.00&fn=1111111111111111&i=777&fp=888999000&n=1", "2026-06-13", "18:42", 1898],
+        ["s=770.00&t=20260613T1205&fn=222&i=333&fp=444", "2026-06-13", "12:05", 770]
+      ];
+      const results = qrCases.map(([raw, date, time, amount], index) => {
+        const value = parseReceiptQrData(raw);
+        return {
+          name: `QR ${index + 1}`,
+          passed: value.found && value.parsed?.date === date && value.parsed?.time === time && Math.abs(value.parsed?.amount - amount) < .001
+        };
+      });
+      const invalid = parseReceiptQrData("hello world");
+      results.push({
+        name: "QR неизвестного формата",
+        passed: invalid.found && invalid.parsed?.date === null && invalid.parsed?.amount === null && invalid.warnings.some(item => item.includes("формат"))
+      });
+      const receipt = parseReceiptText("МАГНИТ\nМолоко 2,5%\n1 x 89,90 89,90\nХлеб 54,50\nИТОГ 144,40\n13.06.2026 18:42\nКАРТА");
+      results.push({
+        name: "Разбор текста чека",
+        passed: receipt.merchant === "Магнит" && Math.abs(receipt.amount - 144.4) < .001 && receipt.date === "2026-06-13" && receipt.time === "18:42" && receipt.items.length >= 2,
+        actual: { merchant: receipt.merchant, amount: receipt.amount, date: receipt.date, time: receipt.time, items: receipt.items }
+      });
+      return results;
+    }
+
+    window.receiptDiagnostics = Object.freeze({
+      parseQr: parseReceiptQrData,
+      parseText: parseReceiptText,
+      runSelfTests: runReceiptRecognitionSelfTests
+    });
+
+    function qrSearchRegions(width, height, aggressive = false) {
+      const regions = [
+        { name: "весь снимок", x: 0, y: 0, width, height, maxSide: 2600, upscaleLimit: 1 },
+        { name: "нижняя половина", x: 0, y: height * .46, width, height: height * .54, maxSide: 2400, upscaleLimit: 1.5 },
+        { name: "нижние 38%", x: 0, y: height * .62, width, height: height * .38, maxSide: 2300, upscaleLimit: 2 },
+        { name: "нижний центр", x: width * .12, y: height * .56, width: width * .76, height: height * .44, maxSide: 2200, upscaleLimit: 2.2 },
+        { name: "нижний левый угол", x: 0, y: height * .58, width: width * .66, height: height * .42, maxSide: 2100, upscaleLimit: 2.2 },
+        { name: "нижний правый угол", x: width * .34, y: height * .58, width: width * .66, height: height * .42, maxSide: 2100, upscaleLimit: 2.2 }
+      ];
+      if (aggressive) {
+        regions.push(
+          { name: "верхняя половина", x: 0, y: 0, width, height: height * .56, maxSide: 2300, upscaleLimit: 1.6 },
+          { name: "центр снимка", x: width * .1, y: height * .2, width: width * .8, height: height * .65, maxSide: 2300, upscaleLimit: 2 }
+        );
+      }
+      return regions;
+    }
+
+    async function detectQrWithBarcodeDetector(canvas) {
+      if (typeof window.BarcodeDetector !== "function") return null;
+      try {
+        if (typeof window.BarcodeDetector.getSupportedFormats === "function") {
+          const formats = await window.BarcodeDetector.getSupportedFormats();
+          if (formats?.length && !formats.includes("qr_code")) return null;
+        }
+        const detector = new window.BarcodeDetector({ formats: ["qr_code"] });
+        const results = await detector.detect(canvas);
+        return String(results?.[0]?.rawValue || "").trim() || null;
+      } catch {
+        return null;
+      }
+    }
+
+    function detectQrWithJsQr(canvas, aggressive = false) {
+      if (typeof window.jsQR !== "function") return null;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const modes = aggressive ? ["raw", "contrast", "binary"] : ["raw", "contrast"];
+      for (const mode of modes) {
+        const candidate = mode === "raw" ? imageData : enhancedImageData(imageData, mode);
+        const result = window.jsQR(candidate.data, candidate.width, candidate.height, {
+          inversionAttempts: mode === "contrast" ? "dontInvert" : "attemptBoth"
+        });
+        const raw = String(result?.data || "").trim();
+        if (raw) return raw;
+      }
+      return null;
+    }
+
+    async function detectReceiptQrCode(imageFile, options = {}) {
+      const hasJsQr = typeof window.jsQR === "function";
+      const hasNativeDetector = typeof window.BarcodeDetector === "function";
+      if (!hasJsQr && !hasNativeDetector) {
         const error = new Error("QR-код не удалось обработать, используется OCR.");
         error.code = "QR_LIBRARY_UNAVAILABLE";
         throw error;
       }
-      const { imageData } = await imageDataFromFile(imageFile, 2200);
-      const result = window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "attemptBoth" });
-      return String(result?.data || "").trim() || null;
+      const image = await loadReceiptImageSource(imageFile);
+      try {
+        const regions = qrSearchRegions(image.width, image.height, Boolean(options.aggressive));
+        const fullCanvas = canvasFromImageRegion(image, regions[0], { maxSide: 1500, maxPixels: 2500000 });
+        const quality = analyzeReceiptCanvas(fullCanvas);
+        state.receiptScan.qrMessage = quality.messages.length
+          ? `${quality.messages.join(". ")}. Держите камеру ровно, включите свет и заполните чеком весь кадр.`
+          : "";
+        for (let index = 0; index < regions.length; index++) {
+          const region = regions[index];
+          const canvas = canvasFromImageRegion(image, region, {
+            maxSide: region.maxSide,
+            maxPixels: index === 0 ? 7000000 : 5200000,
+            upscaleLimit: region.upscaleLimit
+          });
+          const nativeRaw = await detectQrWithBarcodeDetector(canvas);
+          if (nativeRaw) return nativeRaw;
+          const jsRaw = detectQrWithJsQr(canvas, Boolean(options.aggressive) || index >= 1);
+          if (jsRaw) return jsRaw;
+          if (index < regions.length - 1) await new Promise(resolve => setTimeout(resolve, 0));
+        }
+        return null;
+      } finally {
+        image.close();
+      }
     }
 
-    async function recognizeReceiptQr(file) {
+    async function recognizeReceiptQr(file, options = {}) {
       try {
-        const raw = await detectReceiptQrCode(file);
-        return raw ? parseReceiptQrData(raw) : emptyReceiptQrData();
+        const raw = await detectReceiptQrCode(file, options);
+        if (raw) return parseReceiptQrData(raw);
+        return {
+          ...emptyReceiptQrData(),
+          warnings: options.aggressive ? ["QR не найден даже после усиленного поиска. OCR продолжит работу."] : []
+        };
       } catch (error) {
         return {
           ...emptyReceiptQrData(),
@@ -3159,9 +3474,63 @@
       }
     }
 
+    async function retryReceiptQrSearch() {
+      if (!state.receiptScan.file || state.receiptScan.running) return;
+      $("#receiptQrRetryBtn").disabled = true;
+      $("#receiptQrStatus").textContent = "Усиленный поиск...";
+      $("#receiptScanHint").classList.remove("hidden");
+      $("#receiptScanHint").textContent = "Проверяем дополнительные зоны, контрастный и черно-белый варианты изображения.";
+      try {
+        state.receiptScan.qrPromise = recognizeReceiptQr(state.receiptScan.file, { aggressive: true });
+        state.receiptScan.qrData = await state.receiptScan.qrPromise;
+        updateReceiptQrScanStatus(state.receiptScan.qrData);
+      } finally {
+        $("#receiptQrRetryBtn").disabled = false;
+      }
+    }
+
+    async function handleReceiptQrCloseup(file) {
+      if (!file) return;
+      if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+        toast("Для QR крупным планом используйте JPG, PNG или WEBP.", "error");
+        return;
+      }
+      $("#receiptQrCloseupBtn").disabled = true;
+      $("#receiptQrStatus").textContent = "Читаем крупный QR...";
+      $("#receiptScanHint").classList.remove("hidden");
+      $("#receiptScanHint").textContent = "Основное фото чека сохранено для OCR. Сейчас используется только отдельный снимок QR.";
+      try {
+        const qrData = await recognizeReceiptQr(file, { aggressive: true });
+        if (qrData.found) {
+          state.receiptScan.qrData = qrData;
+          state.receiptScan.qrPromise = Promise.resolve(qrData);
+          updateReceiptQrScanStatus(qrData);
+          toast("QR-код прочитан с отдельного снимка.", "success");
+        } else {
+          updateReceiptQrScanStatus(qrData);
+          toast("QR все еще не найден. Снимите код ближе, без бликов и строго сверху.", "error");
+        }
+      } finally {
+        $("#receiptQrCloseupBtn").disabled = false;
+      }
+    }
+
     // Будущая интеграция с API проверки чеков. Сейчас не используется.
     async function fetchReceiptFromFiscalApi(qrData) {
       return null;
+    }
+
+    function receiptOcrScore(result) {
+      const text = String(result?.data?.text || "").trim();
+      if (!text) return 0;
+      const confidence = Number.isFinite(result?.data?.confidence) ? result.data.confidence : 0;
+      const parsed = parseReceiptText(text);
+      return confidence
+        + Math.min(18, text.length / 35)
+        + (parsed.amount > 0 ? 18 : 0)
+        + (parsed.merchant ? 8 : 0)
+        + (parsed.items.length ? Math.min(18, parsed.items.length * 3) : 0)
+        + (parsed.dateConfidence >= .8 ? 8 : 0);
     }
 
     async function recognizeReceiptImage(file) {
@@ -3182,28 +3551,88 @@
         }
       });
       state.receiptScan.worker = worker;
-      const result = await worker.recognize(file);
-      await worker.terminate();
-      state.receiptScan.worker = null;
-      if (state.receiptScan.cancelled) throw new Error("Распознавание отменено");
-      const rawText = String(result?.data?.text || "").trim();
-      if (!rawText) throw new Error("Текст на изображении не найден");
-      return {
-        rawText,
-        lines: rawText.split(/\r?\n/).map(line => line.trim()).filter(Boolean),
-        confidence: Number.isFinite(result?.data?.confidence) ? result.data.confidence : null,
-        sourceType: "image"
-      };
+      let image = null;
+      try {
+        image = await loadReceiptImageSource(file);
+        const base = canvasFromImageRegion(image, {}, { maxSide: 3000, maxPixels: 5200000, upscaleLimit: 1.35 });
+        const quality = analyzeReceiptCanvas(base);
+        if (quality.messages.length) {
+          $("#receiptScanHint").classList.remove("hidden");
+          $("#receiptScanHint").textContent = `${quality.messages.join(". ")}. Приложение усилит контраст автоматически, но итог нужно проверить.`;
+        }
+        let rotated = null;
+        const variants = [
+          { name: "усиленный снимок", createCanvas: () => enhancedReceiptCanvas(base, "contrast"), pageSegmentation: "6" },
+          { name: "черно-белый снимок", createCanvas: () => enhancedReceiptCanvas(base, "binary"), pageSegmentation: "6" }
+        ];
+        if (base.width > base.height * 1.18) {
+          rotated = rotatedReceiptCanvas(base);
+          variants.push(
+            { name: "повернутый снимок", createCanvas: () => enhancedReceiptCanvas(rotated, "contrast"), pageSegmentation: "6" },
+            { name: "повернутый черно-белый снимок", createCanvas: () => enhancedReceiptCanvas(rotated, "binary"), pageSegmentation: "6" }
+          );
+        }
+        let bestResult = null;
+        let bestScore = -1;
+        for (let index = 0; index < variants.length; index++) {
+          if (state.receiptScan.cancelled) throw new Error("Распознавание отменено");
+          const variant = variants[index];
+          await worker.setParameters({
+            tessedit_pageseg_mode: variant.pageSegmentation,
+            preserve_interword_spaces: "1",
+            user_defined_dpi: "300"
+          });
+          setReceiptProgress(20 + index * 18, `OCR: ${variant.name}`);
+          const variantCanvas = variant.createCanvas();
+          let result;
+          try {
+            result = await worker.recognize(variantCanvas);
+          } finally {
+            variantCanvas.width = 1;
+            variantCanvas.height = 1;
+          }
+          const score = receiptOcrScore(result);
+          if (score > bestScore) {
+            bestScore = score;
+            bestResult = result;
+          }
+          if (bestScore >= 105 && index === 0) break;
+          if (bestScore >= 118) break;
+        }
+        if (rotated) {
+          rotated.width = 1;
+          rotated.height = 1;
+        }
+        base.width = 1;
+        base.height = 1;
+        if (state.receiptScan.cancelled) throw new Error("Распознавание отменено");
+        const rawText = String(bestResult?.data?.text || "").trim();
+        if (!rawText) throw new Error("Текст на изображении не найден");
+        return {
+          rawText,
+          lines: rawText.split(/\r?\n/).map(line => line.trim()).filter(Boolean),
+          confidence: Number.isFinite(bestResult?.data?.confidence) ? bestResult.data.confidence : null,
+          sourceType: "image"
+        };
+      } finally {
+        image?.close();
+        await worker.terminate().catch(() => {});
+        state.receiptScan.worker = null;
+      }
     }
 
     function parseMoneyToken(value) {
-      const cleaned = String(value || "")
+      let cleaned = String(value || "")
+        .replace(/[ОоOo]/g, "0")
+        .replace(/[Il|Іі]/g, "1")
         .replace(/\s/g, "")
         .replace(/[₽рР]/g, "")
-        .replace(/,(?=\d{1,2}\b)/, ".")
+        .replace(/,/g, ".")
         .replace(/[^\d.]/g, "");
+      const parts = cleaned.split(".");
+      if (parts.length > 2) cleaned = `${parts.slice(0, -1).join("")}.${parts.at(-1)}`;
       const number = Number(cleaned);
-      return Number.isFinite(number) ? number : 0;
+      return Number.isFinite(number) && number >= 0 ? number : 0;
     }
 
     function normalizeReceiptDate(match) {
@@ -3218,23 +3647,39 @@
     }
 
     function parseReceiptItems(lines) {
-      const ignored = /(?:итог|итого|всего|сумма|к оплате|total|amount|налич|карта|сдача|скидка|инн|ккт|фн|фд|фп|кассир|чек)/i;
+      const ignored = /(?:итог|итого|всего|сумма|к\s*оплате|total|amount|налич|безнал|карта|сдача|скидка|инн|ккт|фн|фд|фп|кассир|смена|чек|ндс|налог)/i;
       const items = [];
-      lines.forEach(line => {
-        if (items.length >= 40 || ignored.test(line) || line.length < 3) return;
-        const amountMatch = line.match(/(\d[\d\s]*(?:[.,]\d{2}))\s*(?:₽|руб\.?|р)?\s*$/i);
-        if (!amountMatch) return;
-        const name = line.slice(0, amountMatch.index).replace(/^\d+[.)]\s*/, "").replace(/[.\-–—:\s]+$/, "").trim();
-        if (!name || !/[A-Za-zА-Яа-яЁё]/.test(name)) return;
-        const qtyMatch = line.match(/(\d+(?:[.,]\d+)?)\s*[xх*]\s*(\d+(?:[.,]\d{1,2})?)/i);
+      let pendingName = "";
+      for (const rawLine of lines) {
+        if (items.length >= 60) break;
+        const line = String(rawLine || "").replace(/\s+/g, " ").trim();
+        if (line.length < 2 || ignored.test(line)) continue;
+        const amountMatches = [...line.matchAll(/([0-9ОоOoIl|Іі]+(?:\s[0-9ОоOoIl|Іі]{3})*[.,][0-9ОоOoIl|Іі]{2})/gi)];
+        const amountMatch = amountMatches.at(-1) || null;
+        const qtyMatch = line.match(/([0-9ОоOoIl|Іі]+(?:[.,][0-9ОоOoIl|Іі]+)?)\s*[xх*×]\s*([0-9ОоOoIl|Іі]+(?:[.,][0-9ОоOoIl|Іі]{1,2})?)/i);
+        if (!amountMatch) {
+          if (/[A-Za-zА-Яа-яЁё]{2}/.test(line) && line.length <= 220 && (line.match(/\d/g) || []).length < line.length * .45) {
+            pendingName = line.replace(/^\d+[.)]\s*/, "").trim();
+          }
+          continue;
+        }
         const total = parseMoneyToken(amountMatch[1]);
+        if (!total || total > 10000000) continue;
+        let name = line.slice(0, amountMatch.index).replace(/^\d+[.)]\s*/, "").replace(/[.\-–—:\s]+$/, "").trim();
+        if (qtyMatch) name = name.replace(qtyMatch[0], "").replace(/[xх*×=.\-–—:\s]+$/i, "").trim();
+        if (!/[A-Za-zА-Яа-яЁё]{2}/.test(name)) name = pendingName;
+        if (!name || !/[A-Za-zА-Яа-яЁё]{2}/.test(name)) continue;
+        const normalizedName = name.slice(0, 240);
+        const duplicate = items.at(-1);
+        if (duplicate && duplicate.name === normalizedName && Math.abs((duplicate.total || 0) - total) < .01) continue;
         items.push({
-          name: name.slice(0, 240),
-          qty: qtyMatch ? qtyMatch[1].replace(",", ".") : "",
+          name: normalizedName,
+          qty: qtyMatch ? String(parseMoneyToken(qtyMatch[1])) : "",
           price: qtyMatch ? parseMoneyToken(qtyMatch[2]) : null,
-          total: total || null
+          total
         });
-      });
+        pendingName = "";
+      }
       return items;
     }
 
@@ -3242,51 +3687,85 @@
       const text = String(rawText || "").replace(/\u00a0/g, " ").trim();
       const lines = text.split(/\r?\n/).map(line => line.replace(/\s+/g, " ").trim()).filter(Boolean);
       const warnings = [];
-      const totalKeywords = /(?:ИТОГ(?:О)?|ВСЕГО|СУММА|К\s*ОПЛАТЕ|TOTAL|AMOUNT)/i;
-      const amountPattern = /(?:\d{1,3}(?:[ \u00a0]\d{3})+|\d+)(?:[.,]\d{1,2})?/g;
+      const totalKeywords = /(?:ИТОГ(?:О)?|ИТОГЬ|ВСЕГО|СУММА|К\s*ОПЛАТЕ|ОПЛАТЕ|TOTAL|AMOUNT|TO\s*PAY)/i;
+      const amountPattern = /(?:[0-9ОоOoIl|Іі]{1,3}(?:[ \u00a0][0-9ОоOoIl|Іі]{3})+|[0-9ОоOoIl|Іі]+)(?:[.,][0-9ОоOoIl|Іі]{1,2})?/g;
+      const items = parseReceiptItems(lines);
       const totalCandidates = [];
       lines.forEach((line, index) => {
         if (!totalKeywords.test(line)) return;
-        const amounts = [...line.matchAll(amountPattern)].map(match => parseMoneyToken(match[0])).filter(value => value > 0);
-        amounts.forEach(amount => totalCandidates.push({ amount, index, score: /К\s*ОПЛАТЕ|ИТОГ(?:О)?|TOTAL/i.test(line) ? 3 : 2 }));
+        [line, lines[index + 1] || "", lines[index + 2] || ""].forEach((candidateLine, offset) => {
+          const amounts = [...candidateLine.matchAll(amountPattern)].map(match => ({
+            raw: match[0],
+            amount: parseMoneyToken(match[0])
+          })).filter(item => item.amount > 0 && item.amount < 100000000);
+          amounts.forEach(item => totalCandidates.push({
+            amount: item.amount,
+            index: index + offset,
+            score: (/К\s*ОПЛАТЕ|ИТОГ(?:О)?|TOTAL|TO\s*PAY/i.test(line) ? 5 : 3) + (/[.,][0-9ОоOoIl|Іі]{2}/.test(item.raw) ? 2 : 0) - offset
+          }));
+        });
       });
       let amount = 0;
       let amountConfidence = 0;
       if (totalCandidates.length) {
         totalCandidates.sort((a, b) => b.score - a.score || b.index - a.index || b.amount - a.amount);
         amount = totalCandidates[0].amount;
-        amountConfidence = .92;
+        amountConfidence = .94;
+      } else if (items.length) {
+        const itemsTotal = items.reduce((sum, item) => sum + safeNumber(item.total), 0);
+        if (itemsTotal > 0) {
+          amount = Math.round(itemsTotal * 100) / 100;
+          amountConfidence = .72;
+          warnings.push("Итог рассчитан по распознанным позициям. Сверьте его с чеком.");
+        }
       } else {
-        const allAmounts = [...text.matchAll(amountPattern)].map(match => parseMoneyToken(match[0])).filter(value => value > 0 && value < 100000000);
+        const financialLines = lines.filter(line => !/(?:ИНН|ККТ|ФН|ФД|ФП|ДОКУМЕНТ|СМЕНА|ТЕЛЕФОН)/i.test(line));
+        const allAmounts = [...financialLines.join("\n").matchAll(amountPattern)]
+          .filter(match => /[.,][0-9ОоOoIl|Іі]{2}/.test(match[0]))
+          .map(match => parseMoneyToken(match[0]))
+          .filter(value => value > 0 && value < 10000000);
         amount = allAmounts.length ? Math.max(...allAmounts) : 0;
         amountConfidence = amount ? .42 : 0;
-        warnings.push(amount ? "Сумма определена по самому крупному числу и требует проверки." : "Сумма не найдена. Укажите ее вручную.");
+        warnings.push(amount ? "Сумма определена по самому крупному денежному значению и требует проверки." : "Сумма не найдена. Укажите ее вручную.");
       }
 
-      const isoDateMatch = text.match(/\b(20\d{2})[-/.](0[1-9]|1[0-2])[-/.](0[1-9]|[12]\d|3[01])\b/);
-      const localDateMatch = text.match(/\b(0[1-9]|[12]\d|3[01])[./-](0[1-9]|1[0-2])[./-](\d{2}|\d{4})\b/);
+      const dateSource = text.replace(/[ОоOo]/g, "0").replace(/[Il|Іі]/g, "1");
+      const isoDateMatch = dateSource.match(/\b(20\d{2})\s*[-/.]\s*(0[1-9]|1[0-2])\s*[-/.]\s*(0[1-9]|[12]\d|3[01])\b/);
+      const localDateMatch = dateSource.match(/\b(0[1-9]|[12]\d|3[01])\s*[./-]\s*(0[1-9]|1[0-2])\s*[./-]\s*(\d{2}|\d{4})\b/);
       let date = normalizeReceiptDate(isoDateMatch || localDateMatch);
       let dateConfidence = date ? .9 : .35;
       if (!date) {
         date = new Date().toISOString().slice(0, 10);
         warnings.push("Дата не найдена, поставлена сегодняшняя. Проверьте ее.");
       }
-      const timeMatch = text.match(/\b([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d)?\b/);
+      const timeMatch = dateSource.match(/\b([01]\d|2[0-3])\s*:\s*([0-5]\d)(?:\s*:\s*[0-5]\d)?\b/)
+        || dateSource.match(/(?:ВРЕМЯ|TIME)\D{0,8}([01]\d|2[0-3])\s*[.:]\s*([0-5]\d)/i);
       const time = timeMatch ? `${timeMatch[1]}:${timeMatch[2]}` : "";
 
       const garbage = /(?:ИНН|ККТ|ФН|ФД|ФП|КАССИР|СМЕНА|ЧЕК|ДОКУМЕНТ|АДРЕС|ТЕЛЕФОН|САЙТ|ОФД|www\.|https?:)/i;
-      const merchantCandidates = lines.slice(0, 12).filter(line =>
+      const knownMerchants = [
+        [/пят[её]рочк/i, "Пятёрочка"], [/перекр[её]сток/i, "Перекрёсток"], [/магнит/i, "Магнит"],
+        [/лента/i, "Лента"], [/вкусвилл/i, "ВкусВилл"], [/ашан/i, "Ашан"], [/окей|оке[йи]/i, "O'КЕЙ"],
+        [/дикси/i, "Дикси"], [/метро\s*(?:cash|кэш)/i, "METRO"], [/красное\s*(?:и|&)\s*белое/i, "Красное & Белое"],
+        [/лукойл/i, "Лукойл"], [/газпромнефть/i, "Газпромнефть"], [/яндекс\s*(?:еда|лавка)/i, "Яндекс"],
+        [/самокат/i, "Самокат"], [/озон|ozon/i, "Ozon"], [/wildberries|вайлдберриз/i, "Wildberries"]
+      ];
+      const knownMerchant = knownMerchants.find(([pattern]) => pattern.test(text));
+      const merchantCandidates = lines.slice(0, 18).filter(line =>
         line.length >= 3 && line.length <= 100 &&
         /[A-Za-zА-Яа-яЁё]/.test(line) &&
         !garbage.test(line) &&
         !totalKeywords.test(line) &&
         (line.match(/\d/g) || []).length <= line.length / 2
       );
-      const merchant = merchantCandidates[0] || "";
+      merchantCandidates.sort((a, b) => {
+        const score = value => (/ООО|ИП|АО|ПАО/i.test(value) ? 4 : 0) + (value === value.toLocaleUpperCase("ru") ? 2 : 0) - (value.match(/\d/g) || []).length;
+        return score(b) - score(a);
+      });
+      const merchant = knownMerchant?.[1] || merchantCandidates[0] || "";
       if (!merchant) warnings.push("Магазин не удалось определить.");
       const upper = text.toLocaleUpperCase("ru");
       const paymentMethod = /НАЛИЧНЫЕ|CASH/.test(upper) && !/КАРТА|CARD/.test(upper) ? "Наличные" : "Карта";
-      const items = parseReceiptItems(lines);
       if (!items.length) warnings.push("Список товаров не удалось надежно распознать.");
       return {
         amount,
@@ -3513,9 +3992,19 @@
         }
         if (!state.receiptScan.file) throw new Error("Сначала выберите или сфотографируйте чек");
         setReceiptProgress(1, "Подготовка изображения");
+        let qrData = state.receiptScan.qrPromise
+          ? await state.receiptScan.qrPromise
+          : await recognizeReceiptQr(state.receiptScan.file);
+        if (!qrData.found) {
+          $("#receiptQrStatus").textContent = "Расширенный поиск QR...";
+          qrData = await recognizeReceiptQr(state.receiptScan.file, { aggressive: true });
+          state.receiptScan.qrData = qrData;
+          state.receiptScan.qrPromise = Promise.resolve(qrData);
+          updateReceiptQrScanStatus(qrData);
+        }
         const recognition = await recognizeReceiptImage(state.receiptScan.file);
         setReceiptProgress(100, "Распознавание завершено");
-        renderReceiptReview(recognition, state.receiptScan.qrData);
+        renderReceiptReview(recognition, qrData);
       } catch (error) {
         if (!state.receiptScan.cancelled) {
           setReceiptProgress(0, "Не удалось распознать");
@@ -7407,6 +7896,8 @@
     $("#receiptCategory").addEventListener("change", event => reviewSubcategoryOptions(event.target.value));
     $("#receiptChooseFileBtn").addEventListener("click", () => $("#receiptFileInput").click());
     $("#receiptCameraBtn").addEventListener("click", () => $("#receiptCameraInput").click());
+    $("#receiptQrRetryBtn").addEventListener("click", retryReceiptQrSearch);
+    $("#receiptQrCloseupBtn").addEventListener("click", () => $("#receiptQrCameraInput").click());
     $("#receiptRecognizeBtn").addEventListener("click", processReceipt);
     $("#receiptClearBtn").addEventListener("click", resetReceiptScanner);
     $("#receiptManualBtn").addEventListener("click", () => {
@@ -7427,6 +7918,10 @@
     });
     $("#receiptCameraInput").addEventListener("change", event => {
       if (event.target.files[0]) handleReceiptFile(event.target.files[0]);
+      event.target.value = "";
+    });
+    $("#receiptQrCameraInput").addEventListener("change", event => {
+      if (event.target.files[0]) handleReceiptQrCloseup(event.target.files[0]);
       event.target.value = "";
     });
     $("#receiptDropzone").addEventListener("click", event => {
@@ -7574,6 +8069,9 @@
     $("#transactionsMonth").value = state.selectedMonth;
     applyTheme();
     renderAll();
+    const receiptSelfTests = runReceiptRecognitionSelfTests();
+    document.documentElement.dataset.receiptTests = receiptSelfTests.every(item => item.passed) ? "ok" : receiptSelfTests.filter(item => !item.passed).map(item => item.name).join(", ");
+    document.documentElement.dataset.receiptTestDetails = JSON.stringify(receiptSelfTests);
     if (state.storageWarning) setTimeout(() => toast(state.storageWarning, "error"), 0);
     storageService.init().then(() => processRecurringPayments()).catch(() => {});
   </script>
